@@ -52,6 +52,9 @@ docker run --gpus all \
   -p 8000:8000 \
   --ipc=host \
   -it mineru:latest /bin/bash
+  
+  实验是否安装成功
+  mineru -p /app/input/***.pdf -o /app/output
 
 ```
 

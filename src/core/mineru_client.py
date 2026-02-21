@@ -91,10 +91,21 @@ class MinerUClient:
 if __name__ == "__main__":
     client = MinerUClient()
     # 模拟后端调用
-    response = client.process_file("test.pdf")
+    response = client.process_file("python.pdf")
     
     if response["success"]:
         print(f"处理成功 [{response['code']}]: {response['message']}")
         print(f"数据详情: {response['data']}")
     else:
         print(f"处理失败 [{response['code']}]: {response['message']}")
+    
+    books = [
+        "1Homan.pdf",
+        "1Lemoine.pdf",
+        "1Moreira.pdf",
+        "1Razmus.pdf",
+        "1Silva.pdf",
+    ]
+
+    for book in books:
+        response = client.process_file(book)
