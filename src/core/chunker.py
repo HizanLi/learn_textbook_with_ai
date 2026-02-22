@@ -3,98 +3,164 @@ import re
 import json
 import logging
 from pathlib import Path
+from typing import List, Dict, Any, Optional, Union, Tuple
 from dotenv import load_dotenv
-from typing import List, Dict, Any
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 
-# 配置日志
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+PathLike = Union[str, Path]
 
-load_dotenv()
+def save_chunks_to_json(chunks: List[Dict], output_path: PathLike) -> Tuple[bool, Optional[str]]:
+    try:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with output_path.open("w", encoding="utf-8") as f:
+            json.dump(chunks, f, ensure_ascii=False, indent=4)
+        return True, None
+    except Exception as e:
+        logger.exception("Failed to save chunks json")
+        return False, str(e)
+
 
 class MarkdownChunker:
-    def __init__(self):
-        self.base_output_dir = Path(os.getenv("OUTPUT_DIR", "D:/mineru_test/output"))
+    def __init__(self, env_file: str = ".env"):
+        load_dotenv(dotenv_path=env_file, override=True)
+
+        self.base_output_dir: Optional[Path] = None
+        self.init_error: Optional[str] = None
+
+        output_dir = os.getenv("OUTPUT_DIR")
+        if not output_dir:
+            self.init_error = f"OUTPUT_DIR is not set in {env_file}"
+        else:
+            # optional: normalize quotes/spaces
+            output_dir = output_dir.strip().strip('"').strip("'")
+            self.base_output_dir = Path(output_dir)
+
         self.sub_dir_patterns = ["hybrid_auto", "hybrid_ocr", "hybrid_txt"]
-        
-        # 标题切分器：保留书中的逻辑结构
+
         headers_to_split_on = [
             ("#", "Header_1"),
             ("##", "Header_2"),
             ("###", "Header_3"),
         ]
         self.md_splitter = MarkdownHeaderTextSplitter(
-            headers_to_split_on=headers_to_split_on, 
-            strip_headers=False 
+            headers_to_split_on=headers_to_split_on,
+            strip_headers=False
         )
-        
-        # 递归切分器：确保块大小适合向量化
+
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=800,
             chunk_overlap=100,
             separators=["\n\n", "\n", "。", "！", "？", " ", ""]
         )
 
-    def _find_md_file(self, file_name: str) -> Path:
-        file_stem = Path(file_name).stem
-        for pattern in self.sub_dir_patterns:
-            search_pattern = f"**/{pattern}/{file_stem}.md"
-            matches = list(self.base_output_dir.glob(search_pattern))
-            if matches:
-                return matches[0]
-        raise FileNotFoundError(f"未能在 {self.base_output_dir} 下找到匹配文件: {file_name}")
+    def _find_md_file(self, file_name: str) -> Optional[Path]:
+        # If not configured, don't proceed
+        if self.base_output_dir is None:
+            return None
 
-    def get_chunks(self, file_name: str) -> List[Dict[str, Any]]:
-        target_path = self._find_md_file(file_name)
-        with open(target_path, "r", encoding="utf-8") as f:
-            content = f.read()
+        try:
+            file_stem = Path(file_name).stem
+            for pattern in self.sub_dir_patterns:
+                search_pattern = f"**/{pattern}/{file_stem}.md"
+                matches = list(self.base_output_dir.glob(search_pattern))
+                if matches:
+                    return matches[0]
+            return None
+        except Exception:
+            logger.exception("Failed while searching markdown file")
+            return None
 
-        header_splits = self.md_splitter.split_text(content)
-        chunk_list = []
+    def get_chunks(self, file_name: str, save: bool = True, output_filename: str = "chunks.json") -> Dict[str, Any]:
+        if self.init_error or self.base_output_dir is None:
+            return {
+                "success": False,
+                "status_code": 500,
+                "message": self.init_error or "OUTPUT_DIR not configured",
+                "data": None
+            }
 
-        for doc in header_splits:
-            sub_docs = self.text_splitter.split_documents([doc])
-            for sub_doc in sub_docs:
-                # 提取图片引用
-                img_pattern = r"!\[.*?\]\((images/.*?)\)"
-                images = re.findall(img_pattern, sub_doc.page_content)
-                
-                # 构造序列化字典
-                chunk_data = {
-                    "content": sub_doc.page_content,
-                    "metadata": {
-                        "source": file_name,
-                        "header_1": sub_doc.metadata.get("Header_1", ""),
-                        "header_2": sub_doc.metadata.get("Header_2", ""),
-                        "header_3": sub_doc.metadata.get("Header_3", ""),
-                        "referenced_images": images,
-                        "has_image": len(images) > 0
-                    }
+        try:
+            target_path = self._find_md_file(file_name)
+            if target_path is None:
+                return {
+                    "success": False,
+                    "status_code": 404,
+                    "message": f"File not found under {self.base_output_dir}: {file_name}",
+                    "data": None
                 }
-                chunk_list.append(chunk_data)
-        
-        return chunk_list
 
-def save_chunks_to_json(chunks: List[Dict], output_path: str):
-    """将分块列表保存为 JSON 文件"""
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(chunks, f, ensure_ascii=False, indent=4)
-    logger.info(f"💾 成功保存 {len(chunks)} 个分块到: {output_path}")
+            try:
+                content = target_path.read_text(encoding="utf-8")
+            except Exception as e:
+                logger.exception("Failed to read markdown file")
+                return {
+                    "success": False,
+                    "status_code": 500,
+                    "message": f"Failed to read file: {target_path}. Error: {e}",
+                    "data": None
+                }
 
-# --- 执行存储 ---
+            header_splits = self.md_splitter.split_text(content)
+            chunk_list: List[Dict[str, Any]] = []
+            img_pattern = r"!\[.*?\]\((images/.*?)\)"
+
+            for doc in header_splits:
+                sub_docs = self.text_splitter.split_documents([doc])
+                for sub_doc in sub_docs:
+                    images = re.findall(img_pattern, sub_doc.page_content)
+                    chunk_list.append({
+                        "content": sub_doc.page_content,
+                        "metadata": {
+                            "source": file_name,
+                            "header_1": sub_doc.metadata.get("Header_1", ""),
+                            "header_2": sub_doc.metadata.get("Header_2", ""),
+                            "header_3": sub_doc.metadata.get("Header_3", ""),
+                            "referenced_images": images,
+                            "has_image": len(images) > 0
+                        }
+                    })
+
+            saved_json_path = None
+            if save:
+                saved_json_path = target_path.parent / output_filename
+                ok, err = save_chunks_to_json(chunk_list, saved_json_path)
+                if not ok:
+                    return {
+                        "success": False,
+                        "status_code": 500,
+                        "message": f"Chunking succeeded but saving JSON failed: {err}",
+                        "data": {
+                            "md_path": str(target_path),
+                            "json_path": str(saved_json_path),
+                            "chunks_count": len(chunk_list),
+                        }
+                    }
+
+            return {
+                "success": True,
+                "status_code": 200,
+                "message": "Success",
+                "data": {
+                    "md_path": str(target_path),
+                    "json_path": str(saved_json_path) if saved_json_path else None,
+                    "chunks_count": len(chunk_list),
+                }
+            }
+
+        except Exception as e:
+            logger.exception("Unexpected error in get_chunks")
+            return {
+                "success": False,
+                "status_code": 500,
+                "message": f"Unexpected error: {e}",
+                "data": None
+            }
+
 if __name__ == "__main__":
     chunker = MarkdownChunker()
-    try:
-        # 1. 获取切分后的数据
-        target_file = "book.md" 
-        all_chunks = chunker.get_chunks(target_file)
-        
-        # 2. 定义保存路径（建议保存在项目根目录或输出目录根部）
-        json_output = "chunks.json" 
-        
-        # 3. 执行存储
-        save_chunks_to_json(all_chunks, json_output)
 
-    except Exception as e:
-        logger.error(f"❌ 运行失败: {e}")
+    target_file = "pyhton_short.md" 
+    result = chunker.get_chunks(target_file)
+    print(result)
