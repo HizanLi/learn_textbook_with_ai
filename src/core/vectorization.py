@@ -110,9 +110,10 @@ if __name__ == "__main__":
         
         # 测试：针对书中具体概念提问
         test_queries = [
-            "What is Expressions?",
-            "What is Operators and operands?",
-            "What is Boolean expressions?",
+            "What is Conditional execution",
+            "What are reserved words in Python?",
+            "What are the rules and restrictions for naming variables in Python?",
+            "How do you define a Boolean expression?",
         ]
         
         for q in test_queries:
