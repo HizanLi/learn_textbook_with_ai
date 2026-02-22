@@ -113,6 +113,11 @@ def parse_pdf(pdf_path):
 
 ---
 
-**这份文档已经涵盖了你过去两小时踩过的所有坑。**
 
-**接下来你想让我帮你写“出题引擎”部分的 Python 代码吗？我们可以尝试让 AI 读入这些 Markdown，然后针对每个章节自动出 5 道选择题。**
+### 1) Create later with `conda create` + install pip deps
+
+```bash
+conda create -n learn_with_ai python=3.11 pip -y
+conda activate learn_with_ai
+python -m pip install -r requirements.txt
+```
