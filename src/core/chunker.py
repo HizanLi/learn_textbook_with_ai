@@ -102,8 +102,14 @@ class MarkdownChunker:
             
             # 设置安全长度阈值（与 chunk_size 一致）
             MAX_SAFE_LEN = 1500
+            MIN_CHUNK_LEN = 100  # 最小内容长度，过短的chunk会被跳过
 
             for doc in header_splits:
+                # 跳过过短的内容（比如只有标题）
+                if len(doc.page_content.strip()) < MIN_CHUNK_LEN:
+                    logger.info(f"⏭️  跳过过短chunk: {doc.page_content[:50]}")
+                    continue
+                
                 # 第二步：检查该标题块是否超长
                 if len(doc.page_content) > MAX_SAFE_LEN:
                     # 超长则进行带重叠的递归切分
@@ -123,7 +129,8 @@ class MarkdownChunker:
                             "header_3": sub_doc.metadata.get("Header_3", ""),
                             "referenced_images": images,
                             "has_image": len(images) > 0,
-                            "is_split": len(doc.page_content) > MAX_SAFE_LEN  # 标记是否经过二次切分
+                            "is_split": len(doc.page_content) > MAX_SAFE_LEN,  # 标记是否经过二次切分
+                            "content_length": len(sub_doc.page_content)  # 新增：记录内容长度
                         }
                     })
 
@@ -167,8 +174,8 @@ class MarkdownChunker:
                 "message": f"Unexpected error: {e}", "data": None
             }
 
-if __name__ == "__main__":
-    chunker = MarkdownChunker()
-    target_file = "pyhton_short.md" 
-    result = chunker.get_chunks(target_file)
-    print(result)
+# if __name__ == "__main__":
+#     chunker = MarkdownChunker()
+#     target_file = "pyhton_short.md" 
+#     result = chunker.get_chunks(target_file)
+#     print(result)

@@ -12,14 +12,18 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class VectorStorageManager:
-    def __init__(self, db_path: str = "./chroma_db", collection_name: str = "liquidity_theory"):
+    def __init__(self, collection_name: str, db_path: str = "./chroma_db"):
         """
         初始化向量数据库管理
-        :param db_path: 本地数据库存储路径
         :param collection_name: 向量集合名称
+        :param db_path: 本地数据库存储路径前缀
         """
+        self.collection_name = collection_name
+        # 为每个 collection 创建单独的 db 文件夹
+        self.db_path = f"{db_path}/{collection_name}"
+        
         # 1. 初始化 ChromaDB 持久化客户端
-        self.client = chromadb.PersistentClient(path=db_path)
+        self.client = chromadb.PersistentClient(path=self.db_path)
         
         # 2. 定义 Embedding 函数 (使用本地 Sentence-Transformers 模型)
         # all-MiniLM-L6-v2 是一个轻量且高效的通用模型，适合处理中英双语或专业书籍
@@ -43,7 +47,14 @@ class VectorStorageManager:
     def process_and_store(self, chunks: List[Dict]):
         """
         执行标题注入并入库，修复元数据中空列表导致的错误
+        如果集合已有数据，则跳过向量化（幂等性）
         """
+        # 检查集合是否已有数据
+        collection_count = self.collection.count()
+        if collection_count > 0:
+            logger.info(f"⏭️  集合 '{self.collection_name}' 已存在 {collection_count} 个分块，跳过向量化。")
+            return
+        
         documents = []
         metadatas = []
         ids = []
@@ -83,52 +94,92 @@ class VectorStorageManager:
         logger.info(f"✅ 成功向量化 {len(documents)} 个分块并保存。")
 
     def search(self, query_text: str, n_results: int = 3):
-        """执行语义搜索测试"""
+        """执行语义搜索并按内容质量排序"""
+        # 获取更多结果用于重排序
+        fetch_count = min(max(n_results * 3, 10), 50)  # 获取n_results的3倍或最多50个
         results = self.collection.query(
             query_texts=[query_text],
-            n_results=n_results
+            n_results=fetch_count
         )
-        return results
-
-# --- 运行主流程 ---
-if __name__ == "__main__":
-    # 1. 实例化管理器
-    manager = VectorStorageManager()
+        
+        # 如果没有结果，直接返回
+        if not results.get('documents') or len(results['documents']) == 0:
+            return results
+        
+        # 重排序：按distance升序，但优先考虑内容长度
+        documents = results['documents'][0]
+        metadatas = results['metadatas'][0]
+        distances = results.get('distances', [[]])[0]
+        
+        # 创建排序元组列表
+        items = list(zip(documents, metadatas, distances))
+        
+        # 排序策略：先按内容长度（降序），再按distance（升序）
+        # 这样会优先返回内容更丰富的结果
+        items.sort(key=lambda x: (
+            -len(x[0]),  # 内容长度降序（负号使其降序）
+            x[2]          # distance升序
+        ))
+        
+        # 只保留前n_results个结果
+        items = items[:n_results]
+        
+        # 重新拆分回原格式
+        sorted_docs, sorted_metas, sorted_dists = zip(*items) if items else ([], [], [])
+        
+        return {
+            'documents': [list(sorted_docs)],
+            'metadatas': [list(sorted_metas)],
+            'distances': [list(sorted_dists)]
+        }
     
-    try:
-        # 2. 加载之前生成的 chunks.json
-        # 确保该文件在脚本同级目录下，或提供完整路径
-        json_file_path = r"D:\mineru_test\output\pyhton_short\hybrid_auto\chunks.json" 
-        data = manager.load_chunks(json_file_path)
+    def collection_exists(self) -> bool:
+        """检查集合是否存在且有数据"""
+        try:
+            count = self.collection.count()
+            return count > 0
+        except Exception:
+            return False
+
+# # --- 运行主流程 ---
+# if __name__ == "__main__":
+#     # 1. 实例化管理器
+#     manager = VectorStorageManager()
+    
+#     try:
+#         # 2. 加载之前生成的 chunks.json
+#         # 确保该文件在脚本同级目录下，或提供完整路径
+#         json_file_path = r"D:\mineru_test\output\pyhton_short\hybrid_auto\chunks.json" 
+#         data = manager.load_chunks(json_file_path)
         
-        # 3. 执行向量化和存储
-        manager.process_and_store(data)
+#         # 3. 执行向量化和存储
+#         manager.process_and_store(data)
         
-        # 4. 验证测试
-        print("\n" + "="*50)
-        print("🔍 检索功能演示：")
+#         # 4. 验证测试
+#         print("\n" + "="*50)
+#         print("🔍 检索功能演示：")
         
-        # 测试：针对书中具体概念提问
-        test_queries = [
-            "What is Conditional execution",
-            "What are reserved words in Python?",
-            "What are the rules and restrictions for naming variables in Python?",
-            "How do you define a Boolean expression?",
-        ]
+#         # 测试：针对书中具体概念提问
+#         test_queries = [
+#             "What is Conditional execution",
+#             "What are reserved words in Python?",
+#             "What are the rules and restrictions for naming variables in Python?",
+#             "How do you define a Boolean expression?",
+#         ]
         
-        for q in test_queries:
-            print(f"\n用户提问: {q}")
-            results = manager.search(q, n_results=1)
+#         for q in test_queries:
+#             print(f"\n用户提问: {q}")
+#             results = manager.search(q, n_results=1)
             
-            if results['documents']:
-                matched_doc = results['documents'][0][0]
-                matched_meta = results['metadatas'][0][0]
-                print(f"匹配章节: {matched_meta.get('header_1')} -> {matched_meta.get('header_2')}")
-                print(f"找到内容: {matched_doc}")
-                print()
-                print()
+#             if results['documents']:
+#                 matched_doc = results['documents'][0][0]
+#                 matched_meta = results['metadatas'][0][0]
+#                 print(f"匹配章节: {matched_meta.get('header_1')} -> {matched_meta.get('header_2')}")
+#                 print(f"找到内容: {matched_doc}")
+#                 print()
+#                 print()
         
-        print("\n" + "="*50)
+#         print("\n" + "="*50)
         
-    except Exception as e:
-        logger.error(f"程序运行出错: {e}")
+#     except Exception as e:
+#         logger.error(f"程序运行出错: {e}")

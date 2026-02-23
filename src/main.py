@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from src.core.chunker import MarkdownChunker
-from src.core.vectorization import VectorStorageManager
-from src.core.mineru_client import MinerUClient
+from core.chunker import MarkdownChunker
+from core.vectorization import VectorStorageManager
+from core.mineru_client import MinerUClient
+import uvicorn
 
 app = FastAPI(
     title="Textbook AI Learner API",
@@ -14,6 +15,8 @@ app = FastAPI(
 # --- 定义请求体和响应模型 ---
 class MinerUProcessRequest(BaseModel):
     file_name: str
+    input_dir: Optional[str] = None
+    output_dir: Optional[str] = None
     description: str = "需要处理的PDF文件名"
 
 class ChunkerProcessRequest(BaseModel):
@@ -23,16 +26,17 @@ class ChunkerProcessRequest(BaseModel):
 
 class VectorizationStoreRequest(BaseModel):
     json_path: str
-    collection_name: str = "liquidity_theory"
+    collection_name: str = "default_collection"
     description: str = "需要向量化的chunks.json文件路径"
 
 class SearchRequest(BaseModel):
+    collection_name: str
     query: str
     n_results: int = 3
 
 # --- 初始化组件 ---
 chunker = MarkdownChunker()
-vector_manager = VectorStorageManager()
+vector_manager = None
 mineru_client = MinerUClient()
 
 # ============================================================================
@@ -43,11 +47,15 @@ mineru_client = MinerUClient()
 async def process_pdf(request: MinerUProcessRequest):
     """
     调用 MinerU 处理 PDF 文件并转换为 Markdown
-    - 输入：PDF 文件名
+    - 输入：PDF 文件名，可选的input_dir和output_dir
     - 输出：Markdown 文件路径和状态
     """
     try:
-        result = mineru_client.process_file(request.file_name)
+        result = mineru_client.process_file(
+            file_name=request.file_name,
+            input_dir=request.input_dir,
+            output_dir=request.output_dir
+        )
         if result["success"]:
             return {
                 "success": True,
@@ -101,12 +109,14 @@ async def vectorize_and_store(request: VectorizationStoreRequest):
     - 注入标题上下文
     - 修复元数据
     - 批量写入数据库
+    - 如果集合已存在，则跳过向量化（幂等性）
     """
+    vector_manager = VectorStorageManager(request.collection_name)
     try:
         # 加载分块数据
         chunks = vector_manager.load_chunks(request.json_path)
         
-        # 执行向量化和存储
+        # 执行向量化和存储（如果已存在则跳过）
         vector_manager.process_and_store(chunks)
         
         return {
@@ -116,7 +126,7 @@ async def vectorize_and_store(request: VectorizationStoreRequest):
             "data": {
                 "chunks_count": len(chunks),
                 "collection_name": vector_manager.collection.name,
-                "db_path": "chroma_db"
+                "db_path": vector_manager.db_path
             }
         }
     except FileNotFoundError as e:
@@ -134,7 +144,18 @@ async def semantic_search(request: SearchRequest):
     对已向量化的知识库进行语义搜索
     """
     try:
-        results = vector_manager.search(request.query, n_results=request.n_results)
+        # 根据 collection_name 加载 VectorStorageManager
+        vm = VectorStorageManager(request.collection_name)
+        
+        # 检查集合是否存在
+        if not vm.collection_exists():
+            raise HTTPException(
+                status_code=404, 
+                detail=f"集合 '{request.collection_name}' 不存在或为空。请先执行向量化操作。"
+            )
+        
+        # 执行搜索
+        results = vm.search(request.query, n_results=request.n_results)
         
         # 格式化响应
         formatted_results = []
@@ -159,10 +180,13 @@ async def semantic_search(request: SearchRequest):
         
         return {
             "success": True,
+            "collection_name": request.collection_name,
             "query": request.query,
             "results_count": len(formatted_results),
             "results": formatted_results
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"搜索出错: {str(e)}")
 
@@ -204,12 +228,11 @@ async def get_status():
             },
             "vectorization": {
                 "status": "ready",
-                "collection_name": vector_manager.collection.name,
-                "db_path": "chroma_db"
+                "db_path": "./chroma_db/{collection_name}",
+                "note": "每个 collection 有独立的数据库文件夹"
             }
         }
     }
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

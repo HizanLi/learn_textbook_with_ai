@@ -1,6 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
+from typing import Optional, Union
 from dotenv import load_dotenv
 
 class MinerUClient:
@@ -21,11 +22,25 @@ class MinerUClient:
         except Exception:
             return None
 
-    def process_file(self, file_name):
+    def process_file(self, file_name: str, input_dir: Optional[Union[str, Path]] = None, output_dir: Optional[Union[str, Path]] = None):
         """
         处理 PDF 文件并返回统一格式
+        :param file_name: PDF 文件名
+        :param input_dir: 输入目录，可以是字符串或Path对象，如果不提供则使用 self.input_dir
+        :param output_dir: 输出目录，可以是字符串或Path对象，如果不提供则使用 self.output_dir
         返回格式: {"success": bool, "status_code": int, "message": str, "data": dict}
         """
+        # 使用提供的参数或使用初始化时的值
+        if input_dir is None:
+            input_dir = self.input_dir
+        else:
+            input_dir = Path(input_dir)
+        
+        if output_dir is None:
+            output_dir = self.output_dir
+        else:
+            output_dir = Path(output_dir)
+        
         # 1. 检查容器状态
         if not self.container_id:
             return {
@@ -36,7 +51,7 @@ class MinerUClient:
             }
 
         # 2. 检查输入文件
-        local_file_path = self.input_dir / file_name
+        local_file_path = input_dir / file_name
         if not local_file_path.exists():
             return {
                 "success": False, 
@@ -47,7 +62,7 @@ class MinerUClient:
 
         # 3. 幂等性检查（检查是否已转换）
         stem_name = Path(file_name).stem
-        target_output_path = self.output_dir / stem_name
+        target_output_path = output_dir / stem_name
         if target_output_path.exists() and any(target_output_path.iterdir()):
             return {
                 "success": True, 
@@ -66,7 +81,7 @@ class MinerUClient:
             print(f"🚀 正在处理: {file_name}")
             result = subprocess.run(docker_cmd, capture_output=True, text=True, encoding='utf-8')
 
-            if result.returnstatus_code == 0:
+            if result.returncode == 0:
                 return {
                     "success": True, 
                     "status_code": 200, 
@@ -88,17 +103,17 @@ class MinerUClient:
                 "data": None
             }
 
-if __name__ == "__main__":
-    client = MinerUClient()
-    # 模拟后端调用
-    # response = client.process_file("python.pdf")
+# if __name__ == "__main__":
+#     client = MinerUClient()
+#     # 模拟后端调用
+#     # response = client.process_file("python.pdf")
     
-    # if response["success"]:
-    #     print(f"处理成功 [{response['status_code']}]: {response['message']}")
-    #     print(f"数据详情: {response['data']}")
-    # else:
-    #     print(f"处理失败 [{response['status_code']}]: {response['message']}")
+#     # if response["success"]:
+#     #     print(f"处理成功 [{response['status_code']}]: {response['message']}")
+#     #     print(f"数据详情: {response['data']}")
+#     # else:
+#     #     print(f"处理失败 [{response['status_code']}]: {response['message']}")
     
 
-    response = client.process_file("pyhton_short.pdf")
-    print(response)
+#     response = client.process_file("1Lemoine.pdf", input_dir=r'D:\mineru_test\input', output_dir=r'D:\mineru_test\output')
+#     print(response)
