@@ -1,0 +1,15 @@
+{
+  "last_updated": "2026-02-24",
+  "models": [
+    {
+      "id": "deepseek-chat",
+      "features": "2026年主力通用模型，MoE 架构升级版，性价比远超同类产品。",
+      "use_cases": "企业级知识库、中文公文写作、通用 Agent 调度。"
+    },
+    {
+      "id": "deepseek-reasoner",
+      "features": "开源/商用推理领先者，提供完整的思维链（COT）输出。",
+      "use_cases": "逻辑漏洞检测、底层代码重写、奥数解题。"
+    }
+  ]
+}
