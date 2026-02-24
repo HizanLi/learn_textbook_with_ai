@@ -67,7 +67,21 @@ Conversion -> Markdown -> Chunking -> Vectorization
    ```bash
    python src/main.py
    ```
-3. 在浏览器中访问本地界面，上传 PDF 并开始学习。
+3. 前端/后端（React + Node）开发：
+      ```bash
+      # 后端
+      cd src/backend
+      npm install
+      npm run dev
+
+      # 前端
+      cd ../frontend
+      npm install
+      npm run dev
+      ```
+4. 在浏览器中访问 http://localhost:5173，输入用户名并开始学习。
+
+> 前端会调用 Node 后端（默认 http://localhost:4000）。可通过设置 `VITE_API_BASE` 环境变量修改。
 
 ## 🗂 开发计划（To‑Do List）
 

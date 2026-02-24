@@ -95,73 +95,64 @@ def main():
     p.add_argument("--temperature", type=float, default=0.3, help="temperature for JSON generation (defaults to 0.3)")
     args = p.parse_args()
 
-    # call the library function so this script can also be imported and used programmatically
-    generate_overview(
-        path_to_markdown=args.markdown,
-        out_path=args.out,
-        provider=args.provider,
-        model=args.model,
-        temperature=args.temperature,
-    )
+    if not os.path.exists(args.markdown):
+        print("Markdown file not found", args.markdown)
+        raise SystemExit(1)
+
+    with open(args.markdown, "r", encoding="utf-8") as f:
+        md = f.read()
+
+    sections = split_sections(md)
+
+    # Delegate to the reusable function
+    generate_overview(args.markdown, args.out, args.provider, model_name=args.model, temperature=args.temperature)
 
 
-if __name__ == "__main__":
-    main()
-
-
-def generate_overview(
-    path_to_markdown: str,
-    out_path: str,
-    provider: str = "openai",
-    model: str | None = None,
-    temperature: float = 0.3,
-    client=None,
-):
+def generate_overview(markdown_path: str, out_path: str, provider_str: str = "openai", model_name: str = None, temperature: float = 0.3) -> dict:
     """Generate overview JSON from a markdown file.
 
-    Args:
-        path_to_markdown: path to the markdown textbook file
-        out_path: output JSON path
-        provider: one of 'openai', 'deepseek', 'google' (or a ModelProvider)
-        model: optional model name override
-        temperature: temperature to request for JSON generation (default 0.3)
-        client: optional pre-created LLM client to use
-
-    Returns:
-        The overview dict that was written to `out_path`.
+    Returns the overview dict and writes it to `out_path`.
     """
-    if not os.path.exists(path_to_markdown):
-        raise FileNotFoundError(path_to_markdown)
+    if not os.path.exists(markdown_path):
+        raise FileNotFoundError(markdown_path)
 
-    with open(path_to_markdown, "r", encoding="utf-8") as f:
+    with open(markdown_path, "r", encoding="utf-8") as f:
         md = f.read()
 
     sections = split_sections(md)
 
     provider_map = {"openai": ModelProvider.OPENAI, "deepseek": ModelProvider.DEEPSEEK, "google": ModelProvider.GOOGLE}
-    prov = provider_map.get(provider, provider) if isinstance(provider, str) else provider
+    if provider_str not in provider_map:
+        raise ValueError(f"Unknown provider: {provider_str}")
+    provider = provider_map[provider_str]
 
-    # create client if one wasn't provided
-    if client is None:
-        client = LLMFactory.create_client(prov, model_name=model, temperature=0.7)
+    # Create a client; JSON generation uses temperature=0.3 internally, but we still pass temperature to client creation.
+    client = LLMFactory.create_client(provider, model_name=model_name, temperature=temperature)
 
-    overview = {"source": os.path.basename(path_to_markdown), "sections": []}
+    overview = {"source": os.path.basename(markdown_path), "sections": []}
 
     for sec in sections:
         sec_title = sec.get("title")
         sec_content = sec.get("content", "")
 
         try:
-            # generate_json already uses a lower temperature; we pass temperature parameter via client if supported
             summary_obj = summarize_with_client(client, sec_content or sec_title)
         except Exception as e:
             print(f"Failed to summarize section {sec_title}: {e}")
             summary_obj = {"summary": "", "subsections": []}
 
-        overview["sections"].append({"title": sec_title, "summary": summary_obj.get("summary"), "subsections": summary_obj.get("subsections")})
+        overview["sections"].append({
+            "title": sec_title,
+            "summary": summary_obj.get("summary"),
+            "subsections": summary_obj.get("subsections"),
+        })
 
     with open(out_path, "w", encoding="utf-8") as outf:
         json.dump(overview, outf, ensure_ascii=False, indent=2)
 
     print("Overview written to", out_path)
     return overview
+
+
+if __name__ == "__main__":
+    main()

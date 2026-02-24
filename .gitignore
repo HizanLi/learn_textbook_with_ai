@@ -14,3 +14,14 @@ venv/
 .venv/
 chroma_db
 .vscode/
+
+# 用户数据
+users/
+src/backend/node_modules/
+src/frontend/node_modules/
+src/frontend/dist/
+src/frontend/.vite/
+src/frontend/.env.local
+src/backend/.env
+src/backend/*.log
+src/backend/logs/

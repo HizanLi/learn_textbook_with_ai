@@ -1,10 +1,13 @@
+import os
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from core.chunker import MarkdownChunker
-from core.vectorization import VectorStorageManager
-from core.mineru_client import MinerUClient
+from chunker import MarkdownChunker
+from vectorization import VectorStorageManager
+from mineru_client import MinerUClient
 import uvicorn
+from dotenv import load_dotenv
 
 app = FastAPI(
     title="Textbook AI Learner API",
@@ -235,4 +238,6 @@ async def get_status():
     }
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    load_dotenv()
+    port = os.getenv("PYTHON_PORT") 
+    uvicorn.run(app, host="0.0.0.0", port=port)
