@@ -9,7 +9,9 @@ from typing import Optional, List, Dict, Any
 from enum import Enum
 from dotenv import load_dotenv
 import json
-
+import openai
+from openai import OpenAI
+import google.generativeai as genai
 
 load_dotenv()
 
@@ -35,6 +37,7 @@ class LLMClient(ABC):
         prompt: str,
         max_tokens: Optional[int] = None,
         system_prompt: Optional[str] = None,
+        temperature: float = 0.7,
     ) -> str:
         """生成文本内容"""
         pass
@@ -65,17 +68,14 @@ class OpenAIClient(LLMClient):
             raise ValueError("OpenAI API key not found")
         super().__init__(api_key, model_name, temperature)
 
-        try:
-            import openai
-            self.client = openai.OpenAI(api_key=self.api_key)
-        except ImportError:
-            raise ImportError("Please install openai: pip install openai")
+        self.client = openai.OpenAI(api_key=self.api_key)
 
     def generate_text(
         self,
         prompt: str,
         max_tokens: Optional[int] = None,
         system_prompt: Optional[str] = None,
+        temperature: float = 0.7,
     ) -> str:
         """调用 OpenAI API 生成文本"""
         messages = []
@@ -86,7 +86,7 @@ class OpenAIClient(LLMClient):
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
-            temperature=self.temperature,
+            temperature=temperature,
             max_tokens=max_tokens,
         )
         return response.choices[0].message.content
@@ -107,7 +107,7 @@ class OpenAIClient(LLMClient):
         full_prompt = prompt + json_schema_prompt
 
         text_response = self.generate_text(
-            full_prompt, max_tokens, system_prompt
+            full_prompt, max_tokens, system_prompt, temperature=0.3
         )
 
         try:
@@ -136,21 +136,18 @@ class DeepseekClient(LLMClient):
         if not api_key:
             raise ValueError("Deepseek API key not found")
         super().__init__(api_key, model_name, temperature)
-
-        try:
-            from openai import OpenAI
-            self.client = OpenAI(
-                api_key=self.api_key,
-                base_url="https://api.deepseek.com",
-            )
-        except ImportError:
-            raise ImportError("Please install openai: pip install openai")
+            
+        self.client = OpenAI(
+            api_key=self.api_key,
+            base_url="https://api.deepseek.com",
+        )
 
     def generate_text(
         self,
         prompt: str,
         max_tokens: Optional[int] = None,
         system_prompt: Optional[str] = None,
+        temperature: float = 0.7,
     ) -> str:
         """调用 Deepseek API 生成文本"""
         messages = []
@@ -161,7 +158,7 @@ class DeepseekClient(LLMClient):
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
-            temperature=self.temperature,
+            temperature=temperature,
             max_tokens=max_tokens,
         )
         return response.choices[0].message.content
@@ -182,7 +179,7 @@ class DeepseekClient(LLMClient):
         full_prompt = prompt + json_schema_prompt
 
         text_response = self.generate_text(
-            full_prompt, max_tokens, system_prompt
+            full_prompt, max_tokens, system_prompt, temperature=0.3
         )
 
         try:
@@ -211,20 +208,15 @@ class GeminiClient(LLMClient):
             raise ValueError("Gemini API key not found")
         super().__init__(api_key, model_name, temperature)
 
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=self.api_key)
-            self.client = genai.GenerativeModel(model_name=self.model_name)
-        except ImportError:
-            raise ImportError(
-                "Please install google-generativeai: pip install google-generativeai"
-            )
+        genai.configure(api_key=self.api_key)
+        self.client = genai.GenerativeModel(model_name=self.model_name)
 
     def generate_text(
         self,
         prompt: str,
         max_tokens: Optional[int] = None,
         system_prompt: Optional[str] = None,
+        temperature: float = 0.7,
     ) -> str:
         """调用 Gemini API 生成文本"""
         if system_prompt:
@@ -233,7 +225,7 @@ class GeminiClient(LLMClient):
             full_prompt = prompt
 
         generation_config = {
-            "temperature": self.temperature,
+            "temperature": temperature,
         }
         if max_tokens:
             generation_config["max_output_tokens"] = max_tokens
@@ -260,7 +252,7 @@ class GeminiClient(LLMClient):
         full_prompt = prompt + json_schema_prompt
 
         text_response = self.generate_text(
-            full_prompt, max_tokens, system_prompt
+            full_prompt, max_tokens, system_prompt, temperature=0.3
         )
 
         try:

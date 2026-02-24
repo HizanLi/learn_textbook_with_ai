@@ -76,7 +76,7 @@ Conversion -> Markdown -> Chunking -> Vectorization
 - [*] **PDF 转 Markdown**：实现稳定的转换工具
 - [*] **文本切分**：按章节与字数切分并保存元数据
 - [*] **向量化**：选型并集成向量数据库（Chroma 等）
-- [ ] **大模型接口**：封装 GPT/Deepseek/Gemini 调用逻辑
+- [*] **大模型接口**：封装 GPT/Deepseek/Gemini 调用逻辑
 - [ ] **生成教程**：文本内容、例题与 Quiz 生成模块
 - [ ] **音频合成**：集成 TTS 引擎输出讲解音频
 - [ ] **视频教师**：实现虚拟教师角色的动画/视频生成
