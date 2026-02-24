@@ -10,8 +10,6 @@ from enum import Enum
 from dotenv import load_dotenv
 import json
 
-# 为了向后兼容，并让其他模块可以直接从 llm_client 引入 LearningContentGenerator
-from .learning_content import LearningContentGenerator  # noqa: E402
 
 load_dotenv()
 
