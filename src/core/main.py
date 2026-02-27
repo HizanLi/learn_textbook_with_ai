@@ -17,22 +17,24 @@ app = FastAPI(
 
 # --- 定义请求体和响应模型 ---
 class MinerUProcessRequest(BaseModel):
+    username: str
     file_name: str
-    input_dir: Optional[str] = None
-    output_dir: Optional[str] = None
     description: str = "需要处理的PDF文件名"
 
 class ChunkerProcessRequest(BaseModel):
+    username: str
     file_name: str
     output_filename: str = "chunks.json"
     description: str = "需要分块的Markdown文件名"
 
 class VectorizationStoreRequest(BaseModel):
+    username: str
     json_path: str
     collection_name: str = "default_collection"
     description: str = "需要向量化的chunks.json文件路径"
 
 class SearchRequest(BaseModel):
+    username: str
     collection_name: str
     query: str
     n_results: int = 3
@@ -50,14 +52,13 @@ mineru_client = MinerUClient()
 async def process_pdf(request: MinerUProcessRequest):
     """
     调用 MinerU 处理 PDF 文件并转换为 Markdown
-    - 输入：PDF 文件名，可选的input_dir和output_dir
+    - 输入：用户名 + PDF 文件名
     - 输出：Markdown 文件路径和状态
     """
     try:
         result = mineru_client.process_file(
-            file_name=request.file_name,
-            input_dir=request.input_dir,
-            output_dir=request.output_dir
+            username=request.username,
+            file_name=request.file_name
         )
         if result["success"]:
             return {
@@ -68,6 +69,8 @@ async def process_pdf(request: MinerUProcessRequest):
             }
         else:
             raise HTTPException(status_code=result["status_code"], detail=result["message"])
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"处理PDF出错: {str(e)}")
 
@@ -85,6 +88,7 @@ async def process_chunking(request: ChunkerProcessRequest):
     """
     try:
         result = chunker.get_chunks(
+            username=request.username,
             file_name=request.file_name,
             save=True,
             output_filename=request.output_filename
@@ -98,6 +102,8 @@ async def process_chunking(request: ChunkerProcessRequest):
             }
         else:
             raise HTTPException(status_code=result["status_code"], detail=result["message"])
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"分块出错: {str(e)}")
 
@@ -114,8 +120,17 @@ async def vectorize_and_store(request: VectorizationStoreRequest):
     - 批量写入数据库
     - 如果集合已存在，则跳过向量化（幂等性）
     """
-    vector_manager = VectorStorageManager(request.collection_name)
     try:
+        # 构建用户特定的数据库路径
+        data_dir = os.getenv("DATA_DIR")
+        if not data_dir:
+            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+        
+        user_db_path = os.path.join(data_dir, request.username, "chroma_db")
+        
+        # 创建 VectorStorageManager 并指定用户特定的db路径
+        vector_manager = VectorStorageManager(request.collection_name, db_path=user_db_path)
+        
         # 加载分块数据
         chunks = vector_manager.load_chunks(request.json_path)
         
@@ -134,6 +149,8 @@ async def vectorize_and_store(request: VectorizationStoreRequest):
         }
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"向量化出错: {str(e)}")
 
@@ -147,8 +164,15 @@ async def semantic_search(request: SearchRequest):
     对已向量化的知识库进行语义搜索
     """
     try:
+        # 构建用户特定的数据库路径
+        data_dir = os.getenv("DATA_DIR")
+        if not data_dir:
+            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+        
+        user_db_path = os.path.join(data_dir, request.username, "chroma_db")
+        
         # 根据 collection_name 加载 VectorStorageManager
-        vm = VectorStorageManager(request.collection_name)
+        vm = VectorStorageManager(request.collection_name, db_path=user_db_path)
         
         # 检查集合是否存在
         if not vm.collection_exists():
@@ -226,18 +250,18 @@ async def get_status():
             },
             "chunker": {
                 "status": "ready" if not chunker.init_error else "error",
-                "output_dir": str(chunker.base_output_dir) if chunker.base_output_dir else None,
+                "data_dir": str(chunker.base_data_dir) if chunker.base_data_dir else None,
                 "error": chunker.init_error
             },
             "vectorization": {
                 "status": "ready",
-                "db_path": "./chroma_db/{collection_name}",
-                "note": "每个 collection 有独立的数据库文件夹"
+                "db_path": "DATA_DIR/{username}/chroma_db/{collection_name}",
+                "note": "每个用户和 collection 有独立的数据库文件夹"
             }
         }
     }
 
 if __name__ == "__main__":
     load_dotenv()
-    port = os.getenv("PYTHON_PORT") 
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    port = int(os.getenv("PYTHON_PORT", "8000"))
+    uvicorn.run(app, host="127.0.0.1", port=port)

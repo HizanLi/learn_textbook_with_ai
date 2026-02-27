@@ -1,14 +1,13 @@
 import os
 import subprocess
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 from dotenv import load_dotenv
 
 class MinerUClient:
     def __init__(self):
         load_dotenv()
-        self.input_dir = Path(os.getenv("INPUT_DIR"))
-        self.output_dir = Path(os.getenv("OUTPUT_DIR"))
+        self.data_dir = Path(os.getenv("DATA_DIR")) if os.getenv("DATA_DIR") else None
         self.image_name = "mineru:latest"
         self.container_id = self._get_container_id()
 
@@ -22,24 +21,38 @@ class MinerUClient:
         except Exception:
             return None
 
-    def process_file(self, file_name: str, input_dir: Optional[Union[str, Path]] = None, output_dir: Optional[Union[str, Path]] = None):
+    def _to_container_path(self, host_path: Path) -> Optional[str]:
+        if not self.data_dir:
+            return None
+        try:
+            host_abs = host_path.resolve()
+            data_abs = self.data_dir.resolve()
+            relative = host_abs.relative_to(data_abs)
+            return f"/app/data/{relative.as_posix()}"
+        except Exception:
+            return None
+
+    def process_file(self, username: str, file_name: str):
         """
         处理 PDF 文件并返回统一格式
+        :param username: 用户名，用于拼接 DATA_DIR/{username}
         :param file_name: PDF 文件名
-        :param input_dir: 输入目录，可以是字符串或Path对象，如果不提供则使用 self.input_dir
-        :param output_dir: 输出目录，可以是字符串或Path对象，如果不提供则使用 self.output_dir
         返回格式: {"success": bool, "status_code": int, "message": str, "data": dict}
         """
-        # 使用提供的参数或使用初始化时的值
-        if input_dir is None:
-            input_dir = self.input_dir
-        else:
-            input_dir = Path(input_dir)
-        
-        if output_dir is None:
-            output_dir = self.output_dir
-        else:
-            output_dir = Path(output_dir)
+        if not self.data_dir:
+            return {
+                "success": False,
+                "status_code": 500,
+                "message": "DATA_DIR 未配置",
+                "data": None,
+            }
+
+        user_root = self.data_dir / username
+        user_input_path = user_root / "input"
+        user_output_path = user_root / "output"
+        user_output_path.mkdir(parents=True, exist_ok=True)
+
+        self.container_id = self._get_container_id()
         
         # 1. 检查容器状态
         if not self.container_id:
@@ -51,7 +64,7 @@ class MinerUClient:
             }
 
         # 2. 检查输入文件
-        local_file_path = input_dir / file_name
+        local_file_path = user_input_path / file_name
         if not local_file_path.exists():
             return {
                 "success": False, 
@@ -60,9 +73,19 @@ class MinerUClient:
                 "data": None
             }
 
+        container_input_path = self._to_container_path(local_file_path)
+        container_output_path = self._to_container_path(user_output_path)
+        if not container_input_path or not container_output_path:
+            return {
+                "success": False,
+                "status_code": 400,
+                "message": f"路径不在 DATA_DIR 下，无法映射到容器: input={local_file_path}, output={user_output_path}, DATA_DIR={self.data_dir}",
+                "data": None,
+            }
+
         # 3. 幂等性检查（检查是否已转换）
         stem_name = Path(file_name).stem
-        target_output_path = output_dir / stem_name
+        target_output_path = user_output_path / stem_name
         if target_output_path.exists() and any(target_output_path.iterdir()):
             return {
                 "success": True, 
@@ -74,7 +97,7 @@ class MinerUClient:
         # 4. 构造并执行指令
         docker_cmd = [
             "docker", "exec", self.container_id,
-            "mineru", "-p", f"/app/input/{file_name}", "-o", "/app/output"
+            "mineru", "-p", container_input_path, "-o", container_output_path
         ]
 
         try:
@@ -115,5 +138,5 @@ class MinerUClient:
 #     #     print(f"处理失败 [{response['status_code']}]: {response['message']}")
     
 
-#     response = client.process_file("1Lemoine.pdf", input_dir=r'D:\mineru_test\input', output_dir=r'D:\mineru_test\output')
+#     response = client.process_file("hizan", "1Lemoine.pdf")
 #     print(response)

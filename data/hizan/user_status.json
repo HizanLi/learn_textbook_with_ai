@@ -1,0 +1,13 @@
+{
+  "uploadedProjects": [
+    {
+      "id": "project-1772218124097",
+      "filename": "pyhton_short-1772218124093.pdf",
+      "originalName": "pyhton_short.pdf",
+      "uploadedAt": "2026-02-27T18:48:44.097Z",
+      "status": "failed",
+      "error": "Python API server is not running"
+    }
+  ],
+  "currentProject": "project-1772218124097"
+}

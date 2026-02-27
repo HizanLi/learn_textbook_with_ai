@@ -2,15 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import UploadZone from "../components/UploadZone";
-import MarkdownPreview from "../components/MarkdownPreview";
-import KeypointsSidebar from "../components/KeypointsSidebar";
-import { summarize, uploadTextbook } from "../services/api";
+import ProjectList from "../components/ProjectList";
+import { uploadTextbook } from "../services/api";
 
 export default function Dashboard() {
-  const { username } = useContext(UserContext);
+  const { username, loadUserStatus } = useContext(UserContext);
   const navigate = useNavigate();
-  const [markdown, setMarkdown] = useState("");
-  const [sections, setSections] = useState([]);
   const [status, setStatus] = useState("Ready");
   const [loading, setLoading] = useState(false);
 
@@ -25,14 +22,14 @@ export default function Dashboard() {
     setLoading(true);
     setStatus("Uploading and converting...");
     try {
-      const uploadRes = await uploadTextbook(username, file);
-      setMarkdown(uploadRes.markdown);
-      setStatus("Generating keypoints...");
-      const summary = await summarize(username);
-      setSections(summary.sections || []);
-      setStatus("Ready");
+      await uploadTextbook(username, file);
+      setStatus("Upload successful!");
+      // Reload user status to update projects
+      await loadUserStatus(username);
+      setTimeout(() => setStatus("Ready"), 2000);
     } catch (err) {
       setStatus(err.message || "Upload failed");
+      console.error("Upload error:", err);
     } finally {
       setLoading(false);
     }
@@ -51,28 +48,11 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-6 grid lg:grid-cols-[1fr_320px] gap-6">
-        <section className="space-y-6">
+        <section>
           <UploadZone onFileSelected={handleFileSelected} isLoading={loading} />
-          <div className="grid lg:grid-cols-2 gap-6 min-h-[420px]">
-            <div>
-              <h2 className="text-sm font-semibold text-slate-600 mb-2">Markdown Preview</h2>
-              <MarkdownPreview markdown={markdown} />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-slate-600 mb-2">Key Points</h2>
-              <KeypointsSidebar sections={sections} />
-            </div>
-          </div>
         </section>
-        <aside className="space-y-4">
-          <div className="bg-white rounded-xl shadow p-4">
-            <h3 className="font-semibold mb-2">Next steps</h3>
-            <ul className="text-sm text-slate-600 list-disc ml-4 space-y-1">
-              <li>Upload a textbook to generate Markdown.</li>
-              <li>Pick a keypoint to open the deep-dive page.</li>
-              <li>Review AI explanations and continue learning.</li>
-            </ul>
-          </div>
+        <aside>
+          <ProjectList />
         </aside>
       </main>
     </div>

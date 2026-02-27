@@ -6,13 +6,21 @@ export default function UploadZone({ onFileSelected, isLoading }) {
 
   const handleDrop = (event) => {
     event.preventDefault();
-    if (event.dataTransfer.files && event.dataTransfer.files[0]) {
-      onFileSelected(event.dataTransfer.files[0]);
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      const files = Array.from(event.dataTransfer.files);
+      files.forEach((file) => onFileSelected(file));
     }
   };
 
   const handleBrowse = () => {
     inputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      files.forEach((file) => onFileSelected(file));
+    }
   };
 
   return (
@@ -25,17 +33,18 @@ export default function UploadZone({ onFileSelected, isLoading }) {
         ref={inputRef}
         type="file"
         accept=".pdf,.txt,.md"
-        onChange={(e) => e.target.files[0] && onFileSelected(e.target.files[0])}
+        multiple
+        onChange={handleFileChange}
         className="hidden"
       />
       <UploadCloud className="h-10 w-10 text-blue-500 mx-auto mb-3" />
-      <p className="font-medium">Drag & drop a textbook here</p>
-      <p className="text-sm text-slate-500">PDF, Markdown, or text files</p>
+      <p className="font-medium">Drag & drop textbooks here</p>
+      <p className="text-sm text-slate-500">PDF, Markdown, or text files (multiple supported)</p>
       <button
         type="button"
         disabled={isLoading}
         onClick={handleBrowse}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-blue-400"
       >
         {isLoading ? "Uploading..." : "Browse files"}
       </button>

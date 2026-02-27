@@ -28,15 +28,15 @@ class MarkdownChunker:
     def __init__(self, env_file: str = ".env"):
         load_dotenv(dotenv_path=env_file, override=True)
 
-        self.base_output_dir: Optional[Path] = None
+        self.base_data_dir: Optional[Path] = None
         self.init_error: Optional[str] = None
 
-        output_dir = os.getenv("OUTPUT_DIR")
-        if not output_dir:
-            self.init_error = f"OUTPUT_DIR is not set in {env_file}"
+        data_dir = os.getenv("DATA_DIR")
+        if not data_dir:
+            self.init_error = f"DATA_DIR is not set in {env_file}"
         else:
-            output_dir = output_dir.strip().strip('"').strip("'")
-            self.base_output_dir = Path(output_dir)
+            data_dir = data_dir.strip().strip('"').strip("'")
+            self.base_data_dir = Path(data_dir)
 
         self.sub_dir_patterns = ["hybrid_auto", "hybrid_ocr", "hybrid_txt"]
 
@@ -59,14 +59,17 @@ class MarkdownChunker:
             separators=["\n\n", "\n", "。", "！", "？", " ", ""]
         )
 
-    def _find_md_file(self, file_name: str) -> Optional[Path]:
-        if self.base_output_dir is None:
+    def _find_md_file(self, username: str, file_name: str) -> Optional[Path]:
+        if self.base_data_dir is None:
             return None
         try:
+            user_output_dir = self.base_data_dir / username / "output"
+            if not user_output_dir.exists():
+                return None
             file_stem = Path(file_name).stem
             for pattern in self.sub_dir_patterns:
                 search_pattern = f"**/{pattern}/{file_stem}.md"
-                matches = list(self.base_output_dir.glob(search_pattern))
+                matches = list(user_output_dir.glob(search_pattern))
                 if matches:
                     return matches[0]
             return None
@@ -74,21 +77,21 @@ class MarkdownChunker:
             logger.exception("Failed while searching markdown file")
             return None
 
-    def get_chunks(self, file_name: str, save: bool = True, output_filename: str = "chunks.json") -> Dict[str, Any]:
-        if self.init_error or self.base_output_dir is None:
+    def get_chunks(self, username: str, file_name: str, save: bool = True, output_filename: str = "chunks.json") -> Dict[str, Any]:
+        if self.init_error or self.base_data_dir is None:
             return {
                 "success": False,
                 "status_code": 500,
-                "message": self.init_error or "OUTPUT_DIR not configured",
+                "message": self.init_error or "DATA_DIR not configured",
                 "data": None
             }
 
         try:
-            target_path = self._find_md_file(file_name)
+            target_path = self._find_md_file(username, file_name)
             if target_path is None:
                 return {
                     "success": False, "status_code": 404,
-                    "message": f"File not found under {self.base_output_dir}: {file_name}",
+                    "message": f"File not found under {self.base_data_dir}/{username}/output: {file_name}",
                     "data": None
                 }
 
@@ -177,5 +180,5 @@ class MarkdownChunker:
 # if __name__ == "__main__":
 #     chunker = MarkdownChunker()
 #     target_file = "pyhton_short.md" 
-#     result = chunker.get_chunks(target_file)
+#     result = chunker.get_chunks("hizan", target_file)
 #     print(result)

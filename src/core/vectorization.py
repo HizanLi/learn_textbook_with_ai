@@ -2,25 +2,36 @@ import json
 import os
 import logging
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 import chromadb
 from chromadb.utils import embedding_functions
 from tqdm import tqdm
+from dotenv import load_dotenv
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 class VectorStorageManager:
-    def __init__(self, collection_name: str, db_path: str = "./chroma_db"):
+    def __init__(self, collection_name: str, db_path: Optional[str] = None):
         """
         初始化向量数据库管理
         :param collection_name: 向量集合名称
-        :param db_path: 本地数据库存储路径前缀
+        :param db_path: 本地数据库存储路径前缀（可选，默认使用 DATA_DIR/chroma_db）
         """
+        load_dotenv()
         self.collection_name = collection_name
+        
+        # 如果未提供 db_path，则使用 DATA_DIR/chroma_db
+        if db_path is None:
+            data_dir = os.getenv("DATA_DIR")
+            if not data_dir:
+                raise ValueError("DATA_DIR 环境变量未配置")
+            db_path = os.path.join(data_dir, "chroma_db")
+        
         # 为每个 collection 创建单独的 db 文件夹
-        self.db_path = f"{db_path}/{collection_name}"
+        self.db_path = os.path.join(db_path, collection_name)
+        Path(self.db_path).mkdir(parents=True, exist_ok=True)
         
         # 1. 初始化 ChromaDB 持久化客户端
         self.client = chromadb.PersistentClient(path=self.db_path)
