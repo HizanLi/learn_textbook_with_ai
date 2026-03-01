@@ -40,145 +40,204 @@ class MarkdownChunker:
 
         self.sub_dir_patterns = ["hybrid_auto", "hybrid_ocr", "hybrid_txt"]
 
-        # 1. 配置标题切分：保留标题在正文中以增强 Embedding 语义
-        headers_to_split_on = [
-            ("#", "Header_1"),
-            ("##", "Header_2"),
-            ("###", "Header_3"),
-        ]
-        self.md_splitter = MarkdownHeaderTextSplitter(
-            headers_to_split_on=headers_to_split_on,
-            strip_headers=False
-        )
-
-        # 2. 配置递归切分：用于处理标题下超长的文本内容
-        # 设置为 1500 字符，包含前后重叠的 150 字符
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1500,
-            chunk_overlap=150,
-            separators=["\n\n", "\n", "。", "！", "？", " ", ""]
-        )
-
-    def _find_md_file(self, username: str, file_name: str) -> Optional[Path]:
-        if self.base_data_dir is None:
-            return None
-        try:
-            user_output_dir = self.base_data_dir / username / "output"
-            if not user_output_dir.exists():
-                return None
-            file_stem = Path(file_name).stem
-            for pattern in self.sub_dir_patterns:
-                search_pattern = f"**/{pattern}/{file_stem}.md"
-                matches = list(user_output_dir.glob(search_pattern))
-                if matches:
-                    return matches[0]
-            return None
-        except Exception:
-            logger.exception("Failed while searching markdown file")
-            return None
-
-    def get_chunks(self, username: str, file_name: str, save: bool = True, output_filename: str = "chunks.json") -> Dict[str, Any]:
-        if self.init_error or self.base_data_dir is None:
-            return {
-                "success": False,
-                "status_code": 500,
-                "message": self.init_error or "DATA_DIR not configured",
-                "data": None
-            }
-
-        try:
-            target_path = self._find_md_file(username, file_name)
-            if target_path is None:
-                return {
-                    "success": False, "status_code": 404,
-                    "message": f"File not found under {self.base_data_dir}/{username}/output: {file_name}",
-                    "data": None
-                }
-
-            content = target_path.read_text(encoding="utf-8")
-
-            # 第一步：按标题切分（语义大块）
-            header_splits = self.md_splitter.split_text(content)
+    #Step 1: 按标题分块 (#)
+    def split_by_headers(self, markdown_file: PathLike, output_file: str = "chunker_step_1.json") -> Tuple[bool, Optional[str]]:
+        """
+        Split markdown file by single-level headers since file only contains # headers.
+        
+        Args:
+            markdown_file: Path to the markdown file to split
+            output_file: Name of the output JSON file (default: "chunker_step_1.json")
             
-            chunk_list: List[Dict[str, Any]] = []
-            img_pattern = r"!\[.*?\]\((images/.*?)\)"
+        Returns:
+            Tuple of (success: bool, error_message: Optional[str])
+        """
+        try:
+            markdown_path = Path(markdown_file)
+            if not markdown_path.exists():
+                return False, f"Markdown file not found: {markdown_path}"
             
-            # 设置安全长度阈值（与 chunk_size 一致）
-            MAX_SAFE_LEN = 1500
-            MIN_CHUNK_LEN = 100  # 最小内容长度，过短的chunk会被跳过
-
-            for doc in header_splits:
-                # 跳过过短的内容（比如只有标题）
-                if len(doc.page_content.strip()) < MIN_CHUNK_LEN:
-                    logger.info(f"⏭️  跳过过短chunk: {doc.page_content[:50]}")
-                    continue
-                
-                # 第二步：检查该标题块是否超长
-                if len(doc.page_content) > MAX_SAFE_LEN:
-                    # 超长则进行带重叠的递归切分
-                    sub_docs = self.text_splitter.split_documents([doc])
-                else:
-                    # 长度合适则直接使用
-                    sub_docs = [doc]
-
-                for sub_doc in sub_docs:
-                    images = re.findall(img_pattern, sub_doc.page_content)
-                    chunk_list.append({
-                        "content": sub_doc.page_content,
-                        "metadata": {
-                            "source": file_name,
-                            "header_1": sub_doc.metadata.get("Header_1", ""),
-                            "header_2": sub_doc.metadata.get("Header_2", ""),
-                            "header_3": sub_doc.metadata.get("Header_3", ""),
-                            "referenced_images": images,
-                            "has_image": len(images) > 0,
-                            "is_split": len(doc.page_content) > MAX_SAFE_LEN,  # 标记是否经过二次切分
-                            "content_length": len(sub_doc.page_content)  # 新增：记录内容长度
-                        }
-                    })
-
-            saved_json_path = None
-            if save:
-                saved_json_path = target_path.parent / output_filename
-                ok, err = save_chunks_to_json(chunk_list, saved_json_path)
-                if not ok:
-                    return {
-                        "success": False, "status_code": 500,
-                        "message": f"Chunking succeeded but saving JSON failed: {err}",
-                        "data": {"md_path": str(target_path), "chunks_count": len(chunk_list)}
-                    }
-
-            # 统计数据
-            if chunk_list:
-                lengths = [len(c["content"]) for c in chunk_list]
-                max_len = max(lengths)
-                avg_len = sum(lengths) / len(lengths)
+            # Read markdown content
+            with markdown_path.open("r", encoding="utf-8") as f:
+                content = f.read()
+            
+            # Only split on single # headers since that's all the file contains
+            headers_to_split_on = [
+                ("#", "Header 1"),
+            ]
+            
+            # Initialize MarkdownHeaderTextSplitter
+            markdown_splitter = MarkdownHeaderTextSplitter(
+                headers_to_split_on=headers_to_split_on,
+                strip_headers=False  # Keep headers in the content
+            )
+            
+            # Split the markdown by headers
+            md_header_splits = markdown_splitter.split_text(content)
+            
+            chunks = []
+            
+            if not md_header_splits:
+                # No splits found, save entire content as one chunk
+                chunks.append({
+                    "content": content,
+                    "Header": ""
+                })
             else:
-                max_len = 0
-                avg_len = 0
-
-            return {
-                "success": True,
-                "status_code": 200,
-                "message": "Success",
-                "data": {
-                    "md_path": str(target_path),
-                    "json_path": str(saved_json_path) if saved_json_path else None,
-                    "chunks_count": len(chunk_list),
-                    "max_chunk_length": max_len,
-                    "avg_chunk_length": round(avg_len, 2)
-                }
-            }
-
+                # Convert to the desired format
+                for split in md_header_splits:
+                    # Extract the header from metadata
+                    header = split.metadata.get("Header 1", "")
+                    
+                    chunks.append({
+                        "content": split.page_content.strip(),
+                        "Header": header
+                    })
+            
+            # Save to output file in the same directory as the markdown file
+            output_path = markdown_path.parent / output_file
+            success, error = save_chunks_to_json(chunks, output_path)
+            
+            if success:
+                logger.info(f"Successfully saved {len(chunks)} chunks to {output_path}")
+                return True, None
+            else:
+                return False, error
+                
         except Exception as e:
-            logger.exception("Unexpected error in get_chunks")
-            return {
-                "success": False, "status_code": 500,
-                "message": f"Unexpected error: {e}", "data": None
-            }
+            logger.exception(f"Error splitting markdown by headers: {e}")
+            return False, str(e)
 
-# if __name__ == "__main__":
-#     chunker = MarkdownChunker()
-#     target_file = "pyhton_short.md" 
-#     result = chunker.get_chunks("hizan", target_file)
-#     print(result)
+    def split_large_chunks(self, chunks: List[Dict], chunk_size: int = 1500, overlap: int = 150) -> List[Dict]:
+        """
+        Further split large chunks using RecursiveCharacterTextSplitter with markdown-aware separators.
+        
+        Args:
+            chunks: List of chunks from header-based splitting
+            chunk_size: Maximum size of each chunk in characters (default: 1500)
+            overlap: Number of overlapping characters between chunks (default: 150)
+            
+        Returns:
+            List of refined chunks
+        """
+        refined_chunks = []
+        # Separators prioritize markdown structures and code blocks
+        recursive_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=overlap,
+            separators=[
+                "\n```\n",      # Code block boundaries
+                "\n\n",         # Paragraph breaks
+                "\n",           # Line breaks
+                "。",           # Chinese period
+                "，",           # Chinese comma
+                " ",            # Spaces
+                ""              # Character level
+            ],
+            is_separator_regex=False
+        )
+        
+        for chunk in chunks:
+            content = chunk.get("content", "")
+            header = chunk.get("Header", "")
+            
+            # If chunk is small enough, keep it as is
+            if len(content) <= chunk_size:
+                refined_chunks.append(chunk)
+            else:
+                # Split large chunks recursively
+                try:
+                    sub_splits = recursive_splitter.split_text(content)
+                    for sub_content in sub_splits:
+                        if sub_content.strip():  # Only add non-empty chunks
+                            refined_chunks.append({
+                                "content": sub_content.strip(),
+                                "Header": header
+                            })
+                except Exception as e:
+                    logger.warning(f"Failed to split large chunk, keeping as is: {e}")
+                    refined_chunks.append(chunk)
+        
+        return refined_chunks
+
+    def process_markdown(self, markdown_file: PathLike, output_file: str = "chunker_step_1.json") -> Tuple[bool, Optional[str]]:
+        """
+        Main control method: Split content by # headers only using manual splitting.
+        
+        Args:
+            markdown_file: Path to the original markdown file
+            output_file: Name of the output JSON file (default: "chunker_step_1.json")
+            
+        Returns:
+            Tuple of (success: bool, error_message: Optional[str])
+        """
+        try:
+            markdown_path = Path(markdown_file)
+            if not markdown_path.exists():
+                return False, f"Markdown file not found: {markdown_path}"
+            
+            # Read markdown content
+            with markdown_path.open("r", encoding="utf-8") as f:
+                content = f.read()
+            
+            # Split by # headers using regex - split on lines that start with #
+            lines = content.split('\n')
+            chunks = []
+            current_header = ""
+            current_content = []
+            
+            for line in lines:
+                # Check if line is a header (starts with #)
+                if line.strip().startswith('#'):
+                    # Save previous chunk if it has content
+                    if current_header or current_content:
+                        chunk_text = '\n'.join(current_content).strip()
+                        if chunk_text:
+                            chunks.append({
+                                "content": chunk_text,
+                                "Header": current_header
+                            })
+                    
+                    # Extract header text (remove # symbols)
+                    current_header = line.strip().lstrip('#').strip()
+                    current_content = [line]  # Include the header line in content
+                else:
+                    current_content.append(line)
+            
+            # Don't forget the last chunk
+            if current_header or current_content:
+                chunk_text = '\n'.join(current_content).strip()
+                if chunk_text:
+                    chunks.append({
+                        "content": chunk_text,
+                        "Header": current_header
+                    })
+            
+            logger.info(f"Successfully split into {len(chunks)} chunks by # headers")
+            
+            # Save to output file
+            output_path = markdown_path.parent / output_file
+            success, error = save_chunks_to_json(chunks, output_path)
+            
+            if success:
+                logger.info(f"Successfully saved {len(chunks)} chunks to {output_path}")
+                return True, None
+            else:
+                return False, error
+            
+        except Exception as e:
+            logger.exception(f"Error processing markdown: {e}")
+            return False, str(e)
+
+
+if __name__ == "__main__":
+    chunker = MarkdownChunker()
+    
+    # Example: Process a markdown file (replace hashes, then split by headers)
+    markdown_file = r"data\hizan\output\pyhton_short-1772218124093\hybrid_auto\pyhton_short-1772218124093.md"
+    success, error = chunker.process_markdown(markdown_file)
+    
+    if success:
+        print(f"Successfully split markdown file into chunks")
+    else:
+        print(f"Error: {error}")
