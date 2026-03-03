@@ -3,8 +3,8 @@
 """
 from typing import Optional, List, Dict, Any
 
-from .llm_client import LLMClient
-from . import prompts
+from llm_client import LLMClient
+from prompts import *
 
 
 class LearningContentGenerator:

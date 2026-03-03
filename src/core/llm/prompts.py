@@ -6,6 +6,78 @@ Prompt definitions for various LLM operations.
 from typing import List
 
 
+ASK_TABLE_CONTENT_PROMPT= f"""
+Act as a precise data extraction script. Your task is to parse the Table of Contents provided below and convert it into a valid JSON object.
+
+### JSON Template / Schema:
+{{
+  "book_title": "string",
+  "chapters": [
+    {{
+      "chapter_number": integer,
+      "chapter_title": "string",
+      "start_page": integer,
+      "sections": [
+        {{
+          "section_id": "string",
+          "section_title": "string",
+          "page": integer,
+          "sub_sections": [
+            {{
+              "sub_section_id": "string",
+              "sub_section_title": "string",
+              "page": integer
+            }}
+          ]
+        }}
+      ]
+    }}
+  ]
+}}
+
+### Rules:
+1. **Cleaning:** Remove all leader dots (e.g., '. . .') and trailing whitespace.
+2. **Hierarchy:** Nest sub-sections (like 5.6.1) inside their parent sections. If no sub-sections exist, return an empty array [].
+3. **Data Types:** Ensure 'page' and 'chapter_number' are integers.
+4. **Output:** Return ONLY the raw JSON. Do not include markdown code blocks (```json) or any introductory text.
+
+### Input Text:
+[PASTE_YOUR_TOC_HERE]
+"""
+
+
+ANALYZE_SECTION_PROMPT = f"""
+Act as a subject matter expert. Your task is to analyze the following educational content and extract the essential information for a student's study guide.
+
+### Context:
+Section Header: [PASTE_SECTION_HEADER_HERE]
+
+### Input Content:
+[PASTE_SECTION_CONTENT_HERE]
+
+### Instructions:
+Break down the text above into the following four categories:
+1. **Key Concepts & Definitions:** Identify the primary terms, variables, or laws introduced.
+2. **Core Principles & Rules:** List the fundamental logic, formulas, or "laws of the land" (e.g., Syntax rules in CS, Theorems in Math, or Laws in Physics).
+3. **Common Pitfalls or Errors:** What are the typical mistakes, "illegal" operations, or common misconceptions mentioned?
+4. **Practical Examples:** Briefly summarize any specific problems, code snippets, or use cases provided to illustrate the concepts.
+
+### Output Requirements:
+- Use concise, high-density bullet points.
+- Maintain the technical rigor of the original text.
+- Omit all introductory or concluding conversational filler.
+
+### JSON Template / Schema:
+{{
+  "core_concepts": ["string"],
+  "fundamental_rules": ["string"],
+  "common_pitfalls": ["string"],
+  "examples": ["string"],
+  "one_sentence_summary": "string"
+}}
+"""
+
+
 # explanation prompts
 EXPLANATION_SYSTEM_PROMPT = (
     "你是一位经验丰富的教师。"  # 其余部分由难度参数拼接

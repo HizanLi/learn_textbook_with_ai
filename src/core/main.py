@@ -3,9 +3,9 @@ import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from chunker import MarkdownChunker
-from vectorization import VectorStorageManager
-from mineru_client import MinerUClient
+from core.microservices.chunker import MarkdownChunker
+from core.microservices.vectorization import VectorStorageManager
+from core.microservices.mineru_client import MinerUClient
 import uvicorn
 from dotenv import load_dotenv
 

@@ -24,7 +24,7 @@ from typing import List, Dict
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.core.llm_client import LLMFactory, ModelProvider
+from core.llm.llm_client import LLMFactory, ModelProvider
 
 
 SECTION_RE = re.compile(r"^#\s+(.*)", re.MULTILINE)

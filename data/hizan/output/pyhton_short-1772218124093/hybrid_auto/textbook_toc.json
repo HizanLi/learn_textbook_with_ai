@@ -1,0 +1,1268 @@
+{
+    "book_title": "Python for Everybody",
+    "chapters": [
+        {
+            "chapter_number": 1,
+            "chapter_title": "Why should you learn to write programs?",
+            "start_page": 1,
+            "sections": [
+                {
+                    "section_id": "1.1",
+                    "section_title": "Creativity and motivation",
+                    "page": 2,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.2",
+                    "section_title": "Computer hardware architecture",
+                    "page": 3,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.3",
+                    "section_title": "Understanding programming",
+                    "page": 4,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.4",
+                    "section_title": "Words and sentences",
+                    "page": 5,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.5",
+                    "section_title": "Conversing with Python",
+                    "page": 6,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.6",
+                    "section_title": "Terminology: Interpreter and compiler",
+                    "page": 8,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.7",
+                    "section_title": "Writing a program",
+                    "page": 10,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.8",
+                    "section_title": "What is a program?",
+                    "page": 10,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.9",
+                    "section_title": "The building blocks of programs",
+                    "page": 11,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.10",
+                    "section_title": "What could possibly go wrong?",
+                    "page": 12,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.11",
+                    "section_title": "Debugging",
+                    "page": 14,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.12",
+                    "section_title": "The learning journey",
+                    "page": 15,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.13",
+                    "section_title": "Glossary",
+                    "page": 15,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.14",
+                    "section_title": "Exercises",
+                    "page": 16,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 2,
+            "chapter_title": "Variables, expressions, and statements",
+            "start_page": 19,
+            "sections": [
+                {
+                    "section_id": "2.1",
+                    "section_title": "Values and types",
+                    "page": 19,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.2",
+                    "section_title": "Variables",
+                    "page": 20,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.3",
+                    "section_title": "Variable names and keywords",
+                    "page": 21,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.4",
+                    "section_title": "Statements",
+                    "page": 21,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.5",
+                    "section_title": "Operators and operands",
+                    "page": 22,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.6",
+                    "section_title": "Expressions",
+                    "page": 23,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.7",
+                    "section_title": "Order of operations",
+                    "page": 23,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.8",
+                    "section_title": "Modulus operator",
+                    "page": 24,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.9",
+                    "section_title": "String operations",
+                    "page": 24,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.10",
+                    "section_title": "Asking the user for input",
+                    "page": 25,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.11",
+                    "section_title": "Comments",
+                    "page": 26,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.12",
+                    "section_title": "Choosing mnemonic variable names",
+                    "page": 27,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.13",
+                    "section_title": "Debugging",
+                    "page": 28,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.14",
+                    "section_title": "Glossary",
+                    "page": 29,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.15",
+                    "section_title": "Exercises",
+                    "page": 30,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 3,
+            "chapter_title": "Conditional execution",
+            "start_page": 31,
+            "sections": [
+                {
+                    "section_id": "3.1",
+                    "section_title": "Boolean expressions",
+                    "page": 31,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.2",
+                    "section_title": "Logical operators",
+                    "page": 32,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.3",
+                    "section_title": "Conditional execution",
+                    "page": 32,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.4",
+                    "section_title": "Alternative execution",
+                    "page": 34,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.5",
+                    "section_title": "Chained conditionals",
+                    "page": 34,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.6",
+                    "section_title": "Nested conditionals",
+                    "page": 35,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.7",
+                    "section_title": "Catching exceptions using try and except",
+                    "page": 36,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.8",
+                    "section_title": "Short-circuit evaluation of logical expressions",
+                    "page": 38,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.9",
+                    "section_title": "Debugging",
+                    "page": 39,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.10",
+                    "section_title": "Glossary",
+                    "page": 40,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.11",
+                    "section_title": "Exercises",
+                    "page": 40,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 4,
+            "chapter_title": "Functions",
+            "start_page": 43,
+            "sections": [
+                {
+                    "section_id": "4.1",
+                    "section_title": "Function calls",
+                    "page": 43,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.2",
+                    "section_title": "Built-in functions",
+                    "page": 43,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.3",
+                    "section_title": "Type conversion functions",
+                    "page": 44,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.4",
+                    "section_title": "Math functions",
+                    "page": 45,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.5",
+                    "section_title": "Random numbers",
+                    "page": 46,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.6",
+                    "section_title": "Adding new functions",
+                    "page": 47,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.7",
+                    "section_title": "Definitions and uses",
+                    "page": 48,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.8",
+                    "section_title": "Flow of execution",
+                    "page": 49,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.9",
+                    "section_title": "Parameters and arguments",
+                    "page": 49,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.10",
+                    "section_title": "Fruitful functions and void functions",
+                    "page": 51,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.11",
+                    "section_title": "Why functions?",
+                    "page": 52,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.12",
+                    "section_title": "Debugging",
+                    "page": 52,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.13",
+                    "section_title": "Glossary",
+                    "page": 53,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.14",
+                    "section_title": "Exercises",
+                    "page": 54,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 5,
+            "chapter_title": "Iteration",
+            "start_page": 57,
+            "sections": [
+                {
+                    "section_id": "5.1",
+                    "section_title": "Updating variables",
+                    "page": 57,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.2",
+                    "section_title": "The while statement",
+                    "page": 57,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.3",
+                    "section_title": "Infinite loops",
+                    "page": 58,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.4",
+                    "section_title": "Finishing iterations with continue",
+                    "page": 59,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.5",
+                    "section_title": "Definite loops using for",
+                    "page": 60,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.6",
+                    "section_title": "Loop patterns",
+                    "page": 61,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "5.6.1",
+                            "sub_section_title": "Counting and summing loops",
+                            "page": 61
+                        },
+                        {
+                            "sub_section_id": "5.6.2",
+                            "sub_section_title": "Maximum and minimum loops",
+                            "page": 62
+                        }
+                    ]
+                },
+                {
+                    "section_id": "5.7",
+                    "section_title": "Debugging",
+                    "page": 64,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.8",
+                    "section_title": "Glossary",
+                    "page": 64,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.9",
+                    "section_title": "Exercises",
+                    "page": 64,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 6,
+            "chapter_title": "Strings",
+            "start_page": 67,
+            "sections": [
+                {
+                    "section_id": "6.1",
+                    "section_title": "A string is a sequence",
+                    "page": 67,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.2",
+                    "section_title": "Getting the length of a string using len",
+                    "page": 68,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.3",
+                    "section_title": "Traversal through a string with a loop",
+                    "page": 68,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.4",
+                    "section_title": "String slices",
+                    "page": 69,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.5",
+                    "section_title": "Strings are immutable",
+                    "page": 70,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.6",
+                    "section_title": "Looping and counting",
+                    "page": 70,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.7",
+                    "section_title": "The in operator",
+                    "page": 71,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.8",
+                    "section_title": "String comparison",
+                    "page": 71,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.9",
+                    "section_title": "String methods",
+                    "page": 71,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.10",
+                    "section_title": "Parsing strings",
+                    "page": 74,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.11",
+                    "section_title": "Formatted String Literals",
+                    "page": 74,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.12",
+                    "section_title": "Debugging",
+                    "page": 75,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.13",
+                    "section_title": "Glossary",
+                    "page": 76,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.14",
+                    "section_title": "Exercises",
+                    "page": 76,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 7,
+            "chapter_title": "Files",
+            "start_page": 79,
+            "sections": [
+                {
+                    "section_id": "7.1",
+                    "section_title": "Persistence",
+                    "page": 79,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.2",
+                    "section_title": "Opening files",
+                    "page": 79,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.3",
+                    "section_title": "Text files and lines",
+                    "page": 81,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.4",
+                    "section_title": "Reading files",
+                    "page": 82,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.5",
+                    "section_title": "Searching through a file",
+                    "page": 83,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.6",
+                    "section_title": "Letting the user choose the file name",
+                    "page": 85,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.7",
+                    "section_title": "Using try, except, and open",
+                    "page": 86,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.8",
+                    "section_title": "Writing files",
+                    "page": 87,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.9",
+                    "section_title": "Debugging",
+                    "page": 88,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.10",
+                    "section_title": "Glossary",
+                    "page": 89,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.11",
+                    "section_title": "Exercises",
+                    "page": 89,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 8,
+            "chapter_title": "Lists",
+            "start_page": 91,
+            "sections": [
+                {
+                    "section_id": "8.1",
+                    "section_title": "A list is a sequence",
+                    "page": 91,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.2",
+                    "section_title": "Lists are mutable",
+                    "page": 92,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.3",
+                    "section_title": "Traversing a list",
+                    "page": 92,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.4",
+                    "section_title": "List operations",
+                    "page": 93,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.5",
+                    "section_title": "List slices",
+                    "page": 94,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.6",
+                    "section_title": "List methods",
+                    "page": 94,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.7",
+                    "section_title": "Deleting elements",
+                    "page": 95,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.8",
+                    "section_title": "Lists and functions",
+                    "page": 96,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.9",
+                    "section_title": "Lists and strings",
+                    "page": 97,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.10",
+                    "section_title": "Parsing lines",
+                    "page": 98,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.11",
+                    "section_title": "Objects and values",
+                    "page": 99,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.12",
+                    "section_title": "Aliasing",
+                    "page": 100,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.13",
+                    "section_title": "List arguments",
+                    "page": 100,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.14",
+                    "section_title": "Debugging",
+                    "page": 102,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.15",
+                    "section_title": "Glossary",
+                    "page": 105,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.16",
+                    "section_title": "Exercises",
+                    "page": 105,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 9,
+            "chapter_title": "Dictionaries",
+            "start_page": 109,
+            "sections": [
+                {
+                    "section_id": "9.1",
+                    "section_title": "Dictionary as a set of counters",
+                    "page": 111,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.2",
+                    "section_title": "Dictionaries and files",
+                    "page": 112,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.3",
+                    "section_title": "Looping and dictionaries",
+                    "page": 114,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.4",
+                    "section_title": "Advanced text parsing",
+                    "page": 115,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.5",
+                    "section_title": "Debugging",
+                    "page": 116,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.6",
+                    "section_title": "Glossary",
+                    "page": 117,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.7",
+                    "section_title": "Exercises",
+                    "page": 117,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 10,
+            "chapter_title": "Tuples",
+            "start_page": 119,
+            "sections": [
+                {
+                    "section_id": "10.1",
+                    "section_title": "Tuples are immutable",
+                    "page": 119,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.2",
+                    "section_title": "Comparing tuples",
+                    "page": 120,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.3",
+                    "section_title": "Tuple assignment",
+                    "page": 122,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.4",
+                    "section_title": "Dictionaries and tuples",
+                    "page": 123,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.5",
+                    "section_title": "Multiple assignment with dictionaries",
+                    "page": 124,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.6",
+                    "section_title": "The most common words",
+                    "page": 125,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.7",
+                    "section_title": "Using tuples as keys in dictionaries",
+                    "page": 126,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.8",
+                    "section_title": "Sequences: strings, lists, and tuples - Oh My!",
+                    "page": 126,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.9",
+                    "section_title": "List comprehension",
+                    "page": 127,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.10",
+                    "section_title": "Debugging",
+                    "page": 128,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.11",
+                    "section_title": "Glossary",
+                    "page": 128,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.12",
+                    "section_title": "Exercises",
+                    "page": 128,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 11,
+            "chapter_title": "Regular expressions",
+            "start_page": 131,
+            "sections": [
+                {
+                    "section_id": "11.1",
+                    "section_title": "Character matching in regular expressions",
+                    "page": 132,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.2",
+                    "section_title": "Extracting data using regular expressions",
+                    "page": 133,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.3",
+                    "section_title": "Combining searching and extracting",
+                    "page": 136,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.4",
+                    "section_title": "Escape character",
+                    "page": 140,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.5",
+                    "section_title": "Summary",
+                    "page": 140,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.6",
+                    "section_title": "Bonus section for Unix / Linux users",
+                    "page": 141,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.7",
+                    "section_title": "Debugging",
+                    "page": 142,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.8",
+                    "section_title": "Glossary",
+                    "page": 142,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.9",
+                    "section_title": "Exercises",
+                    "page": 143,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 12,
+            "chapter_title": "Networked programs",
+            "start_page": 145,
+            "sections": [
+                {
+                    "section_id": "12.1",
+                    "section_title": "Hypertext Transfer Protocol - HTTP",
+                    "page": 145,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.2",
+                    "section_title": "The world’s simplest web browser",
+                    "page": 146,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.3",
+                    "section_title": "Retrieving an image over HTTP",
+                    "page": 148,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.4",
+                    "section_title": "Retrieving web pages with urllib",
+                    "page": 150,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.5",
+                    "section_title": "Reading binary files using urllib",
+                    "page": 151,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.6",
+                    "section_title": "Parsing HTML and scraping the web",
+                    "page": 152,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.7",
+                    "section_title": "Parsing HTML using regular expressions",
+                    "page": 152,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.8",
+                    "section_title": "Parsing HTML using BeautifulSoup",
+                    "page": 154,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.9",
+                    "section_title": "Bonus section for Unix / Linux users",
+                    "page": 157,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.10",
+                    "section_title": "Glossary",
+                    "page": 157,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.11",
+                    "section_title": "Exercises",
+                    "page": 158,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 13,
+            "chapter_title": "Using Web Services",
+            "start_page": 159,
+            "sections": [
+                {
+                    "section_id": "13.1",
+                    "section_title": "eXtensible Markup Language - XML",
+                    "page": 159,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.2",
+                    "section_title": "Parsing XML",
+                    "page": 160,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.3",
+                    "section_title": "Looping through nodes",
+                    "page": 161,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.4",
+                    "section_title": "JavaScript Object Notation - JSON",
+                    "page": 162,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.5",
+                    "section_title": "Parsing JSON",
+                    "page": 163,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.6",
+                    "section_title": "Application Programming Interfaces",
+                    "page": 164,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.7",
+                    "section_title": "Security and API usage",
+                    "page": 165,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.8",
+                    "section_title": "Glossary",
+                    "page": 166,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 14,
+            "chapter_title": "Object-oriented programming",
+            "start_page": 167,
+            "sections": [
+                {
+                    "section_id": "14.1",
+                    "section_title": "Managing larger programs",
+                    "page": 167,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.2",
+                    "section_title": "Getting started",
+                    "page": 168,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.3",
+                    "section_title": "Using objects",
+                    "page": 168,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.4",
+                    "section_title": "Starting with programs",
+                    "page": 169,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.5",
+                    "section_title": "Subdividing a problem",
+                    "page": 171,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.6",
+                    "section_title": "Our first Python object",
+                    "page": 171,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.7",
+                    "section_title": "Classes as types",
+                    "page": 174,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.8",
+                    "section_title": "Object lifecycle",
+                    "page": 175,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.9",
+                    "section_title": "Multiple instances",
+                    "page": 176,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.10",
+                    "section_title": "Inheritance",
+                    "page": 177,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.11",
+                    "section_title": "Summary",
+                    "page": 178,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.12",
+                    "section_title": "Glossary",
+                    "page": 179,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 15,
+            "chapter_title": "Using Databases and SQL",
+            "start_page": 181,
+            "sections": [
+                {
+                    "section_id": "15.1",
+                    "section_title": "What is a database?",
+                    "page": 181,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.2",
+                    "section_title": "Database concepts",
+                    "page": 181,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.3",
+                    "section_title": "Database Browser for SQLite",
+                    "page": 182,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.4",
+                    "section_title": "Creating a database table",
+                    "page": 182,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.5",
+                    "section_title": "Structured Query Language summary",
+                    "page": 185,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.6",
+                    "section_title": "Multiple tables and basic data modeling",
+                    "page": 187,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.7",
+                    "section_title": "Data model diagrams",
+                    "page": 189,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.8",
+                    "section_title": "Automatically creating primary keys",
+                    "page": 190,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.9",
+                    "section_title": "Logical keys for fast lookup",
+                    "page": 191,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.10",
+                    "section_title": "Adding constraints to the database",
+                    "page": 192,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.11",
+                    "section_title": "Sample multi-table application",
+                    "page": 193,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.12",
+                    "section_title": "Many to many relationships in databases",
+                    "page": 196,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.13",
+                    "section_title": "Modeling data at the many-to-many connection",
+                    "page": 200,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.14",
+                    "section_title": "Summary",
+                    "page": 201,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.15",
+                    "section_title": "Debugging",
+                    "page": 202,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "15.16",
+                    "section_title": "Glossary",
+                    "page": 202,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 16,
+            "chapter_title": "Visualizing data",
+            "start_page": 205,
+            "sections": [
+                {
+                    "section_id": "16.1",
+                    "section_title": "Building a OpenStreetMap from geocoded data",
+                    "page": 205,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "16.2",
+                    "section_title": "Visualizing networks and interconnections",
+                    "page": 207,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "16.3",
+                    "section_title": "Visualizing mail data",
+                    "page": 210,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 17,
+            "chapter_title": "Contributions",
+            "start_page": 217,
+            "sections": [
+                {
+                    "section_id": "A.1",
+                    "section_title": "Translations",
+                    "page": 217,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "A.2",
+                    "section_title": "Contributor List for Python for Everybody",
+                    "page": 217,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "A.3",
+                    "section_title": "Contributor List for Python for Informatics",
+                    "page": 218,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "A.4",
+                    "section_title": "Preface for “Think Python”",
+                    "page": 218,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "A.4.1",
+                            "sub_section_title": "The strange history of “Think Python”",
+                            "page": 218
+                        },
+                        {
+                            "sub_section_id": "A.4.2",
+                            "sub_section_title": "Acknowledgements for “Think Python”",
+                            "page": 219
+                        }
+                    ]
+                },
+                {
+                    "section_id": "A.5",
+                    "section_title": "Contributor List for “Think Python”",
+                    "page": 220,
+                    "sub_sections": []
+                }
+            ]
+        }
+    ]
+}

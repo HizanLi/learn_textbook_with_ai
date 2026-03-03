@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import json
 import openai
 from openai import OpenAI
-import google.generativeai as genai
+import google.genai as genai
 
 load_dotenv()
 
@@ -200,7 +200,7 @@ class GeminiClient(LLMClient):
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model_name: str = "gemini-flash-latest",
+        model_name: str = "gemini-3-flash-preview",
         temperature: float = 0.7,
     ):
         api_key = api_key or os.getenv("GEMINI_API_KEY")
@@ -208,8 +208,7 @@ class GeminiClient(LLMClient):
             raise ValueError("Gemini API key not found")
         super().__init__(api_key, model_name, temperature)
 
-        genai.configure(api_key=self.api_key)
-        self.client = genai.GenerativeModel(model_name=self.model_name)
+        self.client = genai.Client(api_key=self.api_key)
 
     def generate_text(
         self,
@@ -219,22 +218,24 @@ class GeminiClient(LLMClient):
         temperature: float = 0.7,
     ) -> str:
         """调用 Gemini API 生成文本"""
-        if system_prompt:
-            full_prompt = f"{system_prompt}\n\n{prompt}"
-        else:
-            full_prompt = prompt
-
-        generation_config = {
+        config = {
             "temperature": temperature,
         }
         if max_tokens:
-            generation_config["max_output_tokens"] = max_tokens
+            config["max_output_tokens"] = max_tokens
 
-        response = self.client.generate_content(
-            full_prompt,
-            generation_config=generation_config,
-        )
-        return response.text
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config={
+                    "system_instruction": system_prompt,
+                    **config
+                } if system_prompt else config
+            )
+            return response.text
+        except Exception as e:
+            raise ValueError(f"Gemini generation failed: {str(e)}")
 
     def generate_json(
         self,
@@ -244,27 +245,33 @@ class GeminiClient(LLMClient):
         system_prompt: Optional[str] = None,
     ) -> Dict[str, Any]:
         """生成 JSON 格式的结构化数据"""
+        config = {
+            "temperature": 0.3,
+            "response_mime_type": "application/json",
+        }
         if schema:
-            json_schema_prompt = f"\n\n返回符合以下 JSON Schema 的数据：\n{json.dumps(schema, ensure_ascii=False, indent=2)}"
-        else:
-            json_schema_prompt = "\n\n请返回有效的 JSON 格式。"
-
-        full_prompt = prompt + json_schema_prompt
-
-        text_response = self.generate_text(
-            full_prompt, max_tokens, system_prompt, temperature=0.3
-        )
-
+            config["response_schema"] = schema
+        
         try:
-            json_str = text_response
-            if "```json" in text_response:
-                json_str = text_response.split("```json")[1].split("```")[0]
-            elif "```" in text_response:
-                json_str = text_response.split("```")[1].split("```")[0]
-
-            return json.loads(json_str.strip())
-        except json.JSONDecodeError:
-            raise ValueError(f"Failed to parse JSON response: {text_response}")
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config={
+                    "system_instruction": system_prompt,
+                    **config
+                } if system_prompt else config
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            # Fallback to text parsing if structured generation fails
+            text_response = self.generate_text(prompt, max_tokens, system_prompt)
+            try:
+                json_str = text_response
+                if "```json" in text_response:
+                    json_str = text_response.split("```json")[1].split("```")[0]
+                return json.loads(json_str.strip())
+            except:
+                raise ValueError(f"Failed to parse JSON for Gemini: {str(e)}")
 
 
 class LLMFactory:
@@ -292,19 +299,19 @@ class LLMFactory:
         if provider == ModelProvider.OPENAI:
             return OpenAIClient(
                 api_key=api_key,
-                model_name=model_name or "gpt-4o",
+                model_name=model_name,
                 temperature=temperature,
             )
         elif provider == ModelProvider.DEEPSEEK:
             return DeepseekClient(
                 api_key=api_key,
-                model_name=model_name or "deepseek-chat",
+                model_name=model_name,
                 temperature=temperature,
             )
         elif provider == ModelProvider.GOOGLE:
             return GeminiClient(
                 api_key=api_key,
-                model_name=model_name or "gemini-pro",
+                model_name=model_name,
                 temperature=temperature,
             )
         else:
