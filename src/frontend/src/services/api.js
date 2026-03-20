@@ -110,3 +110,39 @@ export async function selectProject(username, projectName) {
   }
   return res.json();
 }
+
+export async function generateDetailedExplanation(payload) {
+  const res = await fetch(`${API_BASE}/api/llm/detailed-explanation`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    const error = new Error(data.error || "Failed to generate detailed explanation");
+    error.status = res.status;
+    error.errorType = data.errorType;
+    error.data = data;
+    throw error;
+  }
+  return data;
+}
+
+export async function generateQuizForSection(payload) {
+  const res = await fetch(`${API_BASE}/api/llm/quiz-for-section`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    const error = new Error(data.error || "Failed to generate quiz for section");
+    error.status = res.status;
+    error.errorType = data.errorType;
+    error.data = data;
+    throw error;
+  }
+  return data;
+}

@@ -10,6 +10,7 @@ import {
   Sparkles,
   FileText,
 } from "lucide-react";
+import { generateDetailedExplanation, generateQuizForSection } from "../services/api";
 
 export const mockData = {
   book_title: "Python for Everybody",
@@ -180,6 +181,7 @@ export default function TextbookContentViewer({ data }) {
   const [draggingKey, setDraggingKey] = useState(null);
   const [droppedKey, setDroppedKey] = useState(null);
   const [generatedText, setGeneratedText] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const activeData = useMemo(() => {
     if (data && Array.isArray(data.chapters) && data.chapters.length) {
@@ -249,22 +251,59 @@ export default function TextbookContentViewer({ data }) {
 
   const droppedCard = labCards.find((card) => card.key === droppedKey);
 
-  const generateContent = () => {
+  const generateContent = async () => {
     if (!droppedCard) {
       setGeneratedText("Please drag one small box into the large box first.");
       return;
     }
 
-    const points = droppedCard.points.length
-      ? droppedCard.points.map((p, i) => `${i + 1}. ${p}`).join("\n")
-      : "No available key points.";
+    setIsGenerating(true);
+    setGeneratedText("");
 
-    const prefix =
-      selectedCategory === "quiz-for-section"
-        ? `[${droppedCard.label}] Quiz Generation\nDesign 3 questions based on the points below (with short answers):\n`
-        : `[${droppedCard.label}] Detailed Explanation Generation\nGenerate a structured explanation based on the points below:\n`;
+    try {
+      const payload = {
+        provider: "openai",
+        chapterTitle: selectedSection?.chapterTitle || "",
+        sectionTitle: selectedSection?.section_title || "",
+        topicType: droppedCard.key,
+        points: droppedCard.points,
+        content: selectedSection?.content || "",
+        language: "en-US",
+        includeRaw: false,
+      };
 
-    setGeneratedText(`${prefix}${points}`);
+      if (selectedCategory === "quiz-for-section") {
+        const result = await generateQuizForSection({
+          ...payload,
+          questionCount: 5,
+          temperature: 0.4,
+          maxTokens: 2200,
+          strictJson: true,
+        });
+
+        if (result?.quiz) {
+          setGeneratedText(JSON.stringify(result.quiz, null, 2));
+        } else {
+          setGeneratedText(result?.text || "No quiz output returned.");
+        }
+      } else {
+        const result = await generateDetailedExplanation({
+          ...payload,
+          temperature: 0.5,
+          maxTokens: 1400,
+        });
+        setGeneratedText(result?.text || "No explanation output returned.");
+      }
+    } catch (err) {
+      const apiText = err?.data?.text;
+      setGeneratedText(
+        apiText
+          ? `Request failed: ${err.message}\n\nModel output:\n${apiText}`
+          : `Request failed: ${err.message}`
+      );
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -497,9 +536,10 @@ export default function TextbookContentViewer({ data }) {
               <div className="space-y-3">
                 <button
                   onClick={generateContent}
+                  disabled={isGenerating}
                   className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
                 >
-                  Generate Content
+                  {isGenerating ? "Generating..." : "Generate Content"}
                 </button>
 
                 <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
