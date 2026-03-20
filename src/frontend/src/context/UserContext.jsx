@@ -22,7 +22,7 @@ export function UserProvider({ children }) {
     setLoading(true);
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE || "http://localhost:5001"}/api/user-status?username=${encodeURIComponent(user)}`
+        `${import.meta.env.VITE_API_BASE || "http://localhost:4000"}/api/user-status?username=${encodeURIComponent(user)}`
       );
       if (res.ok) {
         const status = await res.json();
