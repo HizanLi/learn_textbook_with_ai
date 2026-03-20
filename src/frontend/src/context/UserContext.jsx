@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 export const UserContext = createContext(null);
 
@@ -17,7 +17,7 @@ export function UserProvider({ children }) {
     }
   }, []);
 
-  const loadUserStatus = async (user) => {
+  const loadUserStatus = useCallback(async (user) => {
     if (!user) return;
     setLoading(true);
     try {
@@ -33,13 +33,13 @@ export function UserProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (username) {
       loadUserStatus(username);
     }
-  }, [username]);
+  }, [username, loadUserStatus]);
 
   const value = useMemo(
     () => ({
@@ -50,7 +50,7 @@ export function UserProvider({ children }) {
       loading,
       loadUserStatus,
     }),
-    [username, userStatus, loading]
+    [username, userStatus, loading, loadUserStatus]
   );
 
   return (

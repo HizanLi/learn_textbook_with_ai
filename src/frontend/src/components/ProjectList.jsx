@@ -1,14 +1,25 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Book, CheckCircle } from "lucide-react";
 import { UserContext } from "../context/UserContext";
+import { selectProject } from "../services/api";
 
 export default function ProjectList() {
-  const { userStatus } = useContext(UserContext);
+  const { userStatus, username, loadUserStatus } = useContext(UserContext);
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-  const handleSelectProject = (projectId) => {
-    navigate(`/study/${projectId}`);
+  const handleSelectProject = async (project) => {
+    setError("");
+    try {
+      if (username) {
+        await selectProject(username, project.filename || project.originalName);
+        await loadUserStatus(username);
+      }
+      navigate(`/study/${project.id}`);
+    } catch (err) {
+      setError(err.message || "Failed to select project");
+    }
   };
 
   const projects = userStatus.uploadedProjects || [];
@@ -31,11 +42,12 @@ export default function ProjectList() {
   return (
     <div className="bg-white rounded-xl shadow p-4">
       <h3 className="font-semibold mb-3 text-slate-700">Projects</h3>
+      {error && <p className="text-xs text-red-600 mb-2">{error}</p>}
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {projects.map((project) => (
           <button
             key={project.id}
-            onClick={() => handleSelectProject(project.id)}
+            onClick={() => handleSelectProject(project)}
             className={`w-full text-left p-3 rounded-lg transition-colors ${
               project.id === currentProjectId
                 ? "bg-blue-100 border-2 border-blue-500"

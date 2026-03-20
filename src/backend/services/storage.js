@@ -156,6 +156,44 @@ function setCurrentProject(username, projectId) {
   return status;
 }
 
+function findTextbookWithContent(username, projectName) {
+  try {
+    if (!username || !projectName) {
+      return { found: false, path: null, searchedPaths: [] };
+    }
+
+    const subDirPatterns = ["hybrid_auto", "hybrid_ocr", "hybrid_txt"];
+    const outputDir = path.join(DATA_DIR, username, "output");
+    const safeProjectName = String(projectName).trim();
+    const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
+
+    const candidateProjectDirs = Array.from(
+      new Set([safeProjectName, noExtProjectName].filter(Boolean))
+    );
+
+    const searchedPaths = [];
+    for (const candidateDir of candidateProjectDirs) {
+      for (const subDir of subDirPatterns) {
+        const candidatePath = path.join(
+          outputDir,
+          candidateDir,
+          subDir,
+          "textbook_with_content.json"
+        );
+        searchedPaths.push(candidatePath);
+        if (fs.existsSync(candidatePath)) {
+          return { found: true, path: candidatePath, searchedPaths };
+        }
+      }
+    }
+
+    return { found: false, path: null, searchedPaths };
+  } catch (err) {
+    console.error("Failed to find textbook_with_content.json:", err);
+    return { found: false, path: null, searchedPaths: [], error: err.message };
+  }
+}
+
 module.exports = {
   USERS_DIR,
   DATA_DIR,
@@ -171,4 +209,5 @@ module.exports = {
   writeUserStatus,
   addUploadedProject,
   setCurrentProject,
+  findTextbookWithContent,
 };

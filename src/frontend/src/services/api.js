@@ -98,3 +98,15 @@ export async function setCurrentProject(username, projectId) {
   }
   return res.json();
 }
+
+export async function selectProject(username, projectName) {
+  const res = await fetch(`${API_BASE}/api/select-project`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, projectName }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to select project");
+  }
+  return res.json();
+}
