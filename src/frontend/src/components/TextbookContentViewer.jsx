@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
   ChevronDown,
   ChevronRight,
   CheckCircle2,
+  GripVertical,
   Lightbulb,
   ShieldAlert,
   Sparkles,
@@ -152,6 +152,20 @@ const sectionStyles = {
   },
 };
 
+const LAB_BOX_CONFIG = [
+  { key: "core_concepts", label: "核心概念" },
+  { key: "fundamental_rules", label: "基本规则" },
+  { key: "common_pitfalls", label: "常见误区" },
+  { key: "examples", label: "示例" },
+];
+
+const LAB_BOX_THEME = {
+  core_concepts: "bg-amber-50 border-amber-200",
+  fundamental_rules: "bg-blue-50 border-blue-200",
+  common_pitfalls: "bg-rose-50 border-rose-200",
+  examples: "bg-emerald-50 border-emerald-200",
+};
+
 const normalizeList = (value) => {
   if (Array.isArray(value)) return value;
   if (typeof value === "string" && value.trim()) return [value.trim()];
@@ -159,10 +173,13 @@ const normalizeList = (value) => {
 };
 
 export default function TextbookContentViewer({ data }) {
-  const navigate = useNavigate();
   const [expandedChapterId, setExpandedChapterId] = useState(null);
+  const [expandedSectionKey, setExpandedSectionKey] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("key_topics_analysis");
+  const [draggingKey, setDraggingKey] = useState(null);
+  const [droppedKey, setDroppedKey] = useState(null);
+  const [generatedText, setGeneratedText] = useState("");
 
   const activeData = useMemo(() => {
     if (data && Array.isArray(data.chapters) && data.chapters.length) {
@@ -175,15 +192,32 @@ export default function TextbookContentViewer({ data }) {
 
   useEffect(() => {
     setExpandedChapterId(null);
+    setExpandedSectionKey(null);
     setSelectedSection(null);
     setSelectedCategory("key_topics_analysis");
   }, [activeData]);
 
+  useEffect(() => {
+    setDroppedKey(null);
+    setGeneratedText("");
+  }, [selectedSection?.section_id, selectedCategory]);
+
   const handleToggleChapter = (chapterId) => {
-    setExpandedChapterId((prev) => (prev === chapterId ? null : chapterId));
+    setExpandedChapterId((prev) => {
+      const next = prev === chapterId ? null : chapterId;
+      if (prev !== next) {
+        setExpandedSectionKey(null);
+      }
+      return next;
+    });
   };
 
-  const handleSelectSection = (chapter, section) => {
+  const getSectionKey = (chapter, section) => `${chapter.chapter_number}-${section.section_id}`;
+
+  const handleSelectSection = (chapter, section, options = {}) => {
+    const { toggleSubmenu = false } = options;
+    const sectionKey = getSectionKey(chapter, section);
+
     setExpandedChapterId(chapter.chapter_number);
     setSelectedCategory("key_topics_analysis");
     setSelectedSection({
@@ -191,19 +225,46 @@ export default function TextbookContentViewer({ data }) {
       chapterNumber: chapter.chapter_number,
       ...section,
     });
+
+    setExpandedSectionKey((prev) => {
+      if (toggleSubmenu) {
+        return prev === sectionKey ? null : sectionKey;
+      }
+      return sectionKey;
+    });
   };
 
   const handleOpenLab = (chapter, section, mode) => {
-    navigate(`/section-lab/${chapter.chapter_number}/${section.section_id}/${mode}`, {
-      state: {
-        mode,
-        section: {
-          chapterTitle: chapter.chapter_title,
-          chapterNumber: chapter.chapter_number,
-          ...section,
-        },
-      },
-    });
+    handleSelectSection(chapter, section, { toggleSubmenu: false });
+    setSelectedCategory(mode);
+  };
+
+  const labCards = useMemo(() => {
+    const topics = selectedSection?.key_topics_analysis || {};
+    return LAB_BOX_CONFIG.map((item) => ({
+      ...item,
+      points: normalizeList(topics[item.key]),
+    }));
+  }, [selectedSection]);
+
+  const droppedCard = labCards.find((card) => card.key === droppedKey);
+
+  const generateContent = () => {
+    if (!droppedCard) {
+      setGeneratedText("请先将一个小 box 拖入下方大 box。");
+      return;
+    }
+
+    const points = droppedCard.points.length
+      ? droppedCard.points.map((p, i) => `${i + 1}. ${p}`).join("\n")
+      : "暂无可用要点。";
+
+    const prefix =
+      selectedCategory === "quiz-for-section"
+        ? `【${droppedCard.label}】测验生成\n请基于以下要点设计 3 道题（含简短答案）：\n`
+        : `【${droppedCard.label}】详细解释生成\n请基于以下要点输出结构化解释：\n`;
+
+    setGeneratedText(`${prefix}${points}`);
   };
 
   return (
@@ -248,6 +309,8 @@ export default function TextbookContentViewer({ data }) {
                     <div className="space-y-1 px-2 pb-2">
                       {(chapter.sections || []).map((section) => {
                         const isActive = selectedSection?.section_id === section.section_id;
+                        const sectionKey = getSectionKey(chapter, section);
+                        const isSubmenuOpen = expandedSectionKey === sectionKey;
 
                         return (
                           <div
@@ -258,17 +321,23 @@ export default function TextbookContentViewer({ data }) {
                           >
                             <button
                               type="button"
-                              onClick={() => handleSelectSection(chapter, section)}
+                              onClick={() => handleSelectSection(chapter, section, { toggleSubmenu: true })}
                               className="flex w-full items-center gap-2 rounded-md px-1 py-1 text-left text-sm text-slate-800"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              <ChevronRight
+                                className={`h-4 w-4 transition-transform ${isSubmenuOpen ? "rotate-90" : "rotate-0"}`}
+                              />
                               <span className="line-clamp-2 font-medium">{section.section_title}</span>
                             </button>
 
-                            <div className="mt-2 grid grid-cols-1 gap-1">
+                            <div
+                              className={`grid grid-cols-1 gap-1 overflow-hidden transition-all duration-200 ${
+                                isSubmenuOpen ? "mt-2 max-h-40 opacity-100" : "max-h-0 opacity-0"
+                              }`}
+                            >
                               <button
                                 type="button"
-                                onClick={() => handleSelectSection(chapter, section)}
+                                onClick={() => handleSelectSection(chapter, section, { toggleSubmenu: false })}
                                 className={`rounded-md px-2 py-1 text-left text-xs transition-colors ${
                                   isActive && selectedCategory === "key_topics_analysis"
                                     ? "bg-indigo-100 text-indigo-700"
@@ -280,14 +349,22 @@ export default function TextbookContentViewer({ data }) {
                               <button
                                 type="button"
                                 onClick={() => handleOpenLab(chapter, section, "detailed-explanation")}
-                                className="rounded-md bg-slate-100 px-2 py-1 text-left text-xs text-slate-700 transition-colors hover:bg-slate-200"
+                                className={`rounded-md px-2 py-1 text-left text-xs transition-colors ${
+                                  isActive && selectedCategory === "detailed-explanation"
+                                    ? "bg-indigo-100 text-indigo-700"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                }`}
                               >
                                 detailed explanation
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleOpenLab(chapter, section, "quiz-for-section")}
-                                className="rounded-md bg-slate-100 px-2 py-1 text-left text-xs text-slate-700 transition-colors hover:bg-slate-200"
+                                className={`rounded-md px-2 py-1 text-left text-xs transition-colors ${
+                                  isActive && selectedCategory === "quiz-for-section"
+                                    ? "bg-indigo-100 text-indigo-700"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                }`}
                               >
                                 quiz for section
                               </button>
@@ -312,7 +389,7 @@ export default function TextbookContentViewer({ data }) {
                 <p className="mt-1 text-xs text-slate-500">选择 Section 后将展示关键知识分析</p>
               </div>
             </div>
-          ) : (
+          ) : selectedCategory === "key_topics_analysis" ? (
             <article className="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-5 border-b border-slate-200 pb-4">
                 <p className="text-xs font-medium text-slate-500">
@@ -352,6 +429,85 @@ export default function TextbookContentViewer({ data }) {
                     {selectedSection?.key_topics_analysis?.one_sentence_summary || "暂无总结"}
                   </p>
                 </section>
+              </div>
+            </article>
+          ) : (
+            <article className="mx-auto max-w-5xl space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="mb-2 border-b border-slate-200 pb-3">
+                <p className="text-xs font-medium text-slate-500">
+                  Chapter {selectedSection.chapterNumber} · Section {selectedSection.section_id}
+                </p>
+                <h3 className="mt-1 text-xl font-bold text-slate-900">{selectedSection.section_title}</h3>
+                <p className="mt-1 text-sm text-indigo-700">
+                  {selectedCategory === "quiz-for-section" ? "Quiz for Section" : "Detailed Explanation"}
+                </p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {labCards.map((card) => (
+                  <div
+                    key={card.key}
+                    draggable
+                    onDragStart={() => setDraggingKey(card.key)}
+                    onDragEnd={() => setDraggingKey(null)}
+                    className={`cursor-move rounded-xl border p-4 shadow-sm ${
+                      LAB_BOX_THEME[card.key] || "bg-white border-slate-200"
+                    } ${
+                      draggingKey === card.key ? "opacity-60" : "opacity-100"
+                    }`}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-slate-800">{card.label}</h3>
+                      <GripVertical className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <p className="text-xs text-slate-500">可拖动到下方大 box</p>
+                    <p className="mt-2 text-xs text-slate-600">要点数：{card.points.length}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => {
+                  if (draggingKey) {
+                    setDroppedKey(draggingKey);
+                  }
+                }}
+                className="min-h-[180px] rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-6"
+              >
+                <h2 className="text-sm font-semibold text-indigo-700">内容生成工作区（大 box）</h2>
+                {!droppedCard ? (
+                  <p className="mt-2 text-sm text-slate-600">将上方任意一个小 box 拖到这里。</p>
+                ) : (
+                  <div
+                    className={`mt-3 rounded-lg border p-3 ${
+                      LAB_BOX_THEME[droppedCard.key] || "bg-white border-indigo-200"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold text-slate-800">已选择：{droppedCard.label}</p>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+                      {droppedCard.points.slice(0, 5).map((point, idx) => (
+                        <li key={`${droppedCard.key}-${idx}`}>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  onClick={generateContent}
+                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                >
+                  生成内容解释
+                </button>
+
+                <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
+                  <h3 className="text-sm font-semibold text-slate-800">生成结果</h3>
+                  <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
+                    {generatedText || "点击按钮后在此展示生成内容。"}
+                  </pre>
+                </div>
               </div>
             </article>
           )}
