@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
   ChevronDown,
@@ -158,8 +159,10 @@ const normalizeList = (value) => {
 };
 
 export default function TextbookContentViewer({ data }) {
+  const navigate = useNavigate();
   const [expandedChapterId, setExpandedChapterId] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("key_topics_analysis");
 
   const activeData = useMemo(() => {
     if (data && Array.isArray(data.chapters) && data.chapters.length) {
@@ -173,6 +176,7 @@ export default function TextbookContentViewer({ data }) {
   useEffect(() => {
     setExpandedChapterId(null);
     setSelectedSection(null);
+    setSelectedCategory("key_topics_analysis");
   }, [activeData]);
 
   const handleToggleChapter = (chapterId) => {
@@ -181,10 +185,24 @@ export default function TextbookContentViewer({ data }) {
 
   const handleSelectSection = (chapter, section) => {
     setExpandedChapterId(chapter.chapter_number);
+    setSelectedCategory("key_topics_analysis");
     setSelectedSection({
       chapterTitle: chapter.chapter_title,
       chapterNumber: chapter.chapter_number,
       ...section,
+    });
+  };
+
+  const handleOpenLab = (chapter, section, mode) => {
+    navigate(`/section-lab/${chapter.chapter_number}/${section.section_id}/${mode}`, {
+      state: {
+        mode,
+        section: {
+          chapterTitle: chapter.chapter_title,
+          chapterNumber: chapter.chapter_number,
+          ...section,
+        },
+      },
     });
   };
 
@@ -232,19 +250,49 @@ export default function TextbookContentViewer({ data }) {
                         const isActive = selectedSection?.section_id === section.section_id;
 
                         return (
-                          <button
+                          <div
                             key={section.section_id}
-                            type="button"
-                            onClick={() => handleSelectSection(chapter, section)}
-                            className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                              isActive
-                                ? "bg-indigo-100 text-indigo-700"
-                                : "text-slate-700 hover:bg-slate-100"
+                            className={`rounded-lg border px-2 py-2 ${
+                              isActive ? "border-indigo-200 bg-indigo-50" : "border-slate-200 bg-white"
                             }`}
                           >
-                            <ChevronRight className="h-4 w-4" />
-                            <span className="line-clamp-2">{section.section_title}</span>
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSelectSection(chapter, section)}
+                              className="flex w-full items-center gap-2 rounded-md px-1 py-1 text-left text-sm text-slate-800"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                              <span className="line-clamp-2 font-medium">{section.section_title}</span>
+                            </button>
+
+                            <div className="mt-2 grid grid-cols-1 gap-1">
+                              <button
+                                type="button"
+                                onClick={() => handleSelectSection(chapter, section)}
+                                className={`rounded-md px-2 py-1 text-left text-xs transition-colors ${
+                                  isActive && selectedCategory === "key_topics_analysis"
+                                    ? "bg-indigo-100 text-indigo-700"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                }`}
+                              >
+                                key_topics_analysis
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenLab(chapter, section, "detailed-explanation")}
+                                className="rounded-md bg-slate-100 px-2 py-1 text-left text-xs text-slate-700 transition-colors hover:bg-slate-200"
+                              >
+                                detailed explanation
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenLab(chapter, section, "quiz-for-section")}
+                                className="rounded-md bg-slate-100 px-2 py-1 text-left text-xs text-slate-700 transition-colors hover:bg-slate-200"
+                              >
+                                quiz for section
+                              </button>
+                            </div>
+                          </div>
                         );
                       })}
                     </div>
