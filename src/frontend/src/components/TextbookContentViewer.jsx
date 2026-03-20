@@ -23,23 +23,23 @@ export const mockData = {
           section_title: "Creativity and motivation",
           key_topics_analysis: {
             core_concepts: [
-              "编程是创造性活动，可以把想法转化为可运行的工具。",
-              "学习编程的初始价值在于提升个人处理信息与数据的效率。",
+              "Programming is a creative activity that turns ideas into usable tools.",
+              "The initial value of learning programming is improving personal efficiency in handling data and information.",
             ],
             fundamental_rules: [
-              "先面向自己的真实问题做小工具，再逐步扩展复杂度。",
-              "以可用性为目标：程序要能稳定、重复地完成任务。",
+              "Start with small tools for real problems, then gradually increase complexity.",
+              "Aim for usability: programs should complete tasks reliably and repeatedly.",
             ],
             common_pitfalls: [
-              "只关注语法，忽略“要解决什么问题”。",
-              "一开始就追求复杂项目，导致挫败感。",
+              "Focusing only on syntax while ignoring the actual problem to solve.",
+              "Jumping into complex projects too early and getting frustrated.",
             ],
             examples: [
-              "写一个脚本统计文本中出现频率最高的单词。",
-              "把重复性文件整理工作交给程序自动完成。",
+              "Write a script to count the most frequent word in a text.",
+              "Automate repetitive file organization tasks with a program.",
             ],
             one_sentence_summary:
-              "编程的核心价值是把重复劳动自动化，让人把精力留给创造与判断。",
+              "The core value of programming is automating repetitive work so people can focus on creativity and judgment.",
           },
         },
         {
@@ -47,23 +47,23 @@ export const mockData = {
           section_title: "Computer hardware architecture",
           key_topics_analysis: {
             core_concepts: [
-              "CPU 执行指令，内存保存临时数据，外存保存长期数据。",
-              "输入输出设备和网络共同构成程序与外部世界交互的通道。",
+              "The CPU executes instructions, memory stores temporary data, and storage keeps persistent data.",
+              "I/O devices and networks together form how programs interact with the outside world.",
             ],
             fundamental_rules: [
-              "程序必须以清晰顺序给出“下一步做什么”的指令。",
-              "根据任务选择合适资源：速度优先用内存，持久化用外存。",
+              "Programs must provide clear step-by-step instructions for what happens next.",
+              "Choose resources based on task needs: memory for speed, storage for persistence.",
             ],
             common_pitfalls: [
-              "混淆主存和外存的职责。",
-              "忽视网络延迟与不稳定性对程序流程的影响。",
+              "Confusing the roles of main memory and persistent storage.",
+              "Ignoring network latency and instability in program flow.",
             ],
             examples: [
-              "读取文件到内存后计算，再把结果写回磁盘。",
-              "通过网络 API 获取数据时设置重试和超时机制。",
+              "Load a file into memory, process it, then write results back to disk.",
+              "Use retries and timeouts when fetching data from network APIs.",
             ],
             one_sentence_summary:
-              "程序员的任务是协调 CPU、内存、外存和 I/O 资源，高效完成数据处理。",
+              "A programmer’s job is to coordinate CPU, memory, storage, and I/O resources for efficient data processing.",
           },
         },
       ],
@@ -77,23 +77,23 @@ export const mockData = {
           section_title: "Values and types",
           key_topics_analysis: {
             core_concepts: [
-              "值有类型，如 int、str、float。",
-              "类型决定了值可参与的运算方式。",
+              "Values have types, such as int, str, and float.",
+              "Type determines which operations are valid for a value.",
             ],
             fundamental_rules: [
-              "不确定类型时，用 type() 先检查再计算。",
-              "字符串数字与数值类型要先转换再运算。",
+              "When unsure about type, check with type() before computing.",
+              "Convert numeric strings to numeric types before arithmetic.",
             ],
             common_pitfalls: [
-              "把 '17' 当作 17 参与算术运算。",
-              "用错误类型导致语义错误但不一定报错。",
+              "Treating '17' as 17 in arithmetic operations.",
+              "Using incorrect types can cause semantic errors without obvious exceptions.",
             ],
             examples: [
               "int('17') + 5 -> 22",
               "type('3.2') -> str，float('3.2') -> 3.2",
             ],
             one_sentence_summary:
-              "理解值与类型是写出正确表达式和语句的起点。",
+              "Understanding values and types is the foundation of correct expressions and statements.",
           },
         },
         {
@@ -101,23 +101,23 @@ export const mockData = {
           section_title: "Variable names and keywords",
           key_topics_analysis: {
             core_concepts: [
-              "变量名应语义清晰且符合命名规则。",
-              "关键字是保留词，不能作为变量名。",
+              "Variable names should be meaningful and follow naming rules.",
+              "Keywords are reserved words and cannot be used as variable names.",
             ],
             fundamental_rules: [
-              "变量名使用字母、数字、下划线，且不能数字开头。",
-              "使用助记命名（mnemonic naming）提高可读性。",
+              "Use letters, digits, and underscores; names cannot start with a digit.",
+              "Use mnemonic names to improve readability.",
             ],
             common_pitfalls: [
-              "变量名与关键字冲突（如 class）。",
-              "过度简写导致后续难维护。",
+              "Using names that conflict with keywords (e.g., class).",
+              "Over-abbreviation makes code harder to maintain.",
             ],
             examples: [
-              "hours, rate, pay 比 a, b, c 更易读。",
-              "my_name 合法，76trombones 非法。",
+              "hours, rate, pay are clearer than a, b, c.",
+              "my_name is valid, 76trombones is invalid.",
             ],
             one_sentence_summary:
-              "好的变量命名能显著降低阅读和调试成本。",
+              "Good variable naming significantly reduces reading and debugging cost.",
           },
         },
       ],
@@ -127,25 +127,25 @@ export const mockData = {
 
 const sectionStyles = {
   core_concepts: {
-    title: "核心概念",
+    title: "Core Concepts",
     icon: Lightbulb,
     color: "text-amber-600",
     bg: "bg-amber-50",
   },
   fundamental_rules: {
-    title: "基本规则",
+    title: "Fundamental Rules",
     icon: CheckCircle2,
     color: "text-blue-600",
     bg: "bg-blue-50",
   },
   common_pitfalls: {
-    title: "常见误区",
+    title: "Common Pitfalls",
     icon: ShieldAlert,
     color: "text-rose-600",
     bg: "bg-rose-50",
   },
   examples: {
-    title: "示例",
+    title: "Examples",
     icon: Sparkles,
     color: "text-emerald-600",
     bg: "bg-emerald-50",
@@ -153,10 +153,10 @@ const sectionStyles = {
 };
 
 const LAB_BOX_CONFIG = [
-  { key: "core_concepts", label: "核心概念" },
-  { key: "fundamental_rules", label: "基本规则" },
-  { key: "common_pitfalls", label: "常见误区" },
-  { key: "examples", label: "示例" },
+  { key: "core_concepts", label: "Core Concepts" },
+  { key: "fundamental_rules", label: "Fundamental Rules" },
+  { key: "common_pitfalls", label: "Common Pitfalls" },
+  { key: "examples", label: "Examples" },
 ];
 
 const LAB_BOX_THEME = {
@@ -251,18 +251,18 @@ export default function TextbookContentViewer({ data }) {
 
   const generateContent = () => {
     if (!droppedCard) {
-      setGeneratedText("请先将一个小 box 拖入下方大 box。");
+      setGeneratedText("Please drag one small box into the large box first.");
       return;
     }
 
     const points = droppedCard.points.length
       ? droppedCard.points.map((p, i) => `${i + 1}. ${p}`).join("\n")
-      : "暂无可用要点。";
+      : "No available key points.";
 
     const prefix =
       selectedCategory === "quiz-for-section"
-        ? `【${droppedCard.label}】测验生成\n请基于以下要点设计 3 道题（含简短答案）：\n`
-        : `【${droppedCard.label}】详细解释生成\n请基于以下要点输出结构化解释：\n`;
+        ? `[${droppedCard.label}] Quiz Generation\nDesign 3 questions based on the points below (with short answers):\n`
+        : `[${droppedCard.label}] Detailed Explanation Generation\nGenerate a structured explanation based on the points below:\n`;
 
     setGeneratedText(`${prefix}${points}`);
   };
@@ -276,7 +276,7 @@ export default function TextbookContentViewer({ data }) {
               <BookOpen className="h-5 w-5 text-indigo-600" />
               <h2 className="text-sm font-semibold text-slate-800">{activeData.book_title || "Textbook"}</h2>
             </div>
-            <p className="mt-1 text-xs text-slate-500">章节与小节导航</p>
+            <p className="mt-1 text-xs text-slate-500">Chapter and section navigation</p>
           </div>
 
           <div className="space-y-2 p-3">
@@ -385,8 +385,8 @@ export default function TextbookContentViewer({ data }) {
             <div className="flex h-full min-h-[420px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50">
               <div className="text-center">
                 <FileText className="mx-auto mb-3 h-10 w-10 text-slate-400" />
-                <p className="text-sm font-medium text-slate-700">请从左侧选择一个章节进行查看</p>
-                <p className="mt-1 text-xs text-slate-500">选择 Section 后将展示关键知识分析</p>
+                <p className="text-sm font-medium text-slate-700">Please select a section from the left panel</p>
+                <p className="mt-1 text-xs text-slate-500">Key topic analysis will appear after selecting a section</p>
               </div>
             </div>
           ) : selectedCategory === "key_topics_analysis" ? (
@@ -417,16 +417,16 @@ export default function TextbookContentViewer({ data }) {
                           ))}
                         </ul>
                       ) : (
-                        <p className="text-sm text-slate-500">暂无内容</p>
+                        <p className="text-sm text-slate-500">No content available</p>
                       )}
                     </section>
                   );
                 })}
 
                 <section className="rounded-xl border border-slate-200 bg-indigo-50 p-4">
-                  <h4 className="mb-2 text-sm font-semibold text-indigo-700">一句话总结</h4>
+                  <h4 className="mb-2 text-sm font-semibold text-indigo-700">One-Sentence Summary</h4>
                   <p className="text-sm leading-relaxed text-slate-700">
-                    {selectedSection?.key_topics_analysis?.one_sentence_summary || "暂无总结"}
+                    {selectedSection?.key_topics_analysis?.one_sentence_summary || "No summary available"}
                   </p>
                 </section>
               </div>
@@ -460,8 +460,8 @@ export default function TextbookContentViewer({ data }) {
                       <h3 className="text-sm font-semibold text-slate-800">{card.label}</h3>
                       <GripVertical className="h-4 w-4 text-slate-400" />
                     </div>
-                    <p className="text-xs text-slate-500">可拖动到下方大 box</p>
-                    <p className="mt-2 text-xs text-slate-600">要点数：{card.points.length}</p>
+                    <p className="text-xs text-slate-500">Drag into the large box below</p>
+                    <p className="mt-2 text-xs text-slate-600">Point count: {card.points.length}</p>
                   </div>
                 ))}
               </div>
@@ -475,16 +475,16 @@ export default function TextbookContentViewer({ data }) {
                 }}
                 className="min-h-[180px] rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-6"
               >
-                <h2 className="text-sm font-semibold text-indigo-700">内容生成工作区（大 box）</h2>
+                <h2 className="text-sm font-semibold text-indigo-700">Content Generation Workspace (Large Box)</h2>
                 {!droppedCard ? (
-                  <p className="mt-2 text-sm text-slate-600">将上方任意一个小 box 拖到这里。</p>
+                  <p className="mt-2 text-sm text-slate-600">Drag any small box from above into this area.</p>
                 ) : (
                   <div
                     className={`mt-3 rounded-lg border p-3 ${
                       LAB_BOX_THEME[droppedCard.key] || "bg-white border-indigo-200"
                     }`}
                   >
-                    <p className="text-sm font-semibold text-slate-800">已选择：{droppedCard.label}</p>
+                    <p className="text-sm font-semibold text-slate-800">Selected: {droppedCard.label}</p>
                     <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
                       {droppedCard.points.slice(0, 5).map((point, idx) => (
                         <li key={`${droppedCard.key}-${idx}`}>{point}</li>
@@ -499,13 +499,13 @@ export default function TextbookContentViewer({ data }) {
                   onClick={generateContent}
                   className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
                 >
-                  生成内容解释
+                  Generate Content
                 </button>
 
                 <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
-                  <h3 className="text-sm font-semibold text-slate-800">生成结果</h3>
+                  <h3 className="text-sm font-semibold text-slate-800">Generated Result</h3>
                   <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
-                    {generatedText || "点击按钮后在此展示生成内容。"}
+                    {generatedText || "Generated content will appear here after clicking the button."}
                   </pre>
                 </div>
               </div>
