@@ -162,23 +162,8 @@ export default function Study() {
               </div>
             </div>
           </div>
-        ) : viewMode === "summary" ? (
-          <TextbookContentViewer data={textbookData} />
         ) : (
-          <div className="h-[calc(100vh-140px)] w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
-            {pdfUrl ? (
-              <iframe
-                src={`${pdfUrl}#toolbar=0`}
-                className="w-full h-full border-none"
-                title="pdf-viewer"
-              />
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center gap-3">
-                <Loader className="h-8 w-8 animate-spin text-indigo-600" />
-                <p className="text-slate-600">Loading original textbook...</p>
-              </div>
-            )}
-          </div>
+          <TextbookContentViewer data={textbookData} viewMode={viewMode} pdfUrl={pdfUrl} />
         )}
       </main>
     </div>

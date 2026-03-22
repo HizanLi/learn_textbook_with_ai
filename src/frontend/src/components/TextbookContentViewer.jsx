@@ -173,11 +173,22 @@ const normalizeList = (value) => {
   return [];
 };
 
-export default function TextbookContentViewer({ data }) {
+const toPositivePage = (value) => {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+  return parsed;
+};
+
+export default function TextbookContentViewer({ data, viewMode = "summary", pdfUrl = null }) {
   const [expandedChapterId, setExpandedChapterId] = useState(null);
   const [expandedSectionKey, setExpandedSectionKey] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("key_topics_analysis");
+  const [pdfPage, setPdfPage] = useState(1);
+  const [pageOffset, setPageOffset] = useState(0);
+  const [pdfPageInput, setPdfPageInput] = useState("1");
   const [draggingKey, setDraggingKey] = useState(null);
   const [droppedKey, setDroppedKey] = useState(null);
   const [generatedText, setGeneratedText] = useState("");
@@ -192,11 +203,39 @@ export default function TextbookContentViewer({ data }) {
 
   const chapters = useMemo(() => activeData.chapters || [], [activeData]);
 
+  const currentSectionJsonPage = useMemo(() => {
+    if (!selectedSection) {
+      return null;
+    }
+
+    const sectionPage = toPositivePage(selectedSection.page);
+    if (sectionPage) {
+      return sectionPage;
+    }
+
+    const selectedChapter = chapters.find(
+      (chapter) => chapter.chapter_number === selectedSection.chapterNumber
+    );
+    return toPositivePage(selectedChapter?.start_page);
+  }, [chapters, selectedSection]);
+
+  const applyPageOffset = (jsonPageValue) => {
+    const jsonPage = toPositivePage(jsonPageValue);
+    if (!jsonPage) {
+      return null;
+    }
+    return Math.max(1, jsonPage + pageOffset);
+  };
+
   useEffect(() => {
     setExpandedChapterId(null);
     setExpandedSectionKey(null);
     setSelectedSection(null);
     setSelectedCategory("key_topics_analysis");
+    setPageOffset(0);
+    const firstPage = toPositivePage(activeData?.chapters?.[0]?.start_page) || 1;
+    setPdfPage(firstPage);
+    setPdfPageInput(String(firstPage));
   }, [activeData]);
 
   useEffect(() => {
@@ -204,7 +243,12 @@ export default function TextbookContentViewer({ data }) {
     setGeneratedText("");
   }, [selectedSection?.section_id, selectedCategory]);
 
-  const handleToggleChapter = (chapterId) => {
+  useEffect(() => {
+    setPdfPageInput(String(pdfPage));
+  }, [pdfPage]);
+
+  const handleToggleChapter = (chapter) => {
+    const chapterId = chapter.chapter_number;
     setExpandedChapterId((prev) => {
       const next = prev === chapterId ? null : chapterId;
       if (prev !== next) {
@@ -212,6 +256,11 @@ export default function TextbookContentViewer({ data }) {
       }
       return next;
     });
+
+    const targetPdfPage = applyPageOffset(chapter?.start_page);
+    if (targetPdfPage) {
+      setPdfPage(targetPdfPage);
+    }
   };
 
   const getSectionKey = (chapter, section) => `${chapter.chapter_number}-${section.section_id}`;
@@ -227,6 +276,11 @@ export default function TextbookContentViewer({ data }) {
       chapterNumber: chapter.chapter_number,
       ...section,
     });
+
+    const targetPage = applyPageOffset(section?.page) || applyPageOffset(chapter?.start_page);
+    if (targetPage) {
+      setPdfPage(targetPage);
+    }
 
     setExpandedSectionKey((prev) => {
       if (toggleSubmenu) {
@@ -306,6 +360,25 @@ export default function TextbookContentViewer({ data }) {
     }
   };
 
+  const handleSetAsInitialPage = () => {
+    const actualPdfPage = toPositivePage(pdfPageInput);
+    if (!actualPdfPage || !currentSectionJsonPage) {
+      return;
+    }
+
+    const nextOffset = actualPdfPage - currentSectionJsonPage;
+    setPageOffset(nextOffset);
+    setPdfPage(actualPdfPage);
+  };
+
+  const handleGoToPage = () => {
+    const targetPage = toPositivePage(pdfPageInput);
+    if (!targetPage) {
+      return;
+    }
+    setPdfPage(targetPage);
+  };
+
   return (
     <div className="h-[calc(100vh-120px)] min-h-[620px] w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="grid h-full grid-cols-1 md:grid-cols-[320px_1fr]">
@@ -326,7 +399,7 @@ export default function TextbookContentViewer({ data }) {
                 <div key={chapter.chapter_number} className="rounded-xl border border-slate-200 bg-white">
                   <button
                     type="button"
-                    onClick={() => handleToggleChapter(chapter.chapter_number)}
+                    onClick={() => handleToggleChapter(chapter)}
                     className="flex w-full items-center justify-between gap-2 px-3 py-3 text-left hover:bg-slate-100"
                   >
                     <div>
@@ -420,7 +493,54 @@ export default function TextbookContentViewer({ data }) {
         </aside>
 
         <main className="h-full overflow-y-auto bg-white p-6">
-          {!selectedSection ? (
+          {viewMode === "pdf" ? (
+            <div className="h-full min-h-[420px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div className="flex flex-wrap items-end gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
+                <div className="min-w-[190px]">
+                  <p className="text-xs font-medium text-slate-700">Current PDF page</p>
+                  <input
+                    type="number"
+                    min="1"
+                    value={pdfPageInput}
+                    onChange={(e) => setPdfPageInput(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-800 outline-none focus:border-indigo-400"
+                    placeholder="Page number"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleGoToPage}
+                  className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100"
+                >
+                  Go
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSetAsInitialPage}
+                  disabled={!selectedSection || !currentSectionJsonPage}
+                  className="rounded-md bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                >
+                  Set as initial page
+                </button>
+                <p className="text-xs text-slate-600">Offset: {pageOffset >= 0 ? `+${pageOffset}` : pageOffset}</p>
+              </div>
+              {pdfUrl ? (
+                <iframe
+                  key={`${pdfUrl}-${pdfPage}`}
+                  src={`${pdfUrl}#page=${pdfPage}&toolbar=0`}
+                  className="h-[calc(100%-60px)] w-full border-none"
+                  title="pdf-viewer"
+                />
+              ) : (
+                <div className="flex h-[calc(100%-60px)] items-center justify-center">
+                  <div className="text-center">
+                    <FileText className="mx-auto mb-3 h-10 w-10 text-slate-400" />
+                    <p className="text-sm font-medium text-slate-700">Loading original textbook...</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : !selectedSection ? (
             <div className="flex h-full min-h-[420px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50">
               <div className="text-center">
                 <FileText className="mx-auto mb-3 h-10 w-10 text-slate-400" />
