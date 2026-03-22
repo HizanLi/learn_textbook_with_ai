@@ -24,8 +24,18 @@ router.post("/upload", upload.single("file"), (req, res) => {
       return res.status(400).json({ error: "file is required" });
     }
 
-    const ext = path.extname(req.file.originalname) || ".bin";
-    const filename = `${req.file.originalname.replace(ext, "")}-${Date.now()}${ext}`;
+    // Check for duplicated filename in user_status.json
+    const userStatus = readUserStatus(username);
+    if (userStatus && userStatus.uploadedProjects) {
+      const isDuplicate = userStatus.uploadedProjects.some(
+        (p) => p.originalName === req.file.originalname
+      );
+      if (isDuplicate) {
+        return res.status(400).json({ error: "duplicated file" });
+      }
+    }
+
+    const filename = req.file.originalname;
     
     console.log(`[UPLOAD] User: ${username}, File: ${filename}, Size: ${req.file.size} bytes`);
     

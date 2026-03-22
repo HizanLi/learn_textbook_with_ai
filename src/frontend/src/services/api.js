@@ -22,10 +22,14 @@ export async function uploadTextbook(username, file) {
     body: formData,
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error("Upload failed");
+    const error = new Error(data.error || "Upload failed");
+    error.status = res.status;
+    throw error;
   }
-  return res.json();
+  return data;
 }
 
 export async function processProject(username, projectId) {
@@ -95,6 +99,16 @@ export async function setCurrentProject(username, projectId) {
   });
   if (!res.ok) {
     throw new Error("Failed to set current project");
+  }
+  return res.json();
+}
+
+export async function checkServerHealth() {
+  const res = await fetch(`${API_BASE}/health`, {
+    signal: AbortSignal.timeout(3000)
+  });
+  if (!res.ok) {
+    throw new Error("Backend unavailable");
   }
   return res.json();
 }

@@ -232,12 +232,11 @@ class MarkdownChunker:
 
 if __name__ == "__main__":
     chunker = MarkdownChunker()
+    print(chunker.init_error)
     
     # Example: Process a markdown file (replace hashes, then split by headers)
-    # markdown_file = r"data\hizan\output\pyhton_short-1772218124093\hybrid_auto\pyhton_short-1772218124093.md"
     markdown_file = r"data\hizan\output\java_short\hybrid_auto\java_short.md"
     success, error = chunker.process_markdown(markdown_file)
-    
     if success:
         print(f"Successfully split markdown file into chunks")
     else:

@@ -224,14 +224,15 @@ async def semantic_search(request: SearchRequest):
 @app.get("/health")
 async def health_check():
     """
-    健康检查端点
+    健康检查端点：主要检查 MinerU Docker 容器状态
     """
+    mineru_health = mineru_client.check_health()
+    
     return {
-        "status": "healthy",
+        "status": "healthy" if mineru_health["status"] == "ready" else "unhealthy",
+        "timestamp": os.getenv("CURRENT_DATE", "2026-03-22"),
         "services": {
-            "mineru": "ready" if mineru_client.container_id else "unavailable",
-            "chunker": "ready",
-            "vectorization": "ready"
+            "mineru": mineru_health
         }
     }
 
@@ -263,5 +264,5 @@ async def get_status():
 
 if __name__ == "__main__":
     load_dotenv()
-    port = int(os.getenv("PYTHON_PORT", "8000"))
+    port = int(os.getenv("PYTHON_PORT", "8080"))
     uvicorn.run(app, host="127.0.0.1", port=port)

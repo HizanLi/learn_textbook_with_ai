@@ -21,6 +21,37 @@ class MinerUClient:
         except Exception:
             return None
 
+    def check_health(self):
+        """
+        检查 Docker 容器及其内部环境的健康状态
+        - 检查容器是否运行
+        - 检查容器内 mineru 命令是否可用
+        """
+        self.container_id = self._get_container_id()
+        if not self.container_id:
+            return {
+                "status": "unavailable",
+                "message": f"Docker 容器 '{self.image_name}' 未启动",
+                "container_id": None
+            }
+        
+        try:
+            # 检查容器内 mineru 命令是否可用
+            cmd = f'docker exec {self.container_id} mineru --version'
+            version_info = subprocess.check_output(cmd, shell=True).decode().strip()
+            return {
+                "status": "ready",
+                "message": "MinerU 容器正常运行",
+                "container_id": self.container_id,
+                "version": version_info
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"容器运行中但 MinerU 命令执行失败: {str(e)}",
+                "container_id": self.container_id
+            }
+
     def _to_container_path(self, host_path: Path) -> Optional[str]:
         if not self.data_dir:
             return None
