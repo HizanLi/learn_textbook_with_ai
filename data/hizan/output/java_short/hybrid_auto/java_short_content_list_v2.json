@@ -8670,7 +8670,7 @@
                     },
                     {
                         "type": "equation_inline",
-                        "content": "x = = > 49"
+                        "content": "\\texttt{x} = = > 49"
                     }
                 ]
             },
@@ -9594,7 +9594,7 @@
                 "code_content": [
                     {
                         "type": "text",
-                        "content": "1 jshell> /reset\n| Resetting state.\n2 jshell> System.out.println(\"Hello, Java!\") \n  Hello, Java!\n  jshell> System.out.println(\"My name is Bryson, nice to meet you!\") \n  My name is Bryson, nice to meet you!\n3 jshell> /save ~/Desktop/myJava.txt\n4 jshell> /reset\n| Resetting state.\n5 jshell > /open ~/Desktop/myJava.txt\n6 Hello, Java!\n  My name is Bryson, nice to meet you! "
+                        "content": "1 jshell> /reset\n| Resetting state.\n2 jshell> System.out.println(\"Hello, Java!\") \n  Hello, Java!\n  jshell> System.out.println(\"My name is Bryson, nice to meet you!\") \n  My name is Bryson, nice to meet you! \n3 jshell> /save ~/Desktop/myJava.txt\n4 jshell> /reset\n| Resetting state.\n5 jshell> /open ~/Desktop/myJava.txt\n6 Hello, Java!\n  My name is Bryson, nice to meet you! "
                     }
                 ],
                 "code_language": "txt"
@@ -13230,11 +13230,11 @@
                     },
                     {
                         "type": "equation_inline",
-                        "content": "= \\mathrm{''}"
+                        "content": "= \\mathrm{\"\"}"
                     },
                     {
                         "type": "text",
-                        "content": " .   \ndo { // Create a random number for the user to guess int theNumber  "
+                        "content": " .   \ndo{ // Create a random number for the user to guess int theNumber  "
                     },
                     {
                         "type": "equation_inline",
@@ -13849,7 +13849,7 @@
                 "code_content": [
                     {
                         "type": "text",
-                        "content": "System.out.println(\"Thank you for playing! Goodbye.\"); scan.close(); } 1 "
+                        "content": "System.out.println(\"Thank you for playing! Goodbye.\"); scan.close(); } } "
                     }
                 ],
                 "code_language": "javascript"
@@ -14751,7 +14751,7 @@
                 "page_aside_text_content": [
                     {
                         "type": "text",
-                        "content": "eONNEHNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNn "
+                        "content": "eONNEHNnNINNNIN "
                     }
                 ]
             },
@@ -19605,10 +19605,10 @@
                 "code_content": [
                     {
                         "type": "text",
-                        "content": "import javax.swing JFrame;   \nimport javax.swing.JLabel;   \nimport javax.swing.SwingConstants;   \nimport java.awt.Dimension;   \nimport java.awt.Font;   \nimport javax.swing.JTextField; "
+                        "content": "import javax.swing JFrame;  \nimport javax.swing.JLabel;  \nimport javax.swing.SwingConstants;  \nimport java.awt.Dimension;  \nimport java.awt.Font;  \nimport javax.swing.JTextField; "
                     }
                 ],
-                "code_language": "txt"
+                "code_language": "java"
             },
             "bbox": [
                 238,
@@ -21643,7 +21643,7 @@
                 "page_aside_text_content": [
                     {
                         "type": "text",
-                        "content": "eONNEHNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNn "
+                        "content": "eONNEHNnNINNNIN "
                     }
                 ]
             },
@@ -26653,7 +26653,7 @@
                     },
                     {
                         "type": "text",
-                        "content": " \"tries!\"; Toast.makeText(MainActivity.this, message, Toast.LENGTH LONG).show(); newGame();   \n} "
+                        "content": " \"tries!\"; Toast.makeText(MainActivity.this，message, Toast.LENGTH LONG).show(); newGame();   \n} "
                     }
                 ]
             },
@@ -27612,7 +27612,7 @@
                     },
                     {
                         "type": "text",
-                        "content": " getMenuInflater(); inflater.inflate(Rmenu menu_main,menu); return true;   \npublicboolean onOptionsItemSelected(Menuitem item){ switch(item.getIID(){ caseR.id.action_settings: return true; case R.id.action_newgame: newGame(); return true; case R.id.action在游戏中: return true; case R.id.action_about: return true; "
+                        "content": " getMenuInflater(); inflater.inflate(Rmenu menu_main, menu); return true;   \npublicboolean onOptionsItemSelected(Menuitem item){ switch(item.getIID(){ caseR.id.action_settings: return true; case R.id.action_newgame: newGame(); return true; case R.id.action在游戏中: return true; case R.id.action_about: return true; "
                     }
                 ]
             },
@@ -29106,11 +29106,11 @@
                     },
                     {
                         "type": "equation_inline",
-                        "content": "="
+                        "content": "= \\text{串}"
                     },
                     {
                         "type": "text",
-                        "content": " \"\"; try { int guess  "
+                        "content": " \"； try { int guess  "
                     },
                     {
                         "type": "equation_inline",
@@ -29126,7 +29126,15 @@
                     },
                     {
                         "type": "text",
-                        "content": " guess + \" is too low. Try again.\"; else if (guess > theNumber) message  "
+                        "content": " guess  "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "^+"
+                    },
+                    {
+                        "type": "text",
+                        "content": " \"is too low. Try again.\"; else if (guess > theNumber) message  "
                     },
                     {
                         "type": "equation_inline",
@@ -29134,7 +29142,15 @@
                     },
                     {
                         "type": "text",
-                        "content": " guess + \" is too high. Try again.\"; else { message  "
+                        "content": " guess  "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "^+"
+                    },
+                    {
+                        "type": "text",
+                        "content": " \"is too high. Try again.\"; else { message  "
                     },
                     {
                         "type": "equation_inline",
@@ -29142,7 +29158,15 @@
                     },
                     {
                         "type": "text",
-                        "content": " guess + \" is correct. You win! Let's play again\"; ①SharedPreferences preferences  "
+                        "content": " guess  "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "^+"
+                    },
+                    {
+                        "type": "text",
+                        "content": " \"is correct. You win! Let's play again\"; ①SharedPreferences preferences  "
                     },
                     {
                         "type": "equation_inline",
@@ -29158,7 +29182,7 @@
                     },
                     {
                         "type": "text",
-                        "content": " preferences.getInt(\"gamesWon\", 0) + 1; "
+                        "content": " preferences.getInt(\"gamesWon\",0)+1; "
                     }
                 ]
             },
@@ -31437,7 +31461,7 @@
                     },
                     {
                         "type": "text",
-                        "content": " ; x--）{ output  "
+                        "content": " ;x--）{ output  "
                     },
                     {
                         "type": "equation_inline",
@@ -32349,95 +32373,16 @@
             ]
         },
         {
-            "type": "algorithm",
+            "type": "code",
             "content": {
-                "algorithm_caption": [],
-                "algorithm_content": [
+                "code_caption": [],
+                "code_content": [
                     {
                         "type": "text",
-                        "content": "for (int  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "x = 0"
-                    },
-                    {
-                        "type": "text",
-                        "content": " .  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "\\times <"
-                    },
-                    {
-                        "type": "text",
-                        "content": " message.length();  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "x + +"
-                    },
-                    {
-                        "type": "text",
-                        "content": " ）{ char input  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "="
-                    },
-                    {
-                        "type": "text",
-                        "content": " message.charAt(x); if(input  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "\\Rightarrow"
-                    },
-                    {
-                        "type": "text",
-                        "content": " A' &&input  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "\\Leftarrow"
-                    },
-                    {
-                        "type": "text",
-                        "content": " Z') { 1 input  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "+ ="
-                    },
-                    {
-                        "type": "text",
-                        "content": " key; 2 if(input  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": ">"
-                    },
-                    {
-                        "type": "text",
-                        "content": " Z') 3 input  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "- = 26"
-                    },
-                    {
-                        "type": "text",
-                        "content": " · } output  "
-                    },
-                    {
-                        "type": "equation_inline",
-                        "content": "+ ="
-                    },
-                    {
-                        "type": "text",
-                        "content": " input; "
+                        "content": "for (int \\(x = 0\\) . \\(\\mathbf{x} <   \\mathbf{message.length()}\\) . \\(x + + )\\) { char input \\(=\\) message.charAt(x); if(input \\(\\begin{array}{rl}{\\mathrm{~\\textit~{~A~}~}}&{\\mathrm{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\cdot~}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}1 input \\(+ =\\) key; 2 if(input \\(\\begin{array}{rl}{\\mathrm{~~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\cdot ~}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}1 output \\(+ =\\) input; "
                     }
-                ]
+                ],
+                "code_language": "txt"
             },
             "bbox": [
                 299,
@@ -33871,7 +33816,7 @@
                     },
                     {
                         "type": "equation_inline",
-                        "content": "\\mathbf{x} = 0"
+                        "content": "\\texttt{x} = 0"
                     },
                     {
                         "type": "text",
@@ -33887,7 +33832,7 @@
                     },
                     {
                         "type": "equation_inline",
-                        "content": "\\mathrm{x + + }"
+                        "content": "\\mathbf{x + + }"
                     },
                     {
                         "type": "text",
@@ -37040,16 +36985,23 @@
     ],
     [
         {
-            "type": "code",
+            "type": "algorithm",
             "content": {
-                "code_caption": [],
-                "code_content": [
+                "algorithm_caption": [],
+                "algorithm_content": [
                     {
                         "type": "text",
-                        "content": "public static void main(String[] args) { ① SecretMessagesGUI theApp = new SecretMessagesGUI(); ② theApp.setSize(new java.awt.Dimension(600,400)); ③ theApp.setVisible(true); } "
+                        "content": "public static void main(String[] args){ ① SecretMessagesGUI theApp  "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "="
+                    },
+                    {
+                        "type": "text",
+                        "content": " new SecretMessagesGUI(); ② theApp.setSize(new java.awt.Dimension(600,400)); ③ theApp.setVisible(true);   \n}"
                     }
-                ],
-                "code_language": "java"
+                ]
             },
             "bbox": [
                 271,
@@ -44731,10 +44683,10 @@
                 "code_content": [
                     {
                         "type": "text",
-                        "content": "import javax.swing.JPanel;   \npublic class BubblePanel extends JPanel { private class Bubble{ private int x; private int y; private int size; }   \n1 "
+                        "content": "import javax.swing.JPanel;   \npublic class BubblePanel extends JPanel { private class Bubble{ private int x; private int y; private int size; }   \n} "
                     }
                 ],
-                "code_language": "java"
+                "code_language": "txt"
             },
             "bbox": [
                 238,
@@ -47002,7 +46954,7 @@
                 "code_content": [
                     {
                         "type": "text",
-                        "content": "repaint();\n}\nprivate class BubbleListener extends MouseAdapter {\n} "
+                        "content": "repaint();\n}\nprivate class BubbleListener extends MouseAdapter {\n}\nprivate class Bubble { "
                     }
                 ],
                 "code_language": "java"
@@ -49392,7 +49344,7 @@
                 "code_content": [
                     {
                         "type": "text",
-                        "content": "private class Bubble {\n    private int x;\n    --snip--\n        color = new Color rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));\n} "
+                        "content": "private class Bubble {\n    private int x;\n    --snip--\n        color = new Color[rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)];\n} "
                     }
                 ],
                 "code_language": "txt"
@@ -52332,7 +52284,7 @@
                 "algorithm_content": [
                     {
                         "type": "equation_inline",
-                        "content": "\\begin{array}{rl} & {\\mathrm{y + = y s p e e d};}\\\\ & {\\bullet \\mathrm{if(x - size / 2 <= 0||x + size / 2 >=}\\mathrm{width()})}\\\\ & {\\mathrm{x s p e e d = -x s p e e d};}\\\\ & {\\bullet \\mathrm{if(y - size / 2 <= 0||y + size / 2 >=}\\mathrm{getH e i g h t()})}\\\\ & {\\mathrm{y s p e e d = -y s p e e d;}} \\end{array}"
+                        "content": "\\begin{array}{rl} & y += \\mathrm{yspeed};\\\\ & \\bullet \\text{if} (x - \\mathrm{size} / 2 <= 0 || x + \\mathrm{size} / 2 >= \\mathrm{getWidth()})\\\\ & \\mathrm{xspeed} = -\\mathrm{xspeed};\\\\ & \\bullet \\text{if} (y - \\mathrm{size} / 2 <= 0 || y + \\mathrm{size} / 2 >= \\mathrm{getHeight()})\\\\ & \\mathrm{yspeed} = -\\mathrm{yspeed}; \\end{array}"
                     }
                 ]
             },
@@ -53558,7 +53510,7 @@
                 "page_aside_text_content": [
                     {
                         "type": "text",
-                        "content": "eONNEHNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNn "
+                        "content": "eONNEHNnNINNNININININININININININININININININININININININININININININININININININININININININININ "
                     }
                 ]
             },
@@ -54010,7 +53962,7 @@
                 "page_aside_text_content": [
                     {
                         "type": "text",
-                        "content": "eONNEHNTVHNOINWOWRDO "
+                        "content": "eONNEHHTVHNOINWWWRrO "
                     }
                 ]
             },
@@ -57080,10 +57032,10 @@
                 "code_content": [
                     {
                         "type": "text",
-                        "content": "1 for(Bubble b :bubbleList) 2b.update(); 3 invalidate(); } }; protected void onDraw(Canvas canvas){ for (Bubble b :bubbleList) b.draw(canvas); } "
+                        "content": "1 for(Bubble b :bubbleList) 2 b.update(); 3 invalidate(); } }; protected void onDraw(Canvas canvas) { for (Bubble b :bubbleList) b.draw(canvas); } "
                     }
                 ],
-                "code_language": "javascript"
+                "code_language": "txt"
             },
             "bbox": [
                 238,

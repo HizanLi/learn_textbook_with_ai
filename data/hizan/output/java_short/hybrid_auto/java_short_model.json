@@ -11467,7 +11467,7 @@
                 0.15
             ],
             "angle": 0,
-            "content": "jshell> \\(\\texttt{x} = \\texttt{x} +\\texttt{7}\\)   \n\\(x = = > 49\\)"
+            "content": "jshell> \\(\\texttt{x} = \\texttt{x} +\\texttt{7}\\)   \n\\(\\texttt{x} = = > 49\\)"
         },
         {
             "type": "text",
@@ -12424,7 +12424,7 @@
                 0.416
             ],
             "angle": 0,
-            "content": "1 jshell> /reset\n| Resetting state.\n2 jshell> System.out.println(\"Hello, Java!\") \n  Hello, Java!\n  jshell> System.out.println(\"My name is Bryson, nice to meet you!\") \n  My name is Bryson, nice to meet you!\n3 jshell> /save ~/Desktop/myJava.txt\n4 jshell> /reset\n| Resetting state.\n5 jshell > /open ~/Desktop/myJava.txt\n6 Hello, Java!\n  My name is Bryson, nice to meet you!"
+            "content": "1 jshell> /reset\n| Resetting state.\n2 jshell> System.out.println(\"Hello, Java!\") \n  Hello, Java!\n  jshell> System.out.println(\"My name is Bryson, nice to meet you!\") \n  My name is Bryson, nice to meet you! \n3 jshell> /save ~/Desktop/myJava.txt\n4 jshell> /reset\n| Resetting state.\n5 jshell> /open ~/Desktop/myJava.txt\n6 Hello, Java!\n  My name is Bryson, nice to meet you!"
         },
         {
             "type": "title",
@@ -16295,7 +16295,7 @@
                 0.318
             ],
             "angle": 0,
-            "content": "Scanner scan \\(=\\) new Scanner(System.in);   \nString playAgain \\(= \\mathrm{''}\\) .   \ndo { // Create a random number for the user to guess int theNumber \\(=\\) (int)(Math.random() \\* 100 + 1); // System.out.println( theNumber ); int guess \\(= 0\\) -   \nwhile (guess != theNumber) {"
+            "content": "Scanner scan \\(=\\) new Scanner(System.in);   \nString playAgain \\(= \\mathrm{\"\"}\\) .   \ndo{ // Create a random number for the user to guess int theNumber \\(=\\) (int)(Math.random() \\* 100 + 1); // System.out.println( theNumber ); int guess \\(= 0\\) -   \nwhile (guess != theNumber) {"
         },
         {
             "type": "text",
@@ -16818,7 +16818,7 @@
                 0.381
             ],
             "angle": 0,
-            "content": "System.out.println(\"Thank you for playing! Goodbye.\"); scan.close(); } 1"
+            "content": "System.out.println(\"Thank you for playing! Goodbye.\"); scan.close(); } }"
         },
         {
             "type": "text",
@@ -17583,7 +17583,7 @@
                 0.26
             ],
             "angle": 90,
-            "content": "eONNEHNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNn"
+            "content": "eONNEHNnNINNNIN"
         },
         {
             "type": "title",
@@ -23233,7 +23233,7 @@
                 0.405
             ],
             "angle": 0,
-            "content": "import javax.swing JFrame;   \nimport javax.swing.JLabel;   \nimport javax.swing.SwingConstants;   \nimport java.awt.Dimension;   \nimport java.awt.Font;   \nimport javax.swing.JTextField;"
+            "content": "import javax.swing JFrame;  \nimport javax.swing.JLabel;  \nimport javax.swing.SwingConstants;  \nimport java.awt.Dimension;  \nimport java.awt.Font;  \nimport javax.swing.JTextField;"
         },
         {
             "type": "text",
@@ -25464,7 +25464,7 @@
                 0.26
             ],
             "angle": 90,
-            "content": "eONNEHNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNn"
+            "content": "eONNEHNnNINNNIN"
         },
         {
             "type": "text",
@@ -31543,7 +31543,7 @@
                 0.615
             ],
             "angle": 0,
-            "content": "else{ message \\(=\\) guess \\(^+\\) \"is correct.You win after \\(\" +\\) numberOfTries \\(^+\\) \"tries!\"; Toast.makeText(MainActivity.this, message, Toast.LENGTH LONG).show(); newGame();   \n}"
+            "content": "else{ message \\(=\\) guess \\(^+\\) \"is correct.You win after \\(\" +\\) numberOfTries \\(^+\\) \"tries!\"; Toast.makeText(MainActivity.this，message, Toast.LENGTH LONG).show(); newGame();   \n}"
         },
         {
             "type": "text",
@@ -32661,7 +32661,7 @@
                 0.903
             ],
             "angle": 0,
-            "content": "public boolean onCreateOptionsMenu(Menu menu) { MenuInflater,inflater \\(\\equiv\\) getMenuInflater(); inflater.inflate(Rmenu menu_main,menu); return true;   \npublicboolean onOptionsItemSelected(Menuitem item){ switch(item.getIID(){ caseR.id.action_settings: return true; case R.id.action_newgame: newGame(); return true; case R.id.action在游戏中: return true; case R.id.action_about: return true;"
+            "content": "public boolean onCreateOptionsMenu(Menu menu) { MenuInflater,inflater \\(\\equiv\\) getMenuInflater(); inflater.inflate(Rmenu menu_main, menu); return true;   \npublicboolean onOptionsItemSelected(Menuitem item){ switch(item.getIID(){ caseR.id.action_settings: return true; case R.id.action_newgame: newGame(); return true; case R.id.action在游戏中: return true; case R.id.action_about: return true;"
         },
         {
             "type": "page_number",
@@ -34259,7 +34259,7 @@
                 0.936
             ],
             "angle": 0,
-            "content": "public void checkGuess() { String guessText \\(=\\) txtGuess.getText().toString(); String message \\(=\\) \"\"; try { int guess \\(=\\) Integer.parseInt(guessText); if (guess < theNumber) message \\(=\\) guess + \" is too low. Try again.\"; else if (guess > theNumber) message \\(=\\) guess + \" is too high. Try again.\"; else { message \\(=\\) guess + \" is correct. You win! Let's play again\"; ①SharedPreferences preferences \\(=\\) PreferenceManager.getDefaultSharedPreferences(this); ② int gamesWon \\(=\\) preferences.getInt(\"gamesWon\", 0) + 1;"
+            "content": "public void checkGuess() { String guessText \\(=\\) txtGuess.getText().toString(); String message \\(= \\text{串}\\) \"； try { int guess \\(=\\) Integer.parseInt(guessText); if (guess < theNumber) message \\(=\\) guess \\(^+\\) \"is too low. Try again.\"; else if (guess > theNumber) message \\(=\\) guess \\(^+\\) \"is too high. Try again.\"; else { message \\(=\\) guess \\(^+\\) \"is correct. You win! Let's play again\"; ①SharedPreferences preferences \\(=\\) PreferenceManager.getDefaultSharedPreferences(this); ② int gamesWon \\(=\\) preferences.getInt(\"gamesWon\",0)+1;"
         },
         {
             "type": "page_number",
@@ -36595,7 +36595,7 @@
                 0.817
             ],
             "angle": 0,
-            "content": "import java.util.Scanner;   \npublic class SecretMessages { public static void main(String[] args) { Scanner scan \\(=\\) new Scanner(System.in); System.out.println(\"Enter a message to encode or decode:\"); String message \\(=\\) scan.nextLine(); String output \\(=\\) \"\" for ( int \\(\\mathbf{x} =\\) message.length()-1; \\(\\times > = 0\\) ; x--）{ output \\(+ =\\) messagecharAt(x); } System.out.println(output);"
+            "content": "import java.util.Scanner;   \npublic class SecretMessages { public static void main(String[] args) { Scanner scan \\(=\\) new Scanner(System.in); System.out.println(\"Enter a message to encode or decode:\"); String message \\(=\\) scan.nextLine(); String output \\(=\\) \"\" for ( int \\(\\mathbf{x} =\\) message.length()-1; \\(\\times > = 0\\) ;x--）{ output \\(+ =\\) messagecharAt(x); } System.out.println(output);"
         },
         {
             "type": "text",
@@ -37417,7 +37417,7 @@
                 0.579
             ],
             "angle": 0,
-            "content": "for (int \\(x = 0\\) . \\(\\times <  \\) message.length(); \\(x + +\\) ）{ char input \\(=\\) message.charAt(x); if(input \\(\\Rightarrow\\) A' &&input \\(\\Leftarrow\\) Z') { 1 input \\(+ =\\) key; 2 if(input \\(>\\) Z') 3 input \\(- = 26\\) · } output \\(+ =\\) input;"
+            "content": "for (int \\(x = 0\\) . \\(\\mathbf{x} <   \\mathbf{message.length()}\\) . \\(x + + )\\) { char input \\(=\\) message.charAt(x); if(input \\(\\begin{array}{rl}{\\mathrm{~\\textit~{~A~}~}}&{\\mathrm{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\cdot~}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}1 input \\(+ =\\) key; 2 if(input \\(\\begin{array}{rl}{\\mathrm{~~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\textit ~{~\\cdot ~}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}1 output \\(+ =\\) input;"
         },
         {
             "type": "text",
@@ -38760,7 +38760,7 @@
                 0.924
             ],
             "angle": 0,
-            "content": "import java.util.Scanner;   \npublic class SecretMessages { public static void main(String[] args) { Scanner scan \\(=\\) new Scanner(System.in); System.out.println(\"Enter a message to encode or decode:\"); String message \\(=\\) scan.nextLine(); String output \\(=\\) \"\"; System.out.println(\"Enter a secret key (-25 to 25):\"); int keyVal \\(=\\) Integer.parseInt scam.nextLine(); char key \\(=\\) (char) keyVal; for (int \\(\\mathbf{x} = 0\\) . \\(\\mathbf{x} <   \\mathbf{message}\\) .length(）; \\(\\mathrm{x + + }\\) ){ char input \\(=\\) message.charAt(x); if (input \\(> =\\) 'A' && input \\(<   =\\) 'Z') { input \\(+ =\\) key; if (input \\(>\\) 'Z') input \\(= =\\) 26; if (input \\(<   \\) 'A') input \\(+ =\\) 26; } else if (input \\(> =\\) 'a' && input \\(<   =\\) 'z') { input \\(+ =\\) key; if (input \\(>\\) 'z') input \\(= =\\) 26; if (input \\(<   \\) 'a') input \\(+ =\\) 26; } else if (input \\(> =\\) '0' && input \\(<   =\\) '9') { input \\(+ =\\) (keyVal % 10); if (input \\(>\\) '9') input \\(= =\\) 10; if (input \\(<   \\) '0') input \\(+ =\\) 10; } output \\(+ =\\) input; }"
+            "content": "import java.util.Scanner;   \npublic class SecretMessages { public static void main(String[] args) { Scanner scan \\(=\\) new Scanner(System.in); System.out.println(\"Enter a message to encode or decode:\"); String message \\(=\\) scan.nextLine(); String output \\(=\\) \"\"; System.out.println(\"Enter a secret key (-25 to 25):\"); int keyVal \\(=\\) Integer.parseInt scam.nextLine(); char key \\(=\\) (char) keyVal; for (int \\(\\texttt{x} = 0\\) . \\(\\mathbf{x} <   \\mathbf{message}\\) .length(）; \\(\\mathbf{x + + }\\) ){ char input \\(=\\) message.charAt(x); if (input \\(> =\\) 'A' && input \\(<   =\\) 'Z') { input \\(+ =\\) key; if (input \\(>\\) 'Z') input \\(= =\\) 26; if (input \\(<   \\) 'A') input \\(+ =\\) 26; } else if (input \\(> =\\) 'a' && input \\(<   =\\) 'z') { input \\(+ =\\) key; if (input \\(>\\) 'z') input \\(= =\\) 26; if (input \\(<   \\) 'a') input \\(+ =\\) 26; } else if (input \\(> =\\) '0' && input \\(<   =\\) '9') { input \\(+ =\\) (keyVal % 10); if (input \\(>\\) '9') input \\(= =\\) 10; if (input \\(<   \\) '0') input \\(+ =\\) 10; } output \\(+ =\\) input; }"
         },
         {
             "type": "page_number",
@@ -42325,7 +42325,7 @@
                 0.153
             ],
             "angle": 0,
-            "content": "public static void main(String[] args) { ① SecretMessagesGUI theApp = new SecretMessagesGUI(); ② theApp.setSize(new java.awt.Dimension(600,400)); ③ theApp.setVisible(true); }"
+            "content": "public static void main(String[] args){ ① SecretMessagesGUI theApp \\(=\\) new SecretMessagesGUI(); ② theApp.setSize(new java.awt.Dimension(600,400)); ③ theApp.setVisible(true);   \n}"
         },
         {
             "type": "text",
@@ -51293,7 +51293,7 @@
                 0.515
             ],
             "angle": 0,
-            "content": "import javax.swing.JPanel;   \npublic class BubblePanel extends JPanel { private class Bubble{ private int x; private int y; private int size; }   \n1"
+            "content": "import javax.swing.JPanel;   \npublic class BubblePanel extends JPanel { private class Bubble{ private int x; private int y; private int size; }   \n}"
         },
         {
             "type": "text",
@@ -53655,7 +53655,7 @@
                 0.824
             ],
             "angle": 0,
-            "content": "```java\nrepaint();\n}\nprivate class BubbleListener extends MouseAdapter {\n}"
+            "content": "```java\nrepaint();\n}\nprivate class BubbleListener extends MouseAdapter {\n}\nprivate class Bubble {"
         },
         {
             "type": "text",
@@ -56424,7 +56424,7 @@
                 0.598
             ],
             "angle": 0,
-            "content": "private class Bubble {\n    private int x;\n    --snip--\n        color = new Color rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));\n}"
+            "content": "private class Bubble {\n    private int x;\n    --snip--\n        color = new Color[rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)];\n}"
         },
         {
             "type": "text",
@@ -59597,7 +59597,7 @@
                 0.162
             ],
             "angle": 0,
-            "content": "\\(\\begin{array}{rl} & {\\mathrm{y + = y s p e e d};}\\\\ & {\\bullet \\mathrm{if(x - size / 2 <= 0||x + size / 2 >=}\\mathrm{width()})}\\\\ & {\\mathrm{x s p e e d = -x s p e e d};}\\\\ & {\\bullet \\mathrm{if(y - size / 2 <= 0||y + size / 2 >=}\\mathrm{getH e i g h t()})}\\\\ & {\\mathrm{y s p e e d = -y s p e e d;}} \\end{array}\\)"
+            "content": "\\(\\begin{array}{rl} & y += \\mathrm{yspeed};\\\\ & \\bullet \\text{if} (x - \\mathrm{size} / 2 <= 0 || x + \\mathrm{size} / 2 >= \\mathrm{getWidth()})\\\\ & \\mathrm{xspeed} = -\\mathrm{xspeed};\\\\ & \\bullet \\text{if} (y - \\mathrm{size} / 2 <= 0 || y + \\mathrm{size} / 2 >= \\mathrm{getHeight()})\\\\ & \\mathrm{yspeed} = -\\mathrm{yspeed}; \\end{array}\\)"
         },
         {
             "type": "text",
@@ -60694,7 +60694,7 @@
                 0.26
             ],
             "angle": 90,
-            "content": "eONNEHNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNnNn"
+            "content": "eONNEHNnNINNNININININININININININININININININININININININININININININININININININININININININININ"
         },
         {
             "type": "text",
@@ -61416,7 +61416,7 @@
                 0.259
             ],
             "angle": 90,
-            "content": "eONNEHNTVHNOINWOWRDO"
+            "content": "eONNEHHTVHNOINWWWRrO"
         },
         {
             "type": "image",
@@ -64762,7 +64762,7 @@
                 0.209
             ],
             "angle": 0,
-            "content": "1 for(Bubble b :bubbleList) 2b.update(); 3 invalidate(); } }; protected void onDraw(Canvas canvas){ for (Bubble b :bubbleList) b.draw(canvas); }"
+            "content": "1 for(Bubble b :bubbleList) 2 b.update(); 3 invalidate(); } }; protected void onDraw(Canvas canvas) { for (Bubble b :bubbleList) b.draw(canvas); }"
         },
         {
             "type": "text",

@@ -906,7 +906,7 @@ Whew! Our variable x still has the same value, 42. That means we can use the val
 
 So how would we change the value stored in the variable? We simply use the assignment operator again. Enter $\textbf { \em x } = \textbf { \em x } + \textbf { \em 7 }$ at the JShell prompt:
 
-jshell> $\texttt{x} = \texttt{x} +\texttt{7}$ $x = = > 49$
+jshell> $\texttt{x} = \texttt{x} +\texttt{7}$ $\texttt{x} = = > 49$
 
 We’ve replaced the value stored in x by taking the old $\mathsf { x }$ value and adding 7 to it. From now on, whenever we ask for the value of x, we’ll get 49, until we change it again. The value of a variable can change, or vary, as often as we need it to—that’s why they’re called variables.
 
@@ -1038,11 +1038,11 @@ To start a new code snippet, use the /reset command. JShell will remember and sa
 2 jshell> System.out.println("Hello, Java!") 
   Hello, Java!
   jshell> System.out.println("My name is Bryson, nice to meet you!") 
-  My name is Bryson, nice to meet you!
+  My name is Bryson, nice to meet you! 
 3 jshell> /save ~/Desktop/myJava.txt
 4 jshell> /reset
 | Resetting state.
-5 jshell > /open ~/Desktop/myJava.txt
+5 jshell> /open ~/Desktop/myJava.txt
 6 Hello, Java!
   My name is Bryson, nice to meet you! 
 ```
@@ -1389,8 +1389,8 @@ statements will be contained in the do-while loop. Those steps describe one full
 So, we can add the do keyword and an opening brace immediately after these two lines and before the code that creates the secret number:
 
 Scanner scan $=$ new Scanner(System.in);   
-String playAgain $= \mathrm{''}$ .   
-do { // Create a random number for the user to guess int theNumber $=$ (int)(Math.random() \* 100 + 1); // System.out.println( theNumber ); int guess $= 0$ -   
+String playAgain $= \mathrm{""}$ .   
+do{ // Create a random number for the user to guess int theNumber $=$ (int)(Math.random() \* 100 + 1); // System.out.println( theNumber ); int guess $= 0$ -   
 while (guess != theNumber) {
 
 Then, after the closing brace for the while loop for guessing and the brace following our last else statement, we’ll ask the user if they would like to play again and get their response from the keyboard.
@@ -1444,7 +1444,7 @@ Finally, the last line we’ll add to the guessing game app is to address a warn
 Add the following line after the println() statement thanking the user for playing, before the final two closing braces:
 
 ```javascript
-System.out.println("Thank you for playing! Goodbye."); scan.close(); } 1 
+System.out.println("Thank you for playing! Goodbye."); scan.close(); } } 
 ```
 
 You’ll notice that the yellow warning disappears from the Eclipse editor window when we add this line. Eclipse helps with common programming errors like misspellings or missing punctuation, and it even warns us about problems that could occur like resource leaks and unused variables. As you build bigger, more complex applications in Java, these features of the IDE will become even more valuable. You can find more information on using Eclipse to debug your programs in the appendix.
@@ -2034,12 +2034,12 @@ Figure 3-19: Eclipse recommends Quick Fix options for the new code we’ve enter
 
 We want to make use of the Dimension class that’s already provided in the java.awt package, so the topmost Quick Fix option, Import 'Dimension' ( java.awt), is the right one for this situation. Click it, and Eclipse will add java.awt.Dimension to the list of imported classes at the top of the file.
 
-```txt
-import javax.swing JFrame;   
-import javax.swing.JLabel;   
-import javax.swing.SwingConstants;   
-import java.awt.Dimension;   
-import java.awt.Font;   
+```java
+import javax.swing JFrame;  
+import javax.swing.JLabel;  
+import javax.swing.SwingConstants;  
+import java.awt.Dimension;  
+import java.awt.Font;  
 import javax.swing.JTextField; 
 ```
 
@@ -2750,7 +2750,7 @@ You can create a Toast message popup with the Toast.makeText() method. Here’s 
 ![](images/3a8cd51c778ce00c434ecf0e77dcc47d285b92eb05b5fec5f367dfee1ebc6c4c.jpg)  
 Figure 4-33: A Toast message pops up on the screen to alert the user to important information.
 
-else{ message $=$ guess $^+$ "is correct.You win after $" +$ numberOfTries $^+$ "tries!"; Toast.makeText(MainActivity.this, message, Toast.LENGTH LONG).show(); newGame();   
+else{ message $=$ guess $^+$ "is correct.You win after $" +$ numberOfTries $^+$ "tries!"; Toast.makeText(MainActivity.this，message, Toast.LENGTH LONG).show(); newGame();   
 }
 
 The Toast message in this code will pop up over the MainActivity (our guessing game), displaying the String message for a few seconds thanks to Toast.LENGTH_LONG. There’s also a Toast.LENGTH_SHORT, but it pops up and disappears so quickly that it can be hard to read. The .show() method at the end does the important part, showing the Toast on the screen.
@@ -2857,7 +2857,7 @@ When the user chooses an option from the menu, we want our app to perform the re
 
 In the MainActivity.java file, find and modify the onOptionsItemSelected() event handler method. Alternatively, you can add it right below the method onCreateOptionsMenu() that we modified in the previous section, but before the closing brace on the final line of the file.
 
-public boolean onCreateOptionsMenu(Menu menu) { MenuInflater,inflater $\equiv$ getMenuInflater(); inflater.inflate(Rmenu menu_main,menu); return true;   
+public boolean onCreateOptionsMenu(Menu menu) { MenuInflater,inflater $\equiv$ getMenuInflater(); inflater.inflate(Rmenu menu_main, menu); return true;   
 publicboolean onOptionsItemSelected(Menuitem item){ switch(item.getIID(){ caseR.id.action_settings: return true; case R.id.action_newgame: newGame(); return true; case R.id.action在游戏中: return true; case R.id.action_about: return true;
 
 ```txt
@@ -3033,7 +3033,7 @@ High scores, leaderboards, winning streaks—anything that records our accomplis
 
 When the user wins a round of the game by guessing the correct number, we can use a shared preference to retrieve the number of games they’ve won, add 1 to it, and store the new value. Add this code to your checkGuess() method, putting it inside the else statement for a winning guess:
 
-public void checkGuess() { String guessText $=$ txtGuess.getText().toString(); String message $=$ ""; try { int guess $=$ Integer.parseInt(guessText); if (guess < theNumber) message $=$ guess + " is too low. Try again."; else if (guess > theNumber) message $=$ guess + " is too high. Try again."; else { message $=$ guess + " is correct. You win! Let's play again"; ①SharedPreferences preferences $=$ PreferenceManager.getDefaultSharedPreferences(this); ② int gamesWon $=$ preferences.getInt("gamesWon", 0) + 1;
+public void checkGuess() { String guessText $=$ txtGuess.getText().toString(); String message $= \text{串}$ "； try { int guess $=$ Integer.parseInt(guessText); if (guess < theNumber) message $=$ guess $^+$ "is too low. Try again."; else if (guess > theNumber) message $=$ guess $^+$ "is too high. Try again."; else { message $=$ guess $^+$ "is correct. You win! Let's play again"; ①SharedPreferences preferences $=$ PreferenceManager.getDefaultSharedPreferences(this); ② int gamesWon $=$ preferences.getInt("gamesWon",0)+1;
 
 $\bullet$ SharedPreferences.Editor editor $=$ preferences_edit(); $\bullet$ editor.putInt("gamesWon",gamesWon); $\bullet$ editor.apply(); $\mathrm{newGame()}$
 
@@ -3228,7 +3228,7 @@ The body of the for loop is a single line. We’re getting the character at the 
 Now we just need to show the output message to the screen, which we can do with System.out.println(output). The full message-reversing iteration of the app is shown in Listing 6-1.
 
 import java.util.Scanner;   
-public class SecretMessages { public static void main(String[] args) { Scanner scan $=$ new Scanner(System.in); System.out.println("Enter a message to encode or decode:"); String message $=$ scan.nextLine(); String output $=$ "" for ( int $\mathbf{x} =$ message.length()-1; $\times > = 0$ ; x--）{ output $+ =$ messagecharAt(x); } System.out.println(output);
+public class SecretMessages { public static void main(String[] args) { Scanner scan $=$ new Scanner(System.in); System.out.println("Enter a message to encode or decode:"); String message $=$ scan.nextLine(); String output $=$ "" for ( int $\mathbf{x} =$ message.length()-1; $\times > = 0$ ;x--）{ output $+ =$ messagecharAt(x); } System.out.println(output);
 
 Listing 6-1: The first iteration of the Secret Messages app reverses the characters in the user’s message.
 
@@ -3316,7 +3316,9 @@ In the condition inside the if statement, we can use either 65 (the value of 'A'
 
 Now, in the body of the if statement, we’ll add the key value to the input character to encode the letter. This is also where we’ll handle wrapping around to the front of the alphabet if the key value shifts a letter past $" \Sigma "$ . So the code inside the for loop will become:
 
-for (int $x = 0$ . $\times <$ message.length(); $x + +$ ）{ char input $=$ message.charAt(x); if(input $\Rightarrow$ A' &&input $\Leftarrow$ Z') { 1 input $+ =$ key; 2 if(input $>$ Z') 3 input $- = 26$ · } output $+ =$ input;
+```txt
+for (int \(x = 0\) . \(\mathbf{x} <   \mathbf{message.length()}\) . \(x + + )\) { char input \(=\) message.charAt(x); if(input \(\begin{array}{rl}{\mathrm{~\textit~{~A~}~}}&{\mathrm{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\cdot~}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}1 input \(+ =\) key; 2 if(input \(\begin{array}{rl}{\mathrm{~~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\textit ~{~\cdot ~}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}1 output \(+ =\) input; 
+```
 
 After getting the next character from the message and checking to make sure it’s an uppercase letter, we encode the letter by adding the key to it $\bullet$ . Then, we check whether adding the key value pushed the letter past $z \_ { \pmb { \theta } }$ . If so, at $\pmb { \Theta }$ we subtract 26 (the number of letters in the English alphabet) from the encoded input value to wrap it back around to the front of the alphabet. Finally, we can add the resulting input character to the output string x.
 
@@ -3488,7 +3490,7 @@ The 5 in 5pm is correctly shifted by seven and wraps back around to 2wt in the e
 The full, final text-based version of the Secret Messages app is given in Listing 6-4.
 
 import java.util.Scanner;   
-public class SecretMessages { public static void main(String[] args) { Scanner scan $=$ new Scanner(System.in); System.out.println("Enter a message to encode or decode:"); String message $=$ scan.nextLine(); String output $=$ ""; System.out.println("Enter a secret key (-25 to 25):"); int keyVal $=$ Integer.parseInt scam.nextLine(); char key $=$ (char) keyVal; for (int $\mathbf{x} = 0$ . $\mathbf{x} <   \mathbf{message}$ .length(）; $\mathrm{x + + }$ ){ char input $=$ message.charAt(x); if (input $> =$ 'A' && input $<   =$ 'Z') { input $+ =$ key; if (input $>$ 'Z') input $= =$ 26; if (input $<$ 'A') input $+ =$ 26; } else if (input $> =$ 'a' && input $<   =$ 'z') { input $+ =$ key; if (input $>$ 'z') input $= =$ 26; if (input $<$ 'a') input $+ =$ 26; } else if (input $> =$ '0' && input $<   =$ '9') { input $+ =$ (keyVal % 10); if (input $>$ '9') input $= =$ 10; if (input $<$ '0') input $+ =$ 10; } output $+ =$ input; }
+public class SecretMessages { public static void main(String[] args) { Scanner scan $=$ new Scanner(System.in); System.out.println("Enter a message to encode or decode:"); String message $=$ scan.nextLine(); String output $=$ ""; System.out.println("Enter a secret key (-25 to 25):"); int keyVal $=$ Integer.parseInt scam.nextLine(); char key $=$ (char) keyVal; for (int $\texttt{x} = 0$ . $\mathbf{x} <   \mathbf{message}$ .length(）; $\mathbf{x + + }$ ){ char input $=$ message.charAt(x); if (input $> =$ 'A' && input $<   =$ 'Z') { input $+ =$ key; if (input $>$ 'Z') input $= =$ 26; if (input $<$ 'A') input $+ =$ 26; } else if (input $> =$ 'a' && input $<   =$ 'z') { input $+ =$ key; if (input $>$ 'z') input $= =$ 26; if (input $<$ 'a') input $+ =$ 26; } else if (input $> =$ '0' && input $<   =$ '9') { input $+ =$ (keyVal % 10); if (input $>$ '9') input $= =$ 10; if (input $<$ '0') input $+ =$ 10; } output $+ =$ input; }
 
 ```javascript
 System.out.println(output); scan.close(); } 1 
@@ -3812,9 +3814,8 @@ Eclipse will highlight the closing brace in red, so let’s go ahead and add the
 
 Just like when we created our game app in Chapter 3, we need to add some setup code to the main() method to create an instance of the Secret Messages app, correctly size the GUI window, and make the GUI visible to the user. Near the bottom of the SecretMessagesGUI.java file, find the main() method stub Eclipse provided and add the following three lines.
 
-```java
-public static void main(String[] args) { ① SecretMessagesGUI theApp = new SecretMessagesGUI(); ② theApp.setSize(new java.awt.Dimension(600,400)); ③ theApp.setVisible(true); } 
-```
+public static void main(String[] args){ ① SecretMessagesGUI theApp $=$ new SecretMessagesGUI(); ② theApp.setSize(new java.awt.Dimension(600,400)); ③ theApp.setVisible(true);   
+}
 
 The line at $\bullet$ creates a SecretMessagesGUI object called theApp. The new keyword followed by the class name runs the constructor method SecretMessagesGUI(), which sets up all the components of the GUI interface.
 
@@ -4588,10 +4589,10 @@ We usually make internal and helper classes private to keep other programs from 
 
 BubblePanel will rely on the Bubble class to store information on individual bubbles as the user draws on the screen. A bubble has an (x, y) location on the screen, a size, and a color, so we can make these attributes as variables inside Bubble. The x- and y-coordinates of the bubble’s location and the size of the bubble can all be stored as integer values:
 
-```java
+```txt
 import javax.swing.JPanel;   
 public class BubblePanel extends JPanel { private class Bubble{ private int x; private int y; private int size; }   
-1 
+} 
 ```
 
 Here we make two separate variables called x and y to store the bubble’s coordinates, as well as a size variable. These attributes are private, so only the Bubble class itself can change those values directly. We encapsulate all the data a bubble should have inside the Bubble class, and we interact with bubbles using the methods in that class only.
@@ -4890,7 +4891,8 @@ Next, let’s start coding the private, named inner class to listen for mouse ev
 repaint();
 }
 private class BubbleListener extends MouseAdapter {
-} 
+}
+private class Bubble { 
 ```
 
 The BubbleListener class extends MouseAdapter, which processes mouse events. Just as when we used the extends keyword to build a new type of JFrame that inherited all the features and functions of its parent class, the BubbleListener will inherit all the mouse event listener features of the MouseAdapter class. This adapter class includes the ability to handle
@@ -5136,7 +5138,7 @@ Because the Color class’s constructor can accept the alpha value as a fourth a
 private class Bubble {
     private int x;
     --snip--
-        color = new Color rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+        color = new Color[rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)];
 } 
 ```
 
@@ -5462,7 +5464,7 @@ To check for collisions with the edge of each bubble, we’ll have to account fo
 
 public void update() { $\texttt{x} + = \texttt{xspeed};$
 
-$\begin{array}{rl} & {\mathrm{y + = y s p e e d};}\\ & {\bullet \mathrm{if(x - size / 2 <= 0||x + size / 2 >=}\mathrm{width()})}\\ & {\mathrm{x s p e e d = -x s p e e d};}\\ & {\bullet \mathrm{if(y - size / 2 <= 0||y + size / 2 >=}\mathrm{getH e i g h t()})}\\ & {\mathrm{y s p e e d = -y s p e e d;}} \end{array}$
+$\begin{array}{rl} & y += \mathrm{yspeed};\\ & \bullet \text{if} (x - \mathrm{size} / 2 <= 0 || x + \mathrm{size} / 2 >= \mathrm{getWidth()})\\ & \mathrm{xspeed} = -\mathrm{xspeed};\\ & \bullet \text{if} (y - \mathrm{size} / 2 <= 0 || y + \mathrm{size} / 2 >= \mathrm{getHeight()})\\ & \mathrm{yspeed} = -\mathrm{yspeed}; \end{array}$
 
 At $\bullet$ , we subtract size/2 from x to see whether the left edge of the bubble has touched the left side of the screen, which will be true if x - size/2 is less than or equal to 0. Division is performed before subtraction. Therefore size/2 will be evaluated first and then subtracted from x, so we don’t need to add parentheses around size/2. We also add size/2 to x to see whether the right edge of the bubble is touching the right edge of the screen, which would mean x + size/2 is greater than or equal to getWidth(). At v, we make the same changes to check for the top edge (y - size/2) and bottom edge (y + size/2) of each bubble to see whether they are touching the top or bottom, respectively, of the drawing window.
 
@@ -5993,8 +5995,8 @@ private Runnable r = new Runnable() {
     public void run() { 
 ```
 
-```javascript
-1 for(Bubble b :bubbleList) 2b.update(); 3 invalidate(); } }; protected void onDraw(Canvas canvas){ for (Bubble b :bubbleList) b.draw(canvas); } 
+```txt
+1 for(Bubble b :bubbleList) 2 b.update(); 3 invalidate(); } }; protected void onDraw(Canvas canvas) { for (Bubble b :bubbleList) b.draw(canvas); } 
 ```
 
 At $\bullet$ , we use the for-each statement again to loop through every Bubble b in bubbleList. At each iteration of the loop, we call b.update() $\otimes$ to update the location of each bubble for the next frame of animation.
