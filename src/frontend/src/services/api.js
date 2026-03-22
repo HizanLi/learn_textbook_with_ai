@@ -112,6 +112,28 @@ export async function getProjectPdf(username, filename) {
   return res.blob();
 }
 
+export async function getProjectProcessingSteps(username, projectName) {
+  const url = `${API_BASE}/api/project-processing-steps?username=${encodeURIComponent(username)}&projectName=${encodeURIComponent(projectName)}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Failed to fetch processing steps");
+  }
+  return res.json();
+}
+
+export async function triggerProcessingStep(username, projectName, step) {
+  const res = await fetch(`${API_BASE}/api/trigger-processing-step`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, projectName, step }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to trigger processing step");
+  }
+  return data;
+}
+
 export async function checkServerHealth() {
   const res = await fetch(`${API_BASE}/health`, {
     signal: AbortSignal.timeout(3000)

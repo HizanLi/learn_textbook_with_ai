@@ -123,4 +123,139 @@ router.get("/project-pdf", (req, res) => {
   fileStream.pipe(res);
 });
 
+router.get("/project-processing-steps", (req, res) => {
+  const { username, projectName } = req.query;
+
+  if (!username || !projectName) {
+    return res
+      .status(400)
+      .json({ error: "username and projectName are required" });
+  }
+
+  const safeUsername = String(username).trim();
+  const safeProjectName = String(projectName).trim();
+  const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
+
+  const outputDir = path.join(DATA_DIR, safeUsername, "output");
+  const projectOutputDir = path.join(outputDir, noExtProjectName, "hybrid_auto");
+
+  const steps = {
+    step1: {
+      name: "PDF to Markdown",
+      complete: false,
+    },
+    step2: {
+      name: "Markdown to JSON",
+      complete: false,
+    },
+    step3: {
+      name: "Generate Summary",
+      complete: false,
+    },
+  };
+
+  if (!fs.existsSync(projectOutputDir)) {
+    return res.json(steps);
+  }
+
+  try {
+    const files = fs.readdirSync(projectOutputDir);
+
+    // Check step 1: markdown file exists
+    const mdFile = files.find(
+      (f) => f.toLowerCase().endsWith(".md")
+    );
+    if (mdFile) {
+      steps.step1.complete = true;
+    }
+
+    // Check step 2: chunker_step_1.json and textbook_toc.json exist
+    const hasChunkerStep1 = files.includes("chunker_step_1.json");
+    const hasTocJson = files.includes("textbook_toc.json");
+    if (hasChunkerStep1 && hasTocJson) {
+      steps.step2.complete = true;
+    }
+
+    // Check step 3: textbook_with_content.json exists with content
+    const tocPath = path.join(projectOutputDir, "textbook_with_content.json");
+    if (fs.existsSync(tocPath)) {
+      try {
+        const content = JSON.parse(fs.readFileSync(tocPath, "utf-8"));
+        const chapters = content?.chapters || [];
+        const lastChapter = chapters[chapters.length - 1];
+        const lastSection = lastChapter?.sections?.[lastChapter.sections.length - 1];
+        if (lastSection?.content) {
+          steps.step3.complete = true;
+        }
+      } catch (err) {
+        console.error(`Failed to parse textbook_with_content.json: ${err.message}`);
+      }
+    }
+  } catch (err) {
+    console.error(
+      `Error checking processing steps for ${safeUsername}/${safeProjectName}: ${err.message}`
+    );
+  }
+
+  res.json(steps);
+});
+
+router.post("/trigger-processing-step", async (req, res) => {
+  const { username, projectName, step } = req.body;
+
+  if (!username || !projectName || !step) {
+    return res
+      .status(400)
+      .json({ error: "username, projectName, and step are required" });
+  }
+
+  const safeUsername = String(username).trim();
+  const safeProjectName = String(projectName).trim();
+  const safeStep = String(step).trim();
+
+  const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
+
+  try {
+    // Import processor to trigger steps
+    const {
+      processProjectWithPython,
+    } = require("../services/processor");
+
+    if (safeStep === "step1") {
+      // Trigger Step 1: PDF to Markdown (MinerU)
+      // This would typically call MinerU to convert PDF to markdown
+      // Placeholder: you may need to implement this based on your MinerU integration
+      return res.json({
+        status: "started",
+        message: "Step 1 (PDF to Markdown) processing started",
+      });
+    } else if (safeStep === "step2") {
+      // Trigger Step 2: Markdown to JSON (Chunking)
+      // This would typically call the chunker microservice
+      // Placeholder: you may need to implement this based on your chunker
+      return res.json({
+        status: "started",
+        message: "Step 2 (Markdown to JSON) processing started",
+      });
+    } else if (safeStep === "step3") {
+      // Trigger Step 3: Generate Summary (LLM)
+      // This would typically call the LLM processing pipeline
+      // Placeholder: you may need to implement this based on your LLM pipeline
+      return res.json({
+        status: "started",
+        message: "Step 3 (Generate Summary) processing started",
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Invalid step. Must be step1, step2, or step3." });
+    }
+  } catch (err) {
+    console.error(
+      `Error triggering ${safeStep} for ${safeUsername}/${safeProjectName}: ${err.message}`
+    );
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AlertCircle, ArrowLeft, Loader, FileText, Layout } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader, FileText, Layout, CheckCircle2, Circle } from "lucide-react";
 import TextbookContentViewer from "../components/TextbookContentViewer";
 import { UserContext } from "../context/UserContext";
-import { getUserStatus, selectProject, getProjectPdf } from "../services/api";
+import { getUserStatus, selectProject, getProjectPdf, getProjectProcessingSteps, triggerProcessingStep } from "../services/api";
 
 export default function Study() {
   const navigate = useNavigate();
@@ -15,6 +15,8 @@ export default function Study() {
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("summary"); // summary | pdf
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [processingSteps, setProcessingSteps] = useState(null);
+  const [processingStep, setProcessingStep] = useState(null);
   const loadedProjectRef = useRef(null);
 
   useEffect(() => {
@@ -65,11 +67,21 @@ export default function Study() {
         const result = await selectProject(username, projectNameToSelect);
 
         if (!result?.textbookWithContent?.content) {
+          // Project not ready, check processing steps
+          try {
+            const steps = await getProjectProcessingSteps(username, projectNameToSelect);
+            if (mounted) {
+              setProcessingSteps(steps);
+            }
+          } catch (stepsErr) {
+            console.error("Failed to get processing steps:", stepsErr);
+          }
           throw new Error("该项目暂无 textbook_with_content 内容。");
         }
 
         if (mounted) {
           setTextbookData(result.textbookWithContent.content);
+          setProcessingSteps(null);
           loadedProjectRef.current = projectId;
         }
 
@@ -151,6 +163,70 @@ export default function Study() {
           <div className="flex min-h-[420px] items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white">
             <Loader className="h-5 w-5 animate-spin text-indigo-600" />
             <p className="text-sm text-slate-600">正在从 /select-project 返回内容加载数据...</p>
+          </div>
+        ) : processingSteps ? (
+          <div className="flex min-h-[420px] items-center justify-center rounded-2xl border border-slate-200 bg-white p-8">
+            <div className="max-w-md space-y-6">
+              <div className="text-center">
+                <h2 className="text-lg font-semibold text-slate-900">Processing textbook...</h2>
+                <p className="mt-1 text-sm text-slate-600">File is being prepared for study mode</p>
+              </div>
+              <div className="space-y-3">
+                {["step1", "step2", "step3"].map((stepKey) => {
+                  const step = processingSteps[stepKey];
+                  const isProcessing = processingStep === stepKey;
+                  return (
+                    <div key={stepKey} className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                      <div className="flex items-center gap-3">
+                        {step.complete ? (
+                          <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-green-600" />
+                        ) : (
+                          <Circle className="h-5 w-5 flex-shrink-0 text-slate-400" />
+                        )}
+                        <span className={`text-sm font-medium ${
+                          step.complete ? "text-green-700" : "text-slate-600"
+                        }`}>
+                          {step.name}
+                        </span>
+                      </div>
+                      {!step.complete && (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            setProcessingStep(stepKey);
+                            try {
+                              await triggerProcessingStep(username, projectName, stepKey);
+                              const steps = await getProjectProcessingSteps(username, projectName);
+                              setProcessingSteps(steps);
+                            } catch (err) {
+                              console.error(`Failed to trigger ${stepKey}:`, err);
+                            } finally {
+                              setProcessingStep(null);
+                            }
+                          }}
+                          disabled={isProcessing || processingStep !== null}
+                          className="ml-auto rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                        >
+                          {isProcessing ? (
+                            <span className="flex items-center gap-1">
+                              <Loader className="h-3 w-3 animate-spin" />
+                              Processing...
+                            </span>
+                          ) : (
+                            "Start"
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <p className="text-xs text-amber-800">
+                  <strong>Tip:</strong> Processing may take a few minutes. Click "Start" for each step in order.
+                </p>
+              </div>
+            </div>
           </div>
         ) : error ? (
           <div className="flex min-h-[420px] items-center justify-center rounded-2xl border border-red-200 bg-red-50 p-6">
