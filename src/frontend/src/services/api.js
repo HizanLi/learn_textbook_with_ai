@@ -103,6 +103,15 @@ export async function setCurrentProject(username, projectId) {
   return res.json();
 }
 
+export async function getProjectPdf(username, filename) {
+  const url = `${API_BASE}/api/project-pdf?username=${encodeURIComponent(username)}&filename=${encodeURIComponent(filename)}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Failed to fetch PDF");
+  }
+  return res.blob();
+}
+
 export async function checkServerHealth() {
   const res = await fetch(`${API_BASE}/health`, {
     signal: AbortSignal.timeout(3000)

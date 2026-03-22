@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AlertCircle, ArrowLeft, Loader } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader, FileText, Layout } from "lucide-react";
 import TextbookContentViewer from "../components/TextbookContentViewer";
 import { UserContext } from "../context/UserContext";
-import { getUserStatus, selectProject } from "../services/api";
+import { getUserStatus, selectProject, getProjectPdf } from "../services/api";
 
 export default function Study() {
   const navigate = useNavigate();
@@ -13,10 +13,27 @@ export default function Study() {
   const [projectName, setProjectName] = useState("Project");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [viewMode, setViewMode] = useState("summary"); // summary | pdf
+  const [pdfUrl, setPdfUrl] = useState(null);
   const loadedProjectRef = useRef(null);
 
   useEffect(() => {
+    return () => {
+      // Cleanup URL object
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [pdfUrl]);
+
+  useEffect(() => {
     loadedProjectRef.current = null;
+    setPdfUrl((prevUrl) => {
+      if (prevUrl) {
+        URL.revokeObjectURL(prevUrl);
+      }
+      return null;
+    });
   }, [projectId]);
 
   useEffect(() => {
@@ -28,11 +45,6 @@ export default function Study() {
     let mounted = true;
 
     const loadFromSelectedProject = async () => {
-      if (loadedProjectRef.current === projectId && textbookData) {
-        setLoading(false);
-        return;
-      }
-
       setLoading(true);
       setError("");
 
@@ -60,6 +72,17 @@ export default function Study() {
           setTextbookData(result.textbookWithContent.content);
           loadedProjectRef.current = projectId;
         }
+
+        // Fetch PDF by username + filename and cache in browser memory
+        const pdfFilename = matchedProject.filename || matchedProject.originalName;
+        if (!pdfFilename) {
+          throw new Error("未找到 PDF 文件名");
+        }
+        const pdfBlob = await getProjectPdf(username, pdfFilename);
+        const url = URL.createObjectURL(pdfBlob);
+        if (mounted) {
+          setPdfUrl(url);
+        }
       } catch (err) {
         if (mounted) {
           setError(err.message || "加载项目内容失败");
@@ -77,7 +100,7 @@ export default function Study() {
     return () => {
       mounted = false;
     };
-  }, [username, projectId, navigate, textbookData]);
+  }, [username, projectId, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -94,6 +117,31 @@ export default function Study() {
               <h1 className="text-xl font-semibold">Textbook Knowledge Explorer</h1>
               <p className="text-sm text-slate-500">{projectName}</p>
             </div>
+          </div>
+
+          <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+            <button
+              onClick={() => setViewMode("summary")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === "summary"
+                  ? "bg-white text-indigo-600 shadow-sm"
+                  : "text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              <Layout className="h-4 w-4" />
+              Summary
+            </button>
+            <button
+              onClick={() => setViewMode("pdf")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === "pdf"
+                  ? "bg-white text-indigo-600 shadow-sm"
+                  : "text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              <FileText className="h-4 w-4" />
+              Original PDF
+            </button>
           </div>
         </div>
       </header>
@@ -114,8 +162,23 @@ export default function Study() {
               </div>
             </div>
           </div>
-        ) : (
+        ) : viewMode === "summary" ? (
           <TextbookContentViewer data={textbookData} />
+        ) : (
+          <div className="h-[calc(100vh-140px)] w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
+            {pdfUrl ? (
+              <iframe
+                src={`${pdfUrl}#toolbar=0`}
+                className="w-full h-full border-none"
+                title="pdf-viewer"
+              />
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center gap-3">
+                <Loader className="h-8 w-8 animate-spin text-indigo-600" />
+                <p className="text-slate-600">Loading original textbook...</p>
+              </div>
+            )}
+          </div>
         )}
       </main>
     </div>

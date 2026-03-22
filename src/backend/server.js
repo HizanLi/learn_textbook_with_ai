@@ -12,11 +12,20 @@ const processRoutes = require("./routes/process");
 const summarizeRoutes = require("./routes/summarize");
 const explainRoutes = require("./routes/explain");
 const llmRoutes = require("./routes/llm");
+const projectRoutes = require("./routes/projects");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
+
+app.use("/api", authRoutes);
+app.use("/api", uploadRoutes);
+app.use("/api", processRoutes);
+app.use("/api", summarizeRoutes);
+app.use("/api", explainRoutes);
+app.use("/api", llmRoutes);
+app.use("/api", projectRoutes);
 
 app.get("/health", async (req, res) => {
   const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
@@ -38,7 +47,7 @@ app.get("/health", async (req, res) => {
       minerUStatus = "unhealthy";
     }
   } catch (err) {
-    console.error("Health check error:", err);
+    console.error("Health check error:");
     coreStatus = "unavailable";
     minerUStatus = "unavailable";
   }
