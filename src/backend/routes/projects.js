@@ -215,35 +215,75 @@ router.post("/trigger-processing-step", async (req, res) => {
 
   const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
 
-  try {
-    // Import processor to trigger steps
-    const {
-      processProjectWithPython,
-    } = require("../services/processor");
+  const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
 
+  try {
     if (safeStep === "step1") {
       // Trigger Step 1: PDF to Markdown (MinerU)
-      // This would typically call MinerU to convert PDF to markdown
-      // Placeholder: you may need to implement this based on your MinerU integration
+      const response = await fetch(`${CORE_API}/api/mineru/process`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: safeUsername,
+          file_name: `${noExtProjectName}.pdf`,
+          description: `Processing PDF file for ${noExtProjectName}`,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to process PDF");
+      }
+
       return res.json({
-        status: "started",
-        message: "Step 1 (PDF to Markdown) processing started",
+        status: "completed",
+        message: "Step 1 (PDF to Markdown) processing completed",
+        data: result.data,
       });
     } else if (safeStep === "step2") {
       // Trigger Step 2: Markdown to JSON (Chunking)
-      // This would typically call the chunker microservice
-      // Placeholder: you may need to implement this based on your chunker
+      const response = await fetch(`${CORE_API}/api/chunker/process`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: safeUsername,
+          file_name: `${noExtProjectName}.md`,
+          output_filename: "chunks.json",
+          description: `Chunking markdown for ${noExtProjectName}`,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to chunk markdown");
+      }
+
       return res.json({
-        status: "started",
-        message: "Step 2 (Markdown to JSON) processing started",
+        status: "completed",
+        message: "Step 2 (Markdown to JSON) processing completed",
+        data: result.data,
       });
     } else if (safeStep === "step3") {
-      // Trigger Step 3: Generate Summary (LLM)
-      // This would typically call the LLM processing pipeline
-      // Placeholder: you may need to implement this based on your LLM pipeline
+      // Trigger Step 3: Generate Summary (LLM Analysis)
+      const response = await fetch(`${CORE_API}/api/analyze/textbook`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: safeUsername,
+          project_name: noExtProjectName,
+          description: `Analyzing textbook content for ${noExtProjectName}`,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || result.detail || "Failed to analyze textbook");
+      }
+
       return res.json({
-        status: "started",
-        message: "Step 3 (Generate Summary) processing started",
+        status: "completed",
+        message: "Step 3 (Generate Summary) processing completed",
+        data: result.data,
       });
     } else {
       return res

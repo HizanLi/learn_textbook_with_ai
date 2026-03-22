@@ -1,4 +1,5 @@
 import os
+import json
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -6,6 +7,7 @@ from typing import Optional
 from microservices.chunker import MarkdownChunker
 from microservices.vectorization import VectorStorageManager
 from microservices.mineru_client import MinerUClient
+from llm.analyze_textbook import TextbookAnalyzer
 import uvicorn
 from dotenv import load_dotenv
 
@@ -24,7 +26,7 @@ class MinerUProcessRequest(BaseModel):
 class ChunkerProcessRequest(BaseModel):
     username: str
     file_name: str
-    output_filename: str = "chunks.json"
+    output_filename: str = "chunker_step_1.json"
     description: str = "需要分块的Markdown文件名"
 
 class VectorizationStoreRequest(BaseModel):
@@ -38,6 +40,18 @@ class SearchRequest(BaseModel):
     collection_name: str
     query: str
     n_results: int = 3
+
+class TextbookAnalysisRequest(BaseModel):
+    username: str
+    project_name: str
+    description: str = "分析教科书内容并生成学习材料"
+
+class ParseTocRequest(BaseModel):
+    username: str
+    project_name: str
+    toc_string: str
+    save_to_disk: bool = True
+    description: str = "使用LLM解析目录文本并生成结构化TOC"
 
 # --- 初始化组件 ---
 chunker = MarkdownChunker()
@@ -87,21 +101,57 @@ async def process_chunking(request: ChunkerProcessRequest):
     - 输出：chunks.json 文件及统计信息
     """
     try:
-        result = chunker.get_chunks(
-            username=request.username,
-            file_name=request.file_name,
-            save=True,
-            output_filename=request.output_filename
+        data_dir = os.getenv("DATA_DIR")
+        if not data_dir:
+            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+
+        project_name = os.path.splitext(request.file_name)[0]
+        markdown_path = os.path.join(
+            data_dir,
+            request.username,
+            "output",
+            project_name,
+            "hybrid_auto",
+            request.file_name,
         )
-        if result["success"]:
-            return {
-                "success": True,
-                "status_code": result["status_code"],
-                "message": result["message"],
-                "data": result["data"]
-            }
-        else:
-            raise HTTPException(status_code=result["status_code"], detail=result["message"])
+
+        success, error = chunker.process_markdown(
+            markdown_file=markdown_path,
+            output_file=request.output_filename,
+        )
+
+        if not success:
+            if error and "not found" in error.lower():
+                raise HTTPException(status_code=404, detail=error)
+            raise HTTPException(status_code=500, detail=error or "分块处理失败")
+
+        output_path = os.path.join(
+            data_dir,
+            request.username,
+            "output",
+            project_name,
+            "hybrid_auto",
+            request.output_filename,
+        )
+
+        chunks_count = None
+        try:
+            with open(output_path, "r", encoding="utf-8") as f:
+                chunks = json.load(f)
+            chunks_count = len(chunks) if isinstance(chunks, list) else None
+        except Exception:
+            chunks_count = None
+
+        return {
+            "success": True,
+            "status_code": 200,
+            "message": "Markdown 分块成功",
+            "data": {
+                "markdown_path": markdown_path,
+                "output_path": output_path,
+                "chunks_count": chunks_count,
+            },
+        }
     except HTTPException:
         raise
     except Exception as e:
@@ -217,8 +267,110 @@ async def semantic_search(request: SearchRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"搜索出错: {str(e)}")
 
+
 # ============================================================================
-# 5. 健康检查和状态端点
+# 5. 教科书分析端点 - 生成学习内容和关键点
+# ============================================================================
+
+@app.post("/api/analyze/textbook")
+async def analyze_textbook(request: TextbookAnalysisRequest):
+    """
+    分析教科书内容：加载分块数据和目录，生成每个章节/小节的关键点分析
+    """
+    try:
+        data_dir = os.getenv("DATA_DIR")
+        if not data_dir:
+            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+        
+        # 构建文件路径
+        project_dir = os.path.join(data_dir, request.username, "output", request.project_name, "hybrid_auto")
+        textbook_with_content_path = os.path.join(project_dir, "textbook_with_content.json")
+        
+        if not os.path.exists(textbook_with_content_path):
+            raise HTTPException(
+                status_code=404, 
+                detail=f"textbook_with_content.json not found at {textbook_with_content_path}"
+            )
+        
+        # 初始化分析器
+        analyzer = TextbookAnalyzer()
+        
+        # 运行分析
+        result = analyzer.generate_chapter_analysis(textbook_with_content_path)
+        
+        return {
+            "success": True,
+            "message": f"分析完成：{request.project_name}",
+            "data": {
+                "project_name": request.project_name,
+                "output_path": textbook_with_content_path,
+                "chapters_processed": len(result.get('chapters', []))
+            }
+        }
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"分析出错: {str(e)}")
+
+
+@app.post("/api/analyze/parse-toc")
+async def parse_table_of_content(request: ParseTocRequest):
+    """
+    使用 LLM 解析目录文本并返回结构化 TOC JSON。
+    当 save_to_disk=True 时，将结果保存到项目目录中的 textbook_toc.json。
+    """
+    try:
+        data_dir = os.getenv("DATA_DIR")
+        if not data_dir:
+            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+
+        project_dir = os.path.join(
+            data_dir,
+            request.username,
+            "output",
+            request.project_name,
+            "hybrid_auto",
+        )
+
+        if not os.path.exists(project_dir):
+            raise HTTPException(
+                status_code=404,
+                detail=f"项目目录不存在: {project_dir}",
+            )
+
+        # parse_table_of_content uses chunker_path's parent as the save directory.
+        chunker_path = os.path.join(project_dir, "chunker_step_1.json")
+        analyzer = TextbookAnalyzer(chunker_path=chunker_path)
+
+        toc_json = analyzer.parse_table_of_content(
+            toc_string=request.toc_string,
+            save_to_disk=request.save_to_disk,
+        )
+
+        if not toc_json:
+            raise HTTPException(status_code=500, detail="目录解析失败，请检查 toc_string 内容")
+
+        output_path = os.path.join(project_dir, "textbook_toc.json") if request.save_to_disk else None
+
+        return {
+            "success": True,
+            "message": "目录解析完成",
+            "data": {
+                "project_name": request.project_name,
+                "save_to_disk": request.save_to_disk,
+                "output_path": output_path,
+                "toc": toc_json,
+            },
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"目录解析出错: {str(e)}")
+
+# ============================================================================
+# 6. 健康检查和状态端点
 # ============================================================================
 
 @app.get("/health")

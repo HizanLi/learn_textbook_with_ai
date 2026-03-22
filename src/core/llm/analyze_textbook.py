@@ -9,7 +9,6 @@ from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
 
 from llm_client import LLMClient, ModelProvider, OpenAIClient, DeepseekClient, GeminiClient
-from learning_content import LearningContentGenerator
 from prompts import *
 
 # Configure logging
@@ -36,65 +35,10 @@ class TextbookAnalyzer:
             llm_client = OpenAIClient()
         
         self.llm_client = llm_client
-        self.content_generator = LearningContentGenerator(llm_client)
         self.chunker_path = chunker_path 
         
-    # Step 1: Load chunked content from JSON file        
-    def load_chunker_data(self, chunker_path: Optional[PathLike] = None) -> Optional[List[Dict[str, Any]]]:
-        """
-        Load chunked content from JSON file
-        
-        Args:
-            chunker_path: Path to the chunker JSON file
-            
-        Returns:
-            List of chunks or None if failed
-        """
-        try:
-            chunker_path = Path(chunker_path) if chunker_path else self.chunker_path
-            if not chunker_path.exists():
-                logger.error(f"Chunker file not found: {chunker_path}")
-                return None
-            
-            with open(chunker_path, 'r', encoding='utf-8') as f:
-                chunks = json.load(f)
-            
-            logger.info(f"Successfully loaded {len(chunks)} chunks from {chunker_path}")
-            return chunks
-        except Exception as e:
-            logger.error(f"Failed to load chunker data: {str(e)}")
-            return None
 
-    # Step 1: Load ToC data from JSON file (if available)
-    def load_toc_data(self, toc_path: Optional[PathLike] = None) -> Optional[Dict[str, Any]]:
-        """
-        Try to load textbook_toc.json from the given path or the same directory as chunker_path
-        
-        Args:
-            toc_path: Explicit path to the TOC JSON file. If None, looks for textbook_toc.json near chunker_path
-            
-        Returns:
-            Parsed ToC dictionary or None if not found
-        """
-        try:
-            if toc_path:
-                t_path = Path(toc_path)
-            elif self.chunker_path:
-                t_path = Path(self.chunker_path).parent / "textbook_toc.json"
-            else:
-                return None
-
-            if t_path.exists():
-                with open(t_path, 'r', encoding='utf-8') as f:
-                    toc_json = json.load(f)
-                logger.info(f"Successfully loaded ToC from {t_path}")
-                return toc_json
-            return None
-        except Exception as e:
-            logger.error(f"Failed to load ToC data: {str(e)}")
-            return None
-    
-    # Step 2: 解析目录结构
+    # 解析目录结构
     def parse_table_of_content(self, toc_string: str, save_to_disk: bool = True) -> Optional[Dict[str, Any]]:
         """
         Parse string-formatted table of content using LLM and optionally save to disk
@@ -141,7 +85,7 @@ class TextbookAnalyzer:
             logger.error(f"Failed to parse table of content: {str(e)}")
             return None
     
-    # Step 3: 从 chunks 中提取关键信息和主题
+    # 从 chunks 中提取关键信息和主题
     def extract_key_topics(self, section_header: str, section_content: str) -> Dict[str, Any]:
         """
         Extract key topics and detailed points from a section using LLM analysis.
@@ -253,27 +197,13 @@ class TextbookAnalyzer:
 
 
 if __name__ == "__main__":
-    # Example usage
-    # chunk_path = r"data\hizan\output\pyhton_short-1772218124093\hybrid_auto\chunker_step_1.json"
-    chunk_path = r"data\hizan\output\java_short\hybrid_auto\chunker_step_1.json"
-
-    analyzer = TextbookAnalyzer(chunker_path=chunk_path)
     
-    analyzer.generate_chapter_analysis(r'data/hizan/output/pyhton_short-1772218124093/hybrid_auto/textbook_with_content.json')
+    # chunk_path = r"data\hizan\output\java_short\hybrid_auto\chunker_step_1.json"
+    # analyzer = TextbookAnalyzer(chunker_path=chunk_path)
+    # analyzer.generate_chapter_analysis(r'data/hizan/output/pyhton_short-1772218124093/hybrid_auto/textbook_with_content.json')
 
-    # # 1. Try to load existing ToC data
-    # toc_json = analyzer.load_toc_data()
-    # chunks = analyzer.load_chunker_data(chunk_path)
-    
-    # if chunks and toc_json:
-    #     logger.info("Running section analysis...")
-    #     # analyze_textbook method wraps everything
-    #     result = analyzer.extract_key_topics(
-    #         chunks=chunks,
-    #         toc_json=toc_json
-    #     )
-    #     print(result)
 
+    # This is input by user from markdown file, should get from front end
     # text_toc_string_java = """
     # # C o n t e n t s i n D e ta il
 
