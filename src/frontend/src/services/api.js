@@ -134,6 +134,29 @@ export async function triggerProcessingStep(username, projectName, step) {
   return data;
 }
 
+export async function getProjectMarkdown(username, projectName) {
+  const url = `${API_BASE}/api/project-markdown?username=${encodeURIComponent(username)}&projectName=${encodeURIComponent(projectName)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to fetch project markdown");
+  }
+  return data;
+}
+
+export async function submitProjectToc(username, projectName, tocString) {
+  const res = await fetch(`${API_BASE}/api/parse-project-toc`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, projectName, tocString }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || data.detail || "Failed to parse project TOC");
+  }
+  return data;
+}
+
 export async function checkServerHealth() {
   const res = await fetch(`${API_BASE}/health`, {
     signal: AbortSignal.timeout(3000)

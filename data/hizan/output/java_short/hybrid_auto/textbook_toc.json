@@ -1,0 +1,1290 @@
+{
+    "book_title": "Brief Contents",
+    "chapters": [
+        {
+            "chapter_number": 1,
+            "chapter_title": "Getting Started",
+            "start_page": 1,
+            "sections": [
+                {
+                    "section_id": "1.1",
+                    "section_title": "Java on Windows, macOS, and Linux",
+                    "page": 1,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.2",
+                    "section_title": "Installing Java 8 and 9 for Developers",
+                    "page": 2,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.3",
+                    "section_title": "Installing the Eclipse IDE for Java Developers",
+                    "page": 2,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.4",
+                    "section_title": "Setting Up Eclipse",
+                    "page": 2,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.5",
+                    "section_title": "Installing the WindowBuilder Editor",
+                    "page": 6,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.6",
+                    "section_title": "Customizing Eclipse’s Look and Feel",
+                    "page": 6,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.7",
+                    "section_title": "Installing Android Studio for Mobile App Development",
+                    "page": 8,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.8",
+                    "section_title": "Getting to Know Java with JShell",
+                    "page": 9,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "1.8.1",
+                            "sub_section_title": "Running JShell",
+                            "page": 9
+                        },
+                        {
+                            "sub_section_id": "1.8.2",
+                            "sub_section_title": "Working with Java Expressions in JShell",
+                            "page": 12
+                        },
+                        {
+                            "sub_section_id": "1.8.3",
+                            "sub_section_title": "Declaring Java Variables in JShell",
+                            "page": 13
+                        },
+                        {
+                            "sub_section_id": "1.8.4",
+                            "sub_section_title": "Printing Output in Java",
+                            "page": 15
+                        },
+                        {
+                            "sub_section_id": "1.8.5",
+                            "sub_section_title": "JShell Commands",
+                            "page": 16
+                        }
+                    ]
+                },
+                {
+                    "section_id": "1.9",
+                    "section_title": "What You Learned",
+                    "page": 17,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 2,
+            "chapter_title": "Build a Hi-Lo Guessing Game App!",
+            "start_page": 19,
+            "sections": [
+                {
+                    "section_id": "2.1",
+                    "section_title": "Planning the Game Step-by-Step",
+                    "page": 20,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.2",
+                    "section_title": "Creating a New Java Project",
+                    "page": 20,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.3",
+                    "section_title": "Creating the HiLo Class",
+                    "page": 21,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.4",
+                    "section_title": "Generating a Random Number",
+                    "page": 23,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.5",
+                    "section_title": "Getting User Input from the Keyboard",
+                    "page": 25,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.6",
+                    "section_title": "Making the Program Print Output",
+                    "page": 27,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.7",
+                    "section_title": "Loops: Ask, Check, Repeat",
+                    "page": 28,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.8",
+                    "section_title": "if Statements: Testing for the Right Conditions",
+                    "page": 30,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.9",
+                    "section_title": "Adding a Play Again Loop",
+                    "page": 33,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.10",
+                    "section_title": "Testing the Game",
+                    "page": 36,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.11",
+                    "section_title": "What You Learned",
+                    "page": 38,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "2.12",
+                    "section_title": "Programming Challenges",
+                    "page": 39,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "2.12.1",
+                            "sub_section_title": "#1: Expanding Your Range",
+                            "page": 40
+                        },
+                        {
+                            "sub_section_id": "2.12.2",
+                            "sub_section_title": "#2: Counting Tries",
+                            "page": 40
+                        },
+                        {
+                            "sub_section_id": "2.12.3",
+                            "sub_section_title": "#3: Playing MadLibs",
+                            "page": 41
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 3,
+            "chapter_title": "Creating a GUI for Our Guessing Game",
+            "start_page": 43,
+            "sections": [
+                {
+                    "section_id": "3.1",
+                    "section_title": "Practicing with JShell",
+                    "page": 44,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.2",
+                    "section_title": "Creating a GUI in Four Lines of Code",
+                    "page": 44,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.3",
+                    "section_title": "Creating an Interactive GUI in 10 Lines of Code!",
+                    "page": 45,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.4",
+                    "section_title": "Setting Up the GUI App in Eclipse",
+                    "page": 48,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.5",
+                    "section_title": "GUI Design with Eclipse’s WindowBuilder Editor",
+                    "page": 50,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.6",
+                    "section_title": "Designing the User Interface",
+                    "page": 51,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.7",
+                    "section_title": "Setting GUI Properties in the Properties Pane",
+                    "page": 51,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.8",
+                    "section_title": "Customizing GUI Components in the Palette Pane",
+                    "page": 52,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.9",
+                    "section_title": "Aligning GUI Elements",
+                    "page": 54,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.10",
+                    "section_title": "Naming GUI Components for Coding",
+                    "page": 55,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.11",
+                    "section_title": "Connecting the GUI to Your Java Code",
+                    "page": 56,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.12",
+                    "section_title": "Adding a Method to Check the Player’s Guess",
+                    "page": 58,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.13",
+                    "section_title": "Getting Text from a JTextField",
+                    "page": 59,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.14",
+                    "section_title": "Converting Strings to Numbers",
+                    "page": 60,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.15",
+                    "section_title": "Starting a New Game",
+                    "page": 61,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.16",
+                    "section_title": "Listening for User Events: Click to Guess!",
+                    "page": 62,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.17",
+                    "section_title": "Setting Up the GUI Window",
+                    "page": 64,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.18",
+                    "section_title": "Time to Play!",
+                    "page": 66,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.19",
+                    "section_title": "Adding a Play Again Feature",
+                    "page": 66,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.20",
+                    "section_title": "Improving the UX",
+                    "page": 67,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.21",
+                    "section_title": "Allowing Users to Press Enter to Guess",
+                    "page": 68,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.22",
+                    "section_title": "Automatically Removing Old Guesses",
+                    "page": 68,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.23",
+                    "section_title": "Handling Bad User Input",
+                    "page": 70,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.24",
+                    "section_title": "What You Learned",
+                    "page": 73,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.25",
+                    "section_title": "Programming Challenges",
+                    "page": 73,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "3.25.1",
+                            "sub_section_title": "#1: Showing Users How Many Tries They Took",
+                            "page": 73
+                        },
+                        {
+                            "sub_section_id": "3.25.2",
+                            "sub_section_title": "#2: Showing and Hiding a Play Again Button",
+                            "page": 73
+                        },
+                        {
+                            "sub_section_id": "3.25.3",
+                            "sub_section_title": "#3: Creating a GUI MadLib",
+                            "page": 74
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 4,
+            "chapter_title": "Creating Your First Android App",
+            "start_page": 75,
+            "sections": [
+                {
+                    "section_id": "4.1",
+                    "section_title": "Starting a New Android Studio App Project",
+                    "page": 76,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.2",
+                    "section_title": "Building the GUI Layout in Design View",
+                    "page": 80,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.3",
+                    "section_title": "Naming GUI Components in Android Studio",
+                    "page": 83,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.4",
+                    "section_title": "Connecting the GUI to Java in Android Studio",
+                    "page": 85,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.5",
+                    "section_title": "Adding Methods to Check the Guess and Begin a New Game",
+                    "page": 88,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.6",
+                    "section_title": "Handling Events in Android",
+                    "page": 91,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.7",
+                    "section_title": "Running the App on the Android Emulator",
+                    "page": 94,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.8",
+                    "section_title": "Running the App on a Real Android Device",
+                    "page": 100,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "4.8.1",
+                            "sub_section_title": "Preparing Your Device",
+                            "page": 100
+                        },
+                        {
+                            "sub_section_id": "4.8.2",
+                            "sub_section_title": "Connecting Your Device",
+                            "page": 101
+                        },
+                        {
+                            "sub_section_id": "4.8.3",
+                            "sub_section_title": "Running the App on Your Device",
+                            "page": 101
+                        }
+                    ]
+                },
+                {
+                    "section_id": "4.9",
+                    "section_title": "Improving the UX",
+                    "page": 102,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "4.9.1",
+                            "sub_section_title": "Centering the User’s Guess in the Text Field",
+                            "page": 103
+                        },
+                        {
+                            "sub_section_id": "4.9.2",
+                            "sub_section_title": "Adding a Listener for the Enter Key",
+                            "page": 103
+                        },
+                        {
+                            "sub_section_id": "4.9.3",
+                            "sub_section_title": "Adding One More Finishing Touch",
+                            "page": 104
+                        }
+                    ]
+                },
+                {
+                    "section_id": "4.10",
+                    "section_title": "What You Learned",
+                    "page": 105,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.11",
+                    "section_title": "Programming Challenges",
+                    "page": 105,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "4.11.1",
+                            "sub_section_title": "#1: “Toast”-ing to the Number of Tries",
+                            "page": 106
+                        },
+                        {
+                            "sub_section_id": "4.11.2",
+                            "sub_section_title": "#2: Adding Visual Appeal",
+                            "page": 107
+                        },
+                        {
+                            "sub_section_id": "4.11.3",
+                            "sub_section_title": "#3: Creating a MadLibs Mobile App",
+                            "page": 107
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 5,
+            "chapter_title": "Polishing Your App by Adding Menus and Preferences",
+            "start_page": 109,
+            "sections": [
+                {
+                    "section_id": "5.1",
+                    "section_title": "Adding an Options Menu in Android",
+                    "page": 109,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.2",
+                    "section_title": "Adding Items to the Menu’s XML File",
+                    "page": 110,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.3",
+                    "section_title": "Displaying the Options Menu",
+                    "page": 111,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.4",
+                    "section_title": "Responding to User Selections",
+                    "page": 112,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.5",
+                    "section_title": "Creating an Alert Dialog Pop-up for the About Screen",
+                    "page": 113,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.6",
+                    "section_title": "Changing the Guessing Range",
+                    "page": 114,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "5.6.1",
+                            "sub_section_title": "Adding a Variable for the Range",
+                            "page": 115
+                        },
+                        {
+                            "sub_section_id": "5.6.2",
+                            "sub_section_title": "Using the range Variable",
+                            "page": 115
+                        },
+                        {
+                            "sub_section_id": "5.6.3",
+                            "sub_section_title": "Building the Dialog to Allow the User to Select the Range",
+                            "page": 116
+                        }
+                    ]
+                },
+                {
+                    "section_id": "5.7",
+                    "section_title": "Storing User Preferences and Game Stats",
+                    "page": 118,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "5.7.1",
+                            "sub_section_title": "Storing and Retrieving the User’s Preferred Range",
+                            "page": 118
+                        },
+                        {
+                            "sub_section_id": "5.7.2",
+                            "sub_section_title": "Storing the Number of Games Won",
+                            "page": 120
+                        }
+                    ]
+                },
+                {
+                    "section_id": "5.8",
+                    "section_title": "What You Learned",
+                    "page": 122,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.9",
+                    "section_title": "Programming Challenges",
+                    "page": 122,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "5.9.1",
+                            "sub_section_title": "#1: You Win Some, You Lose Some",
+                            "page": 122
+                        },
+                        {
+                            "sub_section_id": "5.9.2",
+                            "sub_section_title": "#2: Ratio of Wins to Losses",
+                            "page": 123
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 6,
+            "chapter_title": "Deciphering Secret Messages",
+            "start_page": 125,
+            "sections": [
+                {
+                    "section_id": "6.1",
+                    "section_title": "The Caesar Cipher",
+                    "page": 125,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.2",
+                    "section_title": "Setting Up the Secret Messages App",
+                    "page": 126,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.3",
+                    "section_title": "Creating the Secret Messages Project in Eclipse",
+                    "page": 127,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.4",
+                    "section_title": "Beginning to Code SecretMessages.java",
+                    "page": 128,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.5",
+                    "section_title": "Messing with Strings",
+                    "page": 128,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.6",
+                    "section_title": "Characters and Values in Java",
+                    "page": 132,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.7",
+                    "section_title": "Encoding Just the Letters",
+                    "page": 133,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.8",
+                    "section_title": "Closing the Scanner",
+                    "page": 135,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.9",
+                    "section_title": "Adding a Custom Key Value",
+                    "page": 137,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.10",
+                    "section_title": "Encoding Digits",
+                    "page": 138,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.11",
+                    "section_title": "Running Command Line Apps Without Eclipse",
+                    "page": 141,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "6.11.1",
+                            "sub_section_title": "Finding Your Workspace Folders",
+                            "page": 141
+                        },
+                        {
+                            "sub_section_id": "6.11.2",
+                            "sub_section_title": "Opening a Command Line Window",
+                            "page": 142
+                        }
+                    ]
+                },
+                {
+                    "section_id": "6.12",
+                    "section_title": "What You Learned",
+                    "page": 144,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.13",
+                    "section_title": "Programming Challenges",
+                    "page": 144,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "6.13.1",
+                            "sub_section_title": "#1: Looping the Loop",
+                            "page": 144
+                        },
+                        {
+                            "sub_section_id": "6.13.2",
+                            "sub_section_title": "#2: Reversing and Encoding",
+                            "page": 145
+                        },
+                        {
+                            "sub_section_id": "6.13.3",
+                            "sub_section_title": "#3: Safely Handling Keys with try and catch",
+                            "page": 145
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 7,
+            "chapter_title": "Creating Advanced GUIs and Sharing Your App",
+            "start_page": 147,
+            "sections": [
+                {
+                    "section_id": "7.1",
+                    "section_title": "Setting Up the Secret Messages GUI App Project",
+                    "page": 148,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.2",
+                    "section_title": "Designing the GUI and Naming Components",
+                    "page": 148,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.3",
+                    "section_title": "Coding the Secret Messages GUI App",
+                    "page": 152,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.4",
+                    "section_title": "Creating the encode() Method",
+                    "page": 152,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.5",
+                    "section_title": "Writing the Event Handler for the Encode/Decode Button",
+                    "page": 154,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.6",
+                    "section_title": "Handling Bad Input and User Errors",
+                    "page": 156,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.7",
+                    "section_title": "Building the main() Method and Running the App",
+                    "page": 156,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.8",
+                    "section_title": "Improving the GUI",
+                    "page": 159,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.9",
+                    "section_title": "Setting Line Wrap and Word Wrap",
+                    "page": 161,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.10",
+                    "section_title": "Handling Bad Input and User Errors: Part 2",
+                    "page": 162,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.11",
+                    "section_title": "Adding a Slider to the Secret Messages GUI",
+                    "page": 164,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.12",
+                    "section_title": "Code Cracking with the Slider",
+                    "page": 166,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.13",
+                    "section_title": "Bonus: Sharing Your App as a Runnable JAR File",
+                    "page": 169,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.14",
+                    "section_title": "What You Learned",
+                    "page": 172,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.15",
+                    "section_title": "Programming Challenges",
+                    "page": 172,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "7.15.1",
+                            "sub_section_title": "#1: Movin’ On Up!",
+                            "page": 172
+                        },
+                        {
+                            "sub_section_id": "7.15.2",
+                            "sub_section_title": "#2: Scrolling Away!",
+                            "page": 173
+                        },
+                        {
+                            "sub_section_id": "7.15.3",
+                            "sub_section_title": "#3: Changing the Text to Change the Slider",
+                            "page": 174
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 8,
+            "chapter_title": "Make Secret Messages a Phone App to Share with Friends!",
+            "start_page": 175,
+            "sections": [
+                {
+                    "section_id": "8.1",
+                    "section_title": "Setting Up the Mobile GUI",
+                    "page": 176,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.2",
+                    "section_title": "Designing the Mobile GUI",
+                    "page": 177,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.3",
+                    "section_title": "Wiring the GUI to the Java Code",
+                    "page": 182,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.4",
+                    "section_title": "Connecting the Encode Button to the encode() Method",
+                    "page": 182,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.5",
+                    "section_title": "Testing the App",
+                    "page": 185,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.6",
+                    "section_title": "Working with the SeekBar",
+                    "page": 187,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.7",
+                    "section_title": "Running the App on the Emulator and on an Android Device",
+                    "page": 188,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.8",
+                    "section_title": "Bonus: Customizing the Floating Action Button",
+                    "page": 190,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.9",
+                    "section_title": "Receiving Secret Messages from Other Apps",
+                    "page": 193,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.10",
+                    "section_title": "What You Learned",
+                    "page": 195,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.11",
+                    "section_title": "Programming Challenges",
+                    "page": 196,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "8.11.1",
+                            "sub_section_title": "#1: Creating a Move Up Button",
+                            "page": 196
+                        },
+                        {
+                            "sub_section_id": "8.11.2",
+                            "sub_section_title": "#2: Changing the SeekBar’s Progress",
+                            "page": 196
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 9,
+            "chapter_title": "Paint Colorful Bubbles with Your Mouse!",
+            "start_page": 197,
+            "sections": [
+                {
+                    "section_id": "9.1",
+                    "section_title": "Creating the BubbleDraw Project Files",
+                    "page": 198,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.2",
+                    "section_title": "Building the BubbleDraw Frame",
+                    "page": 199,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.3",
+                    "section_title": "Creating a Class for Bubbles",
+                    "page": 200,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.4",
+                    "section_title": "Defining a Bubble",
+                    "page": 200,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.5",
+                    "section_title": "Designing a Bubble’s Methods",
+                    "page": 202,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.6",
+                    "section_title": "Storing Bubbles in an ArrayList",
+                    "page": 205,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.7",
+                    "section_title": "Adding a Constructor to the BubblePanel Class",
+                    "page": 206,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.8",
+                    "section_title": "Adding a Method to Draw on the Screen",
+                    "page": 207,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.9",
+                    "section_title": "Testing the BubblePanel Class",
+                    "page": 208,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.10",
+                    "section_title": "Handling Mouse Events from the User",
+                    "page": 210,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.11",
+                    "section_title": "Creating a Reusable Event Listener",
+                    "page": 211,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.12",
+                    "section_title": "Handling Clicks and Drags",
+                    "page": 212,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.13",
+                    "section_title": "Bonus: Handling MouseWheel Events",
+                    "page": 215,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.14",
+                    "section_title": "What You Learned",
+                    "page": 218,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.15",
+                    "section_title": "Programming Challenges",
+                    "page": 218,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "9.15.1",
+                            "sub_section_title": "#1: No Bubble Too Small",
+                            "page": 218
+                        },
+                        {
+                            "sub_section_id": "9.15.2",
+                            "sub_section_title": "#2: PixelDraw!",
+                            "page": 219
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 10,
+            "chapter_title": "Adding Animation and Collision Detection with Timers",
+            "start_page": 221,
+            "sections": [
+                {
+                    "section_id": "10.1",
+                    "section_title": "Copying the BubbleDraw Java Project to Create BubbleDrawGUI",
+                    "page": 222,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.2",
+                    "section_title": "Renaming the Main Class and Java File",
+                    "page": 222,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.3",
+                    "section_title": "Adding Transparency",
+                    "page": 224,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.4",
+                    "section_title": "Adding Animation: Bubbles Rising!",
+                    "page": 225,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.5",
+                    "section_title": "Adding a Timer",
+                    "page": 226,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.6",
+                    "section_title": "Setting the Timer",
+                    "page": 226,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.7",
+                    "section_title": "Preparing the Animation",
+                    "page": 227,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.8",
+                    "section_title": "Starting the Timer",
+                    "page": 229,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.9",
+                    "section_title": "Forever Blowing Bubbles: Adding Random Speed and Direction",
+                    "page": 229,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.10",
+                    "section_title": "Building a GUI for Our Animated Drawing App",
+                    "page": 232,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.11",
+                    "section_title": "Setting Up the GUI Panel and Buttons",
+                    "page": 232,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.12",
+                    "section_title": "Coding the Clear and Pause/Start Buttons",
+                    "page": 234,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.13",
+                    "section_title": "Bouncing off the Walls with Collision Detection",
+                    "page": 235,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.14",
+                    "section_title": "A Soft Bounce",
+                    "page": 236,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.15",
+                    "section_title": "A Hard Bounce",
+                    "page": 238,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.16",
+                    "section_title": "Adding a Slider to Control the Animation Speed",
+                    "page": 240,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.17",
+                    "section_title": "Customizing the Slider",
+                    "page": 241,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.18",
+                    "section_title": "Implementing the Slider Event Handler",
+                    "page": 242,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.19",
+                    "section_title": "What You Learned",
+                    "page": 243,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.20",
+                    "section_title": "Programming Challenges",
+                    "page": 244,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "10.20.1",
+                            "sub_section_title": "#1: No Bubble Left Behind",
+                            "page": 244
+                        },
+                        {
+                            "sub_section_id": "10.20.2",
+                            "sub_section_title": "#2: Flexi-Draw!",
+                            "page": 244
+                        },
+                        {
+                            "sub_section_id": "10.20.3",
+                            "sub_section_title": "#3: PixelDraw 2.0",
+                            "page": 245
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chapter_number": 11,
+            "chapter_title": "Making BubbleDraw a Multitouch Android App",
+            "start_page": 249,
+            "sections": [
+                {
+                    "section_id": "11.1",
+                    "section_title": "Setting Up the BubbleDraw Project",
+                    "page": 250,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.2",
+                    "section_title": "Creating the BubbleView Constructor",
+                    "page": 252,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.3",
+                    "section_title": "Adding the Animation Variables",
+                    "page": 252,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.4",
+                    "section_title": "Creating the BubbleView() Constructor",
+                    "page": 254,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.5",
+                    "section_title": "Preparing the Layout to Use BubbleView",
+                    "page": 254,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.6",
+                    "section_title": "Modifying the Bubble Class",
+                    "page": 255,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.7",
+                    "section_title": "Drawing in Android with the onDraw() Method",
+                    "page": 257,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.8",
+                    "section_title": "Testing BubbleDraw with 100 Bubbles",
+                    "page": 258,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.9",
+                    "section_title": "Adding testBubbles()",
+                    "page": 258,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.10",
+                    "section_title": "Fixing the OnTouchListener Error",
+                    "page": 259,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.11",
+                    "section_title": "Running the BubbleDraw App",
+                    "page": 260,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.12",
+                    "section_title": "Using Threaded Animation and Multitasking in Java",
+                    "page": 261,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.13",
+                    "section_title": "Using Touch to Draw with Your Finger",
+                    "page": 264,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.14",
+                    "section_title": "Using Multitouch to Draw with 10 Fingers at a Time!",
+                    "page": 266,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.15",
+                    "section_title": "Testing Multitouch Events on an Android Device",
+                    "page": 266,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.16",
+                    "section_title": "Changing the App Launcher Icon",
+                    "page": 268,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.17",
+                    "section_title": "Creating a Custom App Icon",
+                    "page": 268,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.18",
+                    "section_title": "Adding the Custom Icon to Your App",
+                    "page": 268,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.19",
+                    "section_title": "Displaying Your New Icon",
+                    "page": 269,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.20",
+                    "section_title": "Changing the App Name",
+                    "page": 270,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.21",
+                    "section_title": "What You Learned",
+                    "page": 270,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.22",
+                    "section_title": "Programming Challenges",
+                    "page": 271,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "11.22.1",
+                            "sub_section_title": "#1: Combining One-Finger and Multitouch Events, v1.0",
+                            "page": 271
+                        },
+                        {
+                            "sub_section_id": "11.22.2",
+                            "sub_section_title": "#2: Combining One-Finger and Multitouch Events, v2.0",
+                            "page": 271
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

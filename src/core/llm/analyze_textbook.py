@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
 
-from llm_client import LLMClient, ModelProvider, OpenAIClient, DeepseekClient, GeminiClient
-from prompts import *
+from .llm_client import LLMClient, ModelProvider, OpenAIClient, DeepseekClient, GeminiClient
+from .prompts import *
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -196,11 +196,11 @@ class TextbookAnalyzer:
 
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     
-    # chunk_path = r"data\hizan\output\java_short\hybrid_auto\chunker_step_1.json"
-    # analyzer = TextbookAnalyzer(chunker_path=chunk_path)
-    # analyzer.generate_chapter_analysis(r'data/hizan/output/pyhton_short-1772218124093/hybrid_auto/textbook_with_content.json')
+#     chunk_path = r"data\hizan\output\java_short\hybrid_auto\chunker_step_1.json"
+#     analyzer = TextbookAnalyzer(chunker_path=chunk_path)
+#     analyzer.generate_chapter_analysis(r'data/hizan/output/pyhton_short-1772218124093/hybrid_auto/textbook_with_content.json')
 
 
     # This is input by user from markdown file, should get from front end

@@ -8,6 +8,7 @@ from microservices.chunker import MarkdownChunker
 from microservices.vectorization import VectorStorageManager
 from microservices.mineru_client import MinerUClient
 from llm.analyze_textbook import TextbookAnalyzer
+from scripts.merge_toc_content import map_chunks_to_toc
 import uvicorn
 from dotenv import load_dotenv
 
@@ -48,7 +49,8 @@ class TextbookAnalysisRequest(BaseModel):
 
 class ParseTocRequest(BaseModel):
     username: str
-    project_name: str
+    project_name: Optional[str] = None
+    filename: Optional[str] = None
     toc_string: str
     save_to_disk: bool = True
     description: str = "使用LLM解析目录文本并生成结构化TOC"
@@ -326,11 +328,15 @@ async def parse_table_of_content(request: ParseTocRequest):
         if not data_dir:
             raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
 
+        project_name = (request.filename or request.project_name or "").strip()
+        if not project_name:
+            raise HTTPException(status_code=400, detail="filename or project_name is required")
+
         project_dir = os.path.join(
             data_dir,
             request.username,
             "output",
-            request.project_name,
+            project_name,
             "hybrid_auto",
         )
 
@@ -340,8 +346,10 @@ async def parse_table_of_content(request: ParseTocRequest):
                 detail=f"项目目录不存在: {project_dir}",
             )
 
-        # parse_table_of_content uses chunker_path's parent as the save directory.
         chunker_path = os.path.join(project_dir, "chunker_step_1.json")
+        toc_path = os.path.join(project_dir, "textbook_toc.json")
+        textbook_with_content_path = os.path.join(project_dir, "textbook_with_content.json")
+
         analyzer = TextbookAnalyzer(chunker_path=chunker_path)
 
         toc_json = analyzer.parse_table_of_content(
@@ -352,15 +360,27 @@ async def parse_table_of_content(request: ParseTocRequest):
         if not toc_json:
             raise HTTPException(status_code=500, detail="目录解析失败，请检查 toc_string 内容")
 
-        output_path = os.path.join(project_dir, "textbook_toc.json") if request.save_to_disk else None
+        if request.save_to_disk:
+            if not os.path.exists(chunker_path):
+                raise HTTPException(status_code=404, detail=f"chunker_step_1.json not found at {chunker_path}")
+            if not os.path.exists(toc_path):
+                raise HTTPException(status_code=500, detail=f"textbook_toc.json was not saved at {toc_path}")
+
+            merged_ok = map_chunks_to_toc(toc_path, chunker_path, textbook_with_content_path)
+            if not merged_ok:
+                raise HTTPException(status_code=500, detail="目录与分块内容合并失败")
+
+        output_path = toc_path if request.save_to_disk else None
 
         return {
             "success": True,
-            "message": "目录解析完成",
+            "message": "目录解析完成并已合并分块内容",
             "data": {
-                "project_name": request.project_name,
+                "project_name": project_name,
+                "filename": project_name,
                 "save_to_disk": request.save_to_disk,
                 "output_path": output_path,
+                "textbook_with_content_path": textbook_with_content_path if request.save_to_disk else None,
                 "toc": toc_json,
             },
         }

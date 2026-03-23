@@ -10,6 +10,20 @@ const {
 
 const router = express.Router();
 
+function hasStep3Completion(content) {
+  const chapters = content?.chapters || [];
+  const lastChapter = chapters[chapters.length - 1];
+  const lastSection = lastChapter?.sections?.[lastChapter.sections.length - 1];
+  const lastSubsection =
+    lastSection?.sub_sections?.[lastSection.sub_sections.length - 1];
+  const terminalNode = lastSubsection || lastSection;
+
+  return (
+    !!terminalNode &&
+    Object.prototype.hasOwnProperty.call(terminalNode, "key_topics_analysis")
+  );
+}
+
 router.post("/login", (req, res) => {
   const { username } = req.body || {};
   if (!username || typeof username !== "string") {
@@ -87,11 +101,13 @@ router.post("/select-project", (req, res) => {
   const lookupName = matchedProject?.filename || matchedProject?.originalName || normalized;
   const result = findTextbookWithContent(username, lookupName);
   let textbookWithContentData = null;
+  let isStep3Complete = false;
 
   if (result.found && result.path) {
     try {
       const raw = fs.readFileSync(result.path, "utf-8");
       textbookWithContentData = JSON.parse(raw);
+      isStep3Complete = hasStep3Completion(textbookWithContentData);
     } catch (err) {
       return res.status(500).json({
         success: false,
@@ -106,11 +122,15 @@ router.post("/select-project", (req, res) => {
     }
   }
 
-  if (matchedProject && result.found) {
+  if (matchedProject && result.found && isStep3Complete) {
     matchedProject.status = "completed";
     if (matchedProject.error) {
       delete matchedProject.error;
     }
+    writeUserStatus(username, status);
+  } else if (matchedProject && matchedProject.status === "completed" && !isStep3Complete) {
+    // Keep user_status in sync with strict step3 check.
+    matchedProject.status = "uploaded";
     writeUserStatus(username, status);
   }
 

@@ -78,6 +78,53 @@ function resolvePdfPath(username, requestedFilename) {
   return null;
 }
 
+function resolveProjectOutputDir(username, projectName) {
+  const noExtProjectName = String(projectName || "").trim().replace(/\.[^/.]+$/, "");
+  const primaryDir = path.join(DATA_DIR, username, "output", noExtProjectName, "hybrid_auto");
+  if (fs.existsSync(primaryDir)) {
+    return primaryDir;
+  }
+
+  // Backward-compatible fallback for misspelled folder names in old runs.
+  const fallbackDir = path.join(DATA_DIR, username, "output", noExtProjectName, "hybird_auo");
+  if (fs.existsSync(fallbackDir)) {
+    return fallbackDir;
+  }
+
+  return primaryDir;
+}
+
+router.get("/project-markdown", (req, res) => {
+  const { username, projectName } = req.query;
+
+  if (!username || !projectName) {
+    return res.status(400).json({ error: "username and projectName are required" });
+  }
+
+  const safeUsername = String(username).trim();
+  const safeProjectName = String(projectName).trim();
+  const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
+  const projectOutputDir = resolveProjectOutputDir(safeUsername, noExtProjectName);
+  const markdownPath = path.join(projectOutputDir, `${noExtProjectName}.md`);
+
+  if (!fs.existsSync(markdownPath)) {
+    return res.status(404).json({ error: `Markdown file not found: ${markdownPath}` });
+  }
+
+  try {
+    const content = fs.readFileSync(markdownPath, "utf-8");
+    return res.json({
+      success: true,
+      data: {
+        markdownPath,
+        content,
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({ error: `Failed to read markdown: ${err.message}` });
+  }
+});
+
 router.get("/project-pdf", (req, res) => {
   const { username, filename, projectId } = req.query;
 
@@ -137,7 +184,7 @@ router.get("/project-processing-steps", (req, res) => {
   const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
 
   const outputDir = path.join(DATA_DIR, safeUsername, "output");
-  const projectOutputDir = path.join(outputDir, noExtProjectName, "hybrid_auto");
+  const projectOutputDir = resolveProjectOutputDir(safeUsername, noExtProjectName);
 
   const steps = {
     step1: {
@@ -176,7 +223,7 @@ router.get("/project-processing-steps", (req, res) => {
       steps.step2.complete = true;
     }
 
-    // Check step 3: textbook_with_content.json exists with content
+    // Check step 3: textbook_with_content.json exists with key_topics_analysis
     const tocPath = path.join(projectOutputDir, "textbook_with_content.json");
     if (fs.existsSync(tocPath)) {
       try {
@@ -184,7 +231,17 @@ router.get("/project-processing-steps", (req, res) => {
         const chapters = content?.chapters || [];
         const lastChapter = chapters[chapters.length - 1];
         const lastSection = lastChapter?.sections?.[lastChapter.sections.length - 1];
-        if (lastSection?.content) {
+        console.log(`lastSection: ${lastSection}`);
+
+        // Step 3 is complete only when the final node has an explicit key_topics_analysis key.
+        const lastSubsection =
+          lastSection?.sub_sections?.[lastSection.sub_sections.length - 1];
+        const terminalNode = lastSubsection || lastSection;
+        const hasKeyTopicsAnalysis =
+          !!terminalNode &&
+          Object.prototype.hasOwnProperty.call(terminalNode, "key_topics_analysis");
+
+        if (hasKeyTopicsAnalysis) {
           steps.step3.complete = true;
         }
       } catch (err) {
@@ -295,6 +352,71 @@ router.post("/trigger-processing-step", async (req, res) => {
       `Error triggering ${safeStep} for ${safeUsername}/${safeProjectName}: ${err.message}`
     );
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/parse-project-toc", async (req, res) => {
+  const { username, projectName, tocString } = req.body;
+
+  if (!username || !projectName || !tocString) {
+    return res.status(400).json({ error: "username, projectName, and tocString are required" });
+  }
+
+  const safeUsername = String(username).trim();
+  const safeProjectName = String(projectName).trim();
+  const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
+  const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
+
+  try {
+    // Ensure chunker output for step 2 exists using the expected filename.
+    const chunkerResponse = await fetch(`${CORE_API}/api/chunker/process`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: safeUsername,
+        file_name: `${noExtProjectName}.md`,
+        output_filename: "chunker_step_1.json",
+        description: `Chunking markdown for ${noExtProjectName}`,
+      }),
+    });
+    const chunkerResult = await chunkerResponse.json();
+    if (!chunkerResponse.ok) {
+      throw new Error(chunkerResult.detail || chunkerResult.message || "Failed to process chunker step");
+    }
+
+    // Parse and save TOC via the core API endpoint.
+    const tocResponse = await fetch(`${CORE_API}/api/analyze/parse-toc`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: safeUsername,
+        project_name: noExtProjectName,
+        // Keep filename for compatibility with current core endpoint implementation.
+        filename: noExtProjectName,
+        toc_string: tocString,
+        save_to_disk: true,
+      }),
+    });
+    const tocResult = await tocResponse.json();
+    if (!tocResponse.ok) {
+      const detail = tocResult.detail || tocResult.message || "Failed to parse table of content";
+      if (String(detail).includes("filename")) {
+        throw new Error("Core parse-toc endpoint failed due to filename/project_name mismatch in Python server. Please sync src/core/main.py fields.");
+      }
+      throw new Error(detail);
+    }
+
+    return res.json({
+      success: true,
+      message: "Step 2 completed: chunker and TOC parsing finished",
+      data: {
+        chunker: chunkerResult.data,
+        toc: tocResult.data,
+      },
+    });
+  } catch (err) {
+    console.error(`Error parsing TOC for ${safeUsername}/${safeProjectName}: ${err.message}`);
+    return res.status(500).json({ error: err.message });
   }
 });
 
