@@ -8,6 +8,7 @@ import {
   selectProject,
   getProjectPdf,
   getProjectProcessingSteps,
+  getProjectProcessingProgress,
   triggerProcessingStep,
   getProjectMarkdown,
   submitProjectToc,
@@ -25,6 +26,7 @@ export default function Study() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [processingSteps, setProcessingSteps] = useState(null);
   const [processingStep, setProcessingStep] = useState(null);
+  const [summaryProgress, setSummaryProgress] = useState(null);
   const [showStep2Panel, setShowStep2Panel] = useState(false);
   const [markdownPreview, setMarkdownPreview] = useState("");
   const [tocInput, setTocInput] = useState("");
@@ -47,6 +49,7 @@ export default function Study() {
     setMarkdownPreview("");
     setTocInput("");
     setStep2Error("");
+    setSummaryProgress(null);
     setPdfUrl((prevUrl) => {
       if (prevUrl) {
         URL.revokeObjectURL(prevUrl);
@@ -54,6 +57,32 @@ export default function Study() {
       return null;
     });
   }, [projectId]);
+
+  useEffect(() => {
+    if (processingStep !== "step3" || !username || !projectName) {
+      return undefined;
+    }
+
+    let active = true;
+    const pollProgress = async () => {
+      try {
+        const result = await getProjectProcessingProgress(username, projectName);
+        if (active) {
+          setSummaryProgress(result?.data || null);
+        }
+      } catch (err) {
+        // The summary request still owns the final error; keep the last known
+        // progress visible if a polling request fails transiently.
+      }
+    };
+
+    pollProgress();
+    const intervalId = window.setInterval(pollProgress, 1500);
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, [processingStep, username, projectName]);
 
   useEffect(() => {
     if (!username) {
@@ -237,6 +266,9 @@ export default function Study() {
                               return;
                             }
 
+                            if (stepKey === "step3") {
+                              setSummaryProgress(null);
+                            }
                             setProcessingStep(stepKey);
                             try {
                               await triggerProcessingStep(username, projectName, stepKey);
@@ -263,6 +295,24 @@ export default function Study() {
                       )}
                       {stepKey === "step2" && step2Disabled && (
                         <p className="text-xs text-amber-700">Please complete Step 1 first.</p>
+                      )}
+                      {stepKey === "step3" && isProcessing && (
+                        <div className="rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-2 text-xs text-indigo-800">
+                          {summaryProgress?.status === "processing" && summaryProgress.total_chapters > 0 ? (
+                            <>
+                              {summaryProgress.item_title
+                                ? `正在分析：${summaryProgress.item_title}`
+                                : `正在处理第 ${summaryProgress.current_chapter}/${summaryProgress.total_chapters} 章`}
+                              {summaryProgress.item_title
+                                ? `（第 ${summaryProgress.current_chapter}/${summaryProgress.total_chapters} 章）`
+                                : summaryProgress.chapter_title
+                                  ? `：${summaryProgress.chapter_title}`
+                                  : ""}
+                            </>
+                          ) : (
+                            "正在准备章节分析..."
+                          )}
+                        </div>
                       )}
                     </div>
                   );

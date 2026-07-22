@@ -1,7 +1,10 @@
 import os
 import json
+from datetime import datetime, timezone
+from threading import Lock
 
 from fastapi import FastAPI, HTTPException
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from typing import Optional
 from microservices.chunker import MarkdownChunker
@@ -59,6 +62,22 @@ class ParseTocRequest(BaseModel):
 chunker = MarkdownChunker()
 vector_manager = None
 mineru_client = MinerUClient()
+analysis_progress = {}
+analysis_progress_lock = Lock()
+
+
+def _analysis_progress_key(username: str, project_name: str) -> str:
+    return f"{username}:{project_name}"
+
+
+def _set_analysis_progress(username: str, project_name: str, **updates):
+    key = _analysis_progress_key(username, project_name)
+    with analysis_progress_lock:
+        current = analysis_progress.get(key, {})
+        current.update(updates)
+        current["updated_at"] = datetime.now(timezone.utc).isoformat()
+        analysis_progress[key] = current
+        return current.copy()
 
 # ============================================================================
 # 1. MinerU PDF 处理端点
@@ -294,11 +313,49 @@ async def analyze_textbook(request: TextbookAnalysisRequest):
                 detail=f"textbook_with_content.json not found at {textbook_with_content_path}"
             )
         
+        _set_analysis_progress(
+            request.username,
+            request.project_name,
+            status="processing",
+            current_chapter=0,
+            total_chapters=0,
+            chapter_title=None,
+            item_title=None,
+            error=None,
+        )
+
+        def report_chapter_progress(
+            current_chapter: int,
+            total_chapters: int,
+            chapter_title: str,
+            item_title: Optional[str] = None,
+        ):
+            _set_analysis_progress(
+                request.username,
+                request.project_name,
+                status="processing",
+                current_chapter=current_chapter,
+                total_chapters=total_chapters,
+                chapter_title=chapter_title,
+                item_title=item_title,
+                error=None,
+            )
+
         # 初始化分析器
         analyzer = TextbookAnalyzer()
-        
-        # 运行分析
-        result = analyzer.generate_chapter_analysis(textbook_with_content_path)
+
+        # Run the blocking LLM/file workload in a thread so progress requests
+        # can still be served while a textbook is being analyzed.
+        result = await run_in_threadpool(
+            analyzer.generate_chapter_analysis,
+            textbook_with_content_path,
+            report_chapter_progress,
+        )
+        _set_analysis_progress(
+            request.username,
+            request.project_name,
+            status="completed",
+        )
         
         return {
             "success": True,
@@ -314,7 +371,33 @@ async def analyze_textbook(request: TextbookAnalysisRequest):
     except HTTPException:
         raise
     except Exception as e:
+        _set_analysis_progress(
+            request.username,
+            request.project_name,
+            status="failed",
+            error=str(e),
+        )
         raise HTTPException(status_code=500, detail=f"分析出错: {str(e)}")
+
+
+@app.get("/api/analyze/progress")
+async def get_textbook_analysis_progress(username: str, project_name: str):
+    """Return the current in-memory chapter-analysis progress for one project."""
+    key = _analysis_progress_key(username, project_name)
+    with analysis_progress_lock:
+        progress = analysis_progress.get(key)
+
+    return {
+        "success": True,
+        "data": progress or {
+            "status": "idle",
+            "current_chapter": 0,
+            "total_chapters": 0,
+            "chapter_title": None,
+            "item_title": None,
+            "error": None,
+        },
+    }
 
 
 @app.post("/api/analyze/parse-toc")

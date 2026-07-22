@@ -5,7 +5,7 @@ Integrates chunker data and table of contents to generate comprehensive learning
 import json
 import logging
 from pathlib import Path
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Dict, Any, Union, Callable
 from datetime import datetime
 
 from .llm_client import LLMClient, ModelProvider, OpenAIClient, DeepseekClient, GeminiClient
@@ -121,8 +121,9 @@ class TextbookAnalyzer:
 
 
     def generate_chapter_analysis(
-        self, 
+        self,
         path_to_toc_with_content: str,
+        progress_callback: Optional[Callable[[int, int, str, Optional[str]], None]] = None,
     ) -> Dict[str, Any]:
         """
         Generate key point summaries for all sections and subsections in a textbook content JSON file.
@@ -145,8 +146,12 @@ class TextbookAnalyzer:
             logger.info(f"Loaded textbook data from {path}")
             
             # Process each chapter
-            for chapter in textbook_data.get('chapters', []):
+            chapters = textbook_data.get('chapters', [])
+            total_chapters = len(chapters)
+            for chapter_index, chapter in enumerate(chapters, start=1):
                 chapter_title = chapter.get('chapter_title', 'Unknown Chapter')
+                if progress_callback:
+                    progress_callback(chapter_index, total_chapters, chapter_title, None)
                 logger.info(f"Processing chapter: {chapter_title}")
                 
                 # Process each section in the chapter
@@ -161,6 +166,16 @@ class TextbookAnalyzer:
                     # Analyze section content if it exists
                     elif section_content:
                         logger.info(f"Analyzing section: {section_id} {section_title}")
+                        if progress_callback:
+                            section_label = " ".join(
+                                str(value) for value in (section_id, section_title) if value
+                            )
+                            progress_callback(
+                                chapter_index,
+                                total_chapters,
+                                chapter_title,
+                                section_label or section_title,
+                            )
                         analysis = self.extract_key_topics(section_title, section_content)
                         section['key_topics_analysis'] = analysis
                     else:
@@ -169,7 +184,7 @@ class TextbookAnalyzer:
                     # Process subsections within the section
                     for subsection in section.get('sub_sections', []):
                         sub_title = subsection.get('sub_section_title', 'Unknown Subsection')
-                        sub_section_id = section.get('sub_section_id')
+                        sub_section_id = subsection.get('sub_section_id')
                         sub_content = subsection.get('content', '')
                         
                         # Skip if already analyzed
@@ -178,6 +193,16 @@ class TextbookAnalyzer:
                         # Analyze subsection content if it exists
                         elif sub_content:
                             logger.info(f"Analyzing subsection: {sub_section_id} {sub_title}")
+                            if progress_callback:
+                                subsection_label = " ".join(
+                                    str(value) for value in (sub_section_id, sub_title) if value
+                                )
+                                progress_callback(
+                                    chapter_index,
+                                    total_chapters,
+                                    chapter_title,
+                                    subsection_label or sub_title,
+                                )
                             sub_analysis = self.extract_key_topics(sub_title, sub_content)
                             subsection['key_topics_analysis'] = sub_analysis
                         else:

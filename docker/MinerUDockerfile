@@ -8,14 +8,20 @@ FROM vllm/vllm-openai:v0.10.1.1
 # FROM vllm/vllm-openai:v0.11.0
 
 # Install libgl for opencv support & Noto fonts for Chinese characters
-RUN apt-get update && \
-    apt-get install -y \
+RUN set -eux; \
+    apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=120 update; \
+    for attempt in 1 2 3; do \
+      apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=120 install -y --fix-missing \
         fonts-noto-core \
         fonts-noto-cjk \
         fontconfig \
-        libgl1 && \
-    fc-cache -fv && \
-    apt-get clean && \
+        libgl1 && break; \
+      if [ "$attempt" = 3 ]; then exit 1; fi; \
+      echo "APT download failed; retrying in 15 seconds (attempt $attempt/3)..."; \
+      sleep 15; \
+    done; \
+    fc-cache -fv; \
+    apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
 # Install mineru latest

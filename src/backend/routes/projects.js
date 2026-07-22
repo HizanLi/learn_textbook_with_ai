@@ -257,6 +257,34 @@ router.get("/project-processing-steps", (req, res) => {
   res.json(steps);
 });
 
+router.get("/project-processing-progress", async (req, res) => {
+  const { username, projectName } = req.query;
+
+  if (!username || !projectName) {
+    return res
+      .status(400)
+      .json({ error: "username and projectName are required" });
+  }
+
+  const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
+  const params = new URLSearchParams({
+    username: String(username).trim(),
+    project_name: String(projectName).trim().replace(/\.[^/.]+$/, ""),
+  });
+
+  try {
+    const response = await fetch(`${CORE_API}/api/analyze/progress?${params}`);
+    const result = await response.json();
+    if (!response.ok) {
+      return res.status(response.status).json(result);
+    }
+    return res.json(result);
+  } catch (err) {
+    console.error(`Error fetching analysis progress: ${err.message}`);
+    return res.status(502).json({ error: "Failed to fetch analysis progress" });
+  }
+});
+
 router.post("/trigger-processing-step", async (req, res) => {
   const { username, projectName, step } = req.body;
 

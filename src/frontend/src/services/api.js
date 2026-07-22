@@ -121,6 +121,16 @@ export async function getProjectProcessingSteps(username, projectName) {
   return res.json();
 }
 
+export async function getProjectProcessingProgress(username, projectName) {
+  const url = `${API_BASE}/api/project-processing-progress?username=${encodeURIComponent(username)}&projectName=${encodeURIComponent(projectName)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to fetch processing progress");
+  }
+  return data;
+}
+
 export async function triggerProcessingStep(username, projectName, step) {
   const res = await fetch(`${API_BASE}/api/trigger-processing-step`, {
     method: "POST",
