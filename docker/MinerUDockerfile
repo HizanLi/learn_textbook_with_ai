@@ -22,8 +22,19 @@ RUN apt-get update && \
 RUN python3 -m pip install -U 'mineru[core]>=2.7.0' --break-system-packages && \
     python3 -m pip cache purge
 
-# Download models and update the configuration file
-RUN /bin/bash -c "mineru-models-download -s huggingface -m all"
+# Download models and update the configuration file.
+# Some Windows/Docker networks intermittently fail when Hugging Face uses its
+# Xet/CAS transport, so use the standard HTTP downloader and retry transient
+# connection failures. Successful files remain in the layer cache between
+# attempts.
+ENV HF_HUB_DISABLE_XET=1 \
+    HF_HUB_DISABLE_TELEMETRY=1
+RUN for attempt in 1 2 3; do \
+      mineru-models-download -s huggingface -m all && break; \
+      if [ "$attempt" = 3 ]; then exit 1; fi; \
+      echo "Model download failed; retrying in 15 seconds (attempt $attempt/3)..."; \
+      sleep 15; \
+    done
 
 # Set the entry point to activate the virtual environment and run the command line tool
 ENTRYPOINT ["/bin/bash", "-c", "export MINERU_MODEL_SOURCE=local && exec \"$@\"", "--"]

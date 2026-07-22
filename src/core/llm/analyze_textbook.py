@@ -29,10 +29,10 @@ class TextbookAnalyzer:
         Initialize TextbookAnalyzer
         
         Args:
-            llm_client: LLM client instance. If None, creates OpenAI client
+            llm_client: LLM client instance. If None, creates a DeepSeek client
         """
         if llm_client is None:
-            llm_client = OpenAIClient()
+            llm_client = DeepseekClient()
         
         self.llm_client = llm_client
         self.chunker_path = chunker_path 
