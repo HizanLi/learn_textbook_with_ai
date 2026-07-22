@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AlertCircle, ArrowLeft, Loader, FileText, Layout, CheckCircle2, Circle } from "lucide-react";
 import TextbookContentViewer from "../components/TextbookContentViewer";
 import { UserContext } from "../context/UserContext";
+import bankLogo from "../images/LogoHNoBackground.png";
 import {
   getUserStatus,
   selectProject,
@@ -172,7 +173,7 @@ export default function Study() {
   return (
     <div className="min-h-screen bg-slate-100">
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="relative max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/dashboard")}
@@ -210,6 +211,14 @@ export default function Study() {
               Original PDF
             </button>
           </div>
+
+          {!loading && !processingSteps && !error && (
+            <img
+              src={bankLogo}
+              alt="Bank of Shanghai"
+              className="pointer-events-none absolute left-1/2 top-1/2 hidden h-14 w-auto -translate-x-1/2 -translate-y-1/2 object-contain md:block"
+            />
+          )}
         </div>
       </header>
 
@@ -394,6 +403,13 @@ export default function Study() {
                 <p className="text-xs text-amber-800">
                   <strong>Tip:</strong> Processing may take a few minutes. Click "Start" for each step in order.
                 </p>
+              </div>
+              <div className="flex justify-center pt-2">
+                <img
+                  src={bankLogo}
+                  alt="Bank of Shanghai"
+                  className="h-16 w-auto object-contain sm:h-20"
+                />
               </div>
             </div>
           </div>

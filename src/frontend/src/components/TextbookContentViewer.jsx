@@ -192,6 +192,9 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
   const [draggingKey, setDraggingKey] = useState(null);
   const [droppedKey, setDroppedKey] = useState(null);
   const [generatedText, setGeneratedText] = useState("");
+  const [generatedQuiz, setGeneratedQuiz] = useState(null);
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [revealedAnswers, setRevealedAnswers] = useState({});
   const [isGenerating, setIsGenerating] = useState(false);
 
   const activeData = useMemo(() => {
@@ -241,6 +244,9 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
   useEffect(() => {
     setDroppedKey(null);
     setGeneratedText("");
+    setGeneratedQuiz(null);
+    setQuizAnswers({});
+    setRevealedAnswers({});
   }, [selectedSection?.section_id, selectedCategory]);
 
   useEffect(() => {
@@ -304,6 +310,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
   }, [selectedSection]);
 
   const droppedCard = labCards.find((card) => card.key === droppedKey);
+  const quizQuestions = Array.isArray(generatedQuiz?.quiz) ? generatedQuiz.quiz : [];
 
   const generateContent = async () => {
     if (!droppedCard) {
@@ -313,6 +320,9 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
 
     setIsGenerating(true);
     setGeneratedText("");
+    setGeneratedQuiz(null);
+    setQuizAnswers({});
+    setRevealedAnswers({});
 
     try {
       const payload = {
@@ -336,7 +346,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
         });
 
         if (result?.quiz) {
-          setGeneratedText(JSON.stringify(result.quiz, null, 2));
+          setGeneratedQuiz(result.quiz);
         } else {
           setGeneratedText(result?.text || "No quiz output returned.");
         }
@@ -619,7 +629,11 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
                       <h3 className="text-sm font-semibold text-slate-800">{card.label}</h3>
                       <GripVertical className="h-4 w-4 text-slate-400" />
                     </div>
-                    <p className="text-xs text-slate-500">Drag into the large box below</p>
+                    <p className="text-xs text-slate-500">
+                      {selectedCategory === "quiz-for-section"
+                        ? "Use these points as the quiz source"
+                        : "Drag into the large box below"}
+                    </p>
                     <p className="mt-2 text-xs text-slate-600">Point count: {card.points.length}</p>
                   </div>
                 ))}
@@ -634,9 +648,15 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
                 }}
                 className="min-h-[180px] rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-6"
               >
-                <h2 className="text-sm font-semibold text-indigo-700">Content Generation Workspace (Large Box)</h2>
+                <h2 className="text-sm font-semibold text-indigo-700">
+                  {selectedCategory === "quiz-for-section" ? "Quiz Source Selection" : "Content Generation Workspace (Large Box)"}
+                </h2>
                 {!droppedCard ? (
-                  <p className="mt-2 text-sm text-slate-600">Drag any small box from above into this area.</p>
+                  <p className="mt-2 text-sm text-slate-600">
+                    {selectedCategory === "quiz-for-section"
+                      ? "Drag one knowledge-point category here to generate a source-grounded quiz."
+                      : "Drag any small box from above into this area."}
+                  </p>
                 ) : (
                   <div
                     className={`mt-3 rounded-lg border p-3 ${
@@ -659,14 +679,96 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
                   disabled={isGenerating}
                   className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
                 >
-                  {isGenerating ? "Generating..." : "Generate Content"}
+                  {isGenerating
+                    ? selectedCategory === "quiz-for-section" ? "Generating Quiz..." : "Generating..."
+                    : selectedCategory === "quiz-for-section" ? "Generate Quiz" : "Generate Content"}
                 </button>
 
                 <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
-                  <h3 className="text-sm font-semibold text-slate-800">Generated Result</h3>
-                  <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
-                    {generatedText || "Generated content will appear here after clicking the button."}
-                  </pre>
+                  <h3 className="text-sm font-semibold text-slate-800">
+                    {selectedCategory === "quiz-for-section" ? "Your Quiz" : "Generated Result"}
+                  </h3>
+                  {selectedCategory === "quiz-for-section" && quizQuestions.length ? (
+                    <div className="mt-4 space-y-5">
+                      {quizQuestions.map((question, index) => {
+                        const questionKey = String(question.question_id || index + 1);
+                        const answer = quizAnswers[questionKey] || "";
+                        const revealed = revealedAnswers[questionKey];
+                        const isCorrect = answer.trim() === String(question.correct_answer || "").trim();
+                        const isMultipleChoice = question.question_type === "mcq";
+
+                        return (
+                          <section key={questionKey} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                            <div className="flex items-center justify-between gap-3">
+                              <span className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                                Question {index + 1} · {isMultipleChoice ? "Multiple choice" : "Short answer"}
+                              </span>
+                              {question.difficulty && (
+                                <span className="rounded-full bg-white px-2 py-1 text-xs text-slate-500">{question.difficulty}</span>
+                              )}
+                            </div>
+                            <p className="mt-3 font-medium text-slate-900">{question.question}</p>
+
+                            {isMultipleChoice ? (
+                              <div className="mt-3 space-y-2">
+                                {(Array.isArray(question.options) ? question.options : []).map((option, optionIndex) => (
+                                  <label
+                                    key={`${questionKey}-${optionIndex}`}
+                                    className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors ${
+                                      answer === option ? "border-indigo-400 bg-indigo-50" : "border-slate-200 bg-white hover:border-indigo-200"
+                                    }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`quiz-${questionKey}`}
+                                      value={option}
+                                      checked={answer === option}
+                                      onChange={() => setQuizAnswers((current) => ({ ...current, [questionKey]: option }))}
+                                    />
+                                    <span>{option}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            ) : (
+                              <textarea
+                                value={answer}
+                                onChange={(event) => setQuizAnswers((current) => ({ ...current, [questionKey]: event.target.value }))}
+                                placeholder="Write your answer here..."
+                                className="mt-3 min-h-24 w-full rounded-lg border border-slate-300 p-3 text-sm outline-none focus:border-indigo-500"
+                              />
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => setRevealedAnswers((current) => ({ ...current, [questionKey]: true }))}
+                              disabled={!answer.trim()}
+                              className="mt-3 rounded-md border border-indigo-200 bg-white px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Check answer
+                            </button>
+
+                            {revealed && (
+                              <div className={`mt-3 rounded-lg border p-3 text-sm ${isCorrect ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
+                                <p className="font-semibold text-slate-800">
+                                  {isCorrect ? "Correct" : `Suggested answer: ${question.correct_answer || "Not provided"}`}
+                                </p>
+                                {question.explanation && <p className="mt-1 text-slate-700">{question.explanation}</p>}
+                                {question.source_alignment_note && (
+                                  <p className="mt-2 text-xs italic text-slate-500">{question.source_alignment_note}</p>
+                                )}
+                              </div>
+                            )}
+                          </section>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
+                      {generatedText || (selectedCategory === "quiz-for-section"
+                        ? "Choose a source category, then generate your quiz."
+                        : "Generated content will appear here after clicking the button.")}
+                    </pre>
+                  )}
                 </div>
               </div>
             </article>

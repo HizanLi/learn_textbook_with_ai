@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BookOpen } from "lucide-react";
 import { UserContext } from "../context/UserContext";
 import { login } from "../services/api";
+import bankLogo from "../images/LogoHNoBackground.png";
 
 export default function Auth() {
   const [value, setValue] = useState("");
@@ -30,6 +31,9 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-emerald-500 p-6">
       <div className="bg-white/95 backdrop-blur rounded-2xl p-8 w-full max-w-md shadow-xl">
+        <div className="mb-6 flex justify-center">
+          <img src={bankLogo} alt="Bank of Shanghai" className="h-20 w-auto object-contain" />
+        </div>
         <div className="flex items-center gap-3 mb-6">
           <BookOpen className="h-8 w-8 text-blue-600" />
           <h1 className="text-2xl font-semibold">Textbook AI Learning</h1>

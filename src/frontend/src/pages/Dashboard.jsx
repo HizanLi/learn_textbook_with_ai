@@ -4,6 +4,7 @@ import { UserContext } from "../context/UserContext";
 import UploadZone from "../components/UploadZone";
 import ProjectList from "../components/ProjectList";
 import { uploadTextbook, checkServerHealth } from "../services/api";
+import bankLogo from "../images/LogoHNoBackground.png";
 
 export default function Dashboard() {
   const { username, loadUserStatus, health, checkHealth } = useContext(UserContext);
@@ -102,6 +103,12 @@ export default function Dashboard() {
           <ProjectList />
         </aside>
       </main>
+
+      <img
+        src={bankLogo}
+        alt="Bank of Shanghai"
+        className="fixed bottom-6 right-6 h-16 w-auto object-contain drop-shadow-sm sm:h-20"
+      />
     </div>
   );
 }
