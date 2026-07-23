@@ -1,13 +1,16 @@
 import os
 import json
+import re
+import traceback
 from datetime import datetime, timezone
+from pathlib import Path
 from threading import Lock
 
 from fastapi import FastAPI, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from typing import Optional
-from microservices.chunker import MarkdownChunker
+from microservices.chunker import MarkdownChunker, save_chunks_to_json
 from microservices.vectorization import VectorStorageManager
 from microservices.mineru_client import MinerUClient
 from llm.analyze_textbook import TextbookAnalyzer
@@ -25,24 +28,24 @@ app = FastAPI(
 class MinerUProcessRequest(BaseModel):
     username: str
     file_name: str
-    description: str = "需要处理的PDF文件名"
+    description: str = "PDF file name to process"
 
 class MinerUPrepareRequest(BaseModel):
     username: str
     file_name: str
-    description: str = "上传后检查PDF页数并生成分段文件"
+    description: str = "Count PDF pages and prepare split files after upload"
 
 class ChunkerProcessRequest(BaseModel):
     username: str
     file_name: str
     output_filename: str = "chunker_step_1.json"
-    description: str = "需要分块的Markdown文件名"
+    description: str = "Markdown file name to chunk"
 
 class VectorizationStoreRequest(BaseModel):
     username: str
     json_path: str
     collection_name: str = "default_collection"
-    description: str = "需要向量化的chunks.json文件路径"
+    description: str = "Path to chunks JSON for vectorization"
 
 class SearchRequest(BaseModel):
     username: str
@@ -53,7 +56,7 @@ class SearchRequest(BaseModel):
 class TextbookAnalysisRequest(BaseModel):
     username: str
     project_name: str
-    description: str = "分析教科书内容并生成学习材料"
+    description: str = "Analyze textbook content and generate learning material"
 
 class ParseTocRequest(BaseModel):
     username: str
@@ -61,8 +64,7 @@ class ParseTocRequest(BaseModel):
     filename: Optional[str] = None
     toc_string: str
     save_to_disk: bool = True
-    description: str = "使用LLM解析目录文本并生成结构化TOC"
-
+    description: str = "Parse table-of-contents text into structured JSON"
 # --- 初始化组件 ---
 chunker = MarkdownChunker()
 vector_manager = None
@@ -83,6 +85,149 @@ def _set_analysis_progress(username: str, project_name: str, **updates):
         current["updated_at"] = datetime.now(timezone.utc).isoformat()
         analysis_progress[key] = current
         return current.copy()
+
+
+def _data_dir_path() -> Path:
+    data_dir = os.getenv("DATA_DIR")
+    if not data_dir:
+        raise HTTPException(status_code=500, detail="DATA_DIR is not configured")
+    return Path(data_dir)
+
+
+def _project_name_from_file(file_name: str) -> str:
+    return Path(file_name).stem
+
+
+def _project_output_dir(data_dir: Path, username: str, project_name: str) -> Path:
+    return data_dir / username / "output" / project_name / "hybrid_auto"
+
+
+def _part_number_from_dir(part_dir: Path) -> Optional[int]:
+    match = re.search(r"part_(\d+)$", part_dir.name)
+    return int(match.group(1)) if match else None
+
+
+def _find_part_markdown(part_dir: Path, part_pdf_stem: Optional[str] = None) -> Optional[Path]:
+    candidates = []
+    if part_pdf_stem:
+        candidates.extend([
+            part_dir / f"{part_pdf_stem}.md",
+            part_dir / "mineru_output" / f"{part_pdf_stem}.md",
+        ])
+
+    candidates.extend(sorted(part_dir.glob("*.md")))
+    mineru_output_dir = part_dir / "mineru_output"
+    if mineru_output_dir.exists():
+        candidates.extend(sorted(mineru_output_dir.rglob("*.md")))
+
+    for candidate in candidates:
+        if candidate.exists() and candidate.is_file() and candidate.stat().st_size > 0:
+            return candidate
+    return None
+
+
+def _split_roots(data_dir: Path, username: str, file_name: str):
+    safe_name = Path(file_name).name
+    pdf_name = f"{Path(file_name).stem}.pdf"
+    # Current upload layout keeps split PDFs under input/<filename>/.
+    yield data_dir / username / "input" / safe_name
+    if pdf_name != safe_name:
+        yield data_dir / username / "input" / pdf_name
+    # MinerUClient also supports a legacy/alternate split root beside input/.
+    yield data_dir / username / safe_name
+    if pdf_name != safe_name:
+        yield data_dir / username / pdf_name
+
+
+def _output_split_roots(data_dir: Path, username: str, file_name: str):
+    safe_name = Path(file_name).name
+    pdf_name = f"{Path(file_name).stem}.pdf"
+    yield data_dir / username / "output" / safe_name
+    if pdf_name != safe_name:
+        yield data_dir / username / "output" / pdf_name
+
+
+def _process_split_markdown_batch(
+    username: str,
+    file_name: str,
+    output_filename: str,
+):
+    data_dir = _data_dir_path()
+    project_name = _project_name_from_file(file_name)
+    output_dir = _project_output_dir(data_dir, username, project_name)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    split_root = next((root for root in _split_roots(data_dir, username, file_name) if root.exists()), None)
+    output_split_root = next(
+        (root for root in _output_split_roots(data_dir, username, file_name) if root.exists()),
+        None,
+    )
+    if not split_root:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Split PDF directory not found for {file_name}. Expected input/<filename>/part_*/.",
+        )
+
+    part_dirs = sorted(
+        [path for path in split_root.glob("part_*") if path.is_dir()],
+        key=lambda path: _part_number_from_dir(path) or 0,
+    )
+    if not part_dirs:
+        raise HTTPException(status_code=404, detail=f"No split PDF part directories found in {split_root}")
+
+    combined_chunks = []
+    missing_parts = []
+    processed_parts = []
+
+    for part_dir in part_dirs:
+        part_number = _part_number_from_dir(part_dir)
+        part_pdf = next(iter(sorted(part_dir.glob("*.pdf"))), None)
+        output_part_dir = output_split_root / part_dir.name if output_split_root else None
+        markdown_path = (
+            _find_part_markdown(output_part_dir, part_pdf.stem if part_pdf else None)
+            if output_part_dir and output_part_dir.exists()
+            else None
+        ) or _find_part_markdown(part_dir, part_pdf.stem if part_pdf else None)
+        if not markdown_path:
+            missing_parts.append(part_dir.name)
+            continue
+
+        part_chunks = chunker.process_markdown_file_to_chunks(markdown_path)
+        for chunk in part_chunks:
+            enriched_chunk = dict(chunk)
+            enriched_chunk["source_part"] = part_dir.name
+            enriched_chunk["source_markdown"] = str(markdown_path)
+            if part_number is not None:
+                enriched_chunk["part_number"] = part_number
+            combined_chunks.append(enriched_chunk)
+        processed_parts.append({
+            "part": part_dir.name,
+            "markdown_path": str(markdown_path),
+            "chunks_count": len(part_chunks),
+        })
+
+    if missing_parts:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Some split PDF parts have no Markdown yet. Run /api/mineru/process "
+                f"for {file_name} first, or convert these parts: {', '.join(missing_parts)}"
+            ),
+        )
+
+    output_path = output_dir / output_filename
+    success, error = save_chunks_to_json(combined_chunks, output_path)
+    if not success:
+        raise HTTPException(status_code=500, detail=error or "Failed to save combined split chunks")
+
+    return {
+        "markdown_path": None,
+        "output_path": str(output_path),
+        "chunks_count": len(combined_chunks),
+        "source": "split_parts",
+        "split_root": str(split_root),
+        "processed_parts": processed_parts,
+    }
 
 # ============================================================================
 # 1. MinerU PDF 处理端点
@@ -124,7 +269,8 @@ async def process_pdf(request: MinerUProcessRequest):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"处理PDF出错: {str(e)}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"PDF processing error: {type(e).__name__}: {str(e)}")
 
 # ============================================================================
 # 2. 文本分块端点
@@ -133,25 +279,34 @@ async def process_pdf(request: MinerUProcessRequest):
 @app.post("/api/chunker/process")
 async def process_chunking(request: ChunkerProcessRequest):
     """
-    对 Markdown 文件进行智能分块
-    - 按标题分块：保留标题增强语义
-    - 递归分块：处理超长内容
-    - 输出：chunks.json 文件及统计信息
+    Chunk a project's Markdown.
+
+    For normal PDFs, this chunks the merged Markdown at:
+    data/<user>/output/<project>/hybrid_auto/<project>.md
+
+    For long PDFs that were split into part PDFs, this endpoint falls back to
+    batch chunking part Markdown files from:
+    data/<user>/input/<filename>/part_*/
+    data/<user>/<filename>/part_*/
     """
     try:
-        data_dir = os.getenv("DATA_DIR")
-        if not data_dir:
-            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+        data_dir = _data_dir_path()
+        project_name = _project_name_from_file(request.file_name)
+        project_output_dir = _project_output_dir(data_dir, request.username, project_name)
+        markdown_path = project_output_dir / request.file_name
 
-        project_name = os.path.splitext(request.file_name)[0]
-        markdown_path = os.path.join(
-            data_dir,
-            request.username,
-            "output",
-            project_name,
-            "hybrid_auto",
-            request.file_name,
-        )
+        if not markdown_path.exists():
+            batch_result = _process_split_markdown_batch(
+                username=request.username,
+                file_name=request.file_name,
+                output_filename=request.output_filename,
+            )
+            return {
+                "success": True,
+                "status_code": 200,
+                "message": "Split Markdown batch chunking succeeded",
+                "data": batch_result,
+            }
 
         success, error = chunker.process_markdown(
             markdown_file=markdown_path,
@@ -161,16 +316,9 @@ async def process_chunking(request: ChunkerProcessRequest):
         if not success:
             if error and "not found" in error.lower():
                 raise HTTPException(status_code=404, detail=error)
-            raise HTTPException(status_code=500, detail=error or "分块处理失败")
+            raise HTTPException(status_code=500, detail=error or "Chunking failed")
 
-        output_path = os.path.join(
-            data_dir,
-            request.username,
-            "output",
-            project_name,
-            "hybrid_auto",
-            request.output_filename,
-        )
+        output_path = project_output_dir / request.output_filename
 
         chunks_count = None
         try:
@@ -183,18 +331,18 @@ async def process_chunking(request: ChunkerProcessRequest):
         return {
             "success": True,
             "status_code": 200,
-            "message": "Markdown 分块成功",
+            "message": "Markdown chunking succeeded",
             "data": {
-                "markdown_path": markdown_path,
-                "output_path": output_path,
+                "markdown_path": str(markdown_path),
+                "output_path": str(output_path),
                 "chunks_count": chunks_count,
+                "source": "merged_markdown",
             },
         }
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"分块出错: {str(e)}")
-
+        raise HTTPException(status_code=500, detail=f"Chunking error: {str(e)}")
 # ============================================================================
 # 3. 向量化和存储端点
 # ============================================================================
@@ -212,7 +360,7 @@ async def vectorize_and_store(request: VectorizationStoreRequest):
         # 构建用户特定的数据库路径
         data_dir = os.getenv("DATA_DIR")
         if not data_dir:
-            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+            raise HTTPException(status_code=500, detail="DATA_DIR is not configured")
         
         user_db_path = os.path.join(data_dir, request.username, "chroma_db")
         
@@ -255,7 +403,7 @@ async def semantic_search(request: SearchRequest):
         # 构建用户特定的数据库路径
         data_dir = os.getenv("DATA_DIR")
         if not data_dir:
-            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+            raise HTTPException(status_code=500, detail="DATA_DIR is not configured")
         
         user_db_path = os.path.join(data_dir, request.username, "chroma_db")
         
@@ -318,7 +466,7 @@ async def analyze_textbook(request: TextbookAnalysisRequest):
     try:
         data_dir = os.getenv("DATA_DIR")
         if not data_dir:
-            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+            raise HTTPException(status_code=500, detail="DATA_DIR is not configured")
         
         # 构建文件路径
         project_dir = os.path.join(data_dir, request.username, "output", request.project_name, "hybrid_auto")
@@ -426,7 +574,7 @@ async def parse_table_of_content(request: ParseTocRequest):
     try:
         data_dir = os.getenv("DATA_DIR")
         if not data_dir:
-            raise HTTPException(status_code=500, detail="DATA_DIR 环境变量未配置")
+            raise HTTPException(status_code=500, detail="DATA_DIR is not configured")
 
         project_name = (request.filename or request.project_name or "").strip()
         if not project_name:
@@ -538,3 +686,5 @@ if __name__ == "__main__":
     load_dotenv()
     port = int(os.getenv("PYTHON_PORT", "8080"))
     uvicorn.run(app, host="127.0.0.1", port=port)
+
+

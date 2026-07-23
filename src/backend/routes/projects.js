@@ -394,7 +394,7 @@ router.post("/trigger-processing-step", async (req, res) => {
 
       const result = await response.json();
       if (!response.ok) {
-        throw new Error(result.message || "Failed to process PDF");
+        throw new Error(result.detail || result.message || "Failed to process PDF");
       }
 
       return res.json({

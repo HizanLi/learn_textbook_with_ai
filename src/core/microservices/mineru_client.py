@@ -87,6 +87,8 @@ class MinerUClient:
                 "docker",
                 "exec",
                 self.container_id,
+                "env",
+                "VLLM_USE_V1=1",
                 "mineru",
                 "-p",
                 container_input_path,
@@ -109,7 +111,13 @@ class MinerUClient:
         markdown_files = sorted(output_root.rglob("*.md"))
         return markdown_files[0] if markdown_files else None
 
-    def _split_pdf(self, source_pdf: Path, parts_root: Path, page_count: int) -> List[Dict]:
+    def _split_pdf(
+        self,
+        source_pdf: Path,
+        parts_root: Path,
+        page_count: int,
+        output_parts_root: Optional[Path] = None,
+    ) -> List[Dict]:
         if PdfReader is None or PdfWriter is None:
             raise RuntimeError("pypdf is required for large PDFs. Install the core requirements first.")
 
@@ -119,7 +127,9 @@ class MinerUClient:
         for index, start_index in enumerate(range(0, page_count, self.part_pages), start=1):
             end_index = min(start_index + self.part_pages, page_count)
             part_dir = parts_root / f"part_{index:03d}"
+            output_part_dir = (output_parts_root or parts_root) / f"part_{index:03d}"
             part_dir.mkdir(parents=True, exist_ok=True)
+            output_part_dir.mkdir(parents=True, exist_ok=True)
             part_path = part_dir / f"{source_pdf.stem}_part_{index:03d}.pdf"
             if not part_path.exists():
                 writer = PdfWriter()
@@ -135,6 +145,7 @@ class MinerUClient:
                     "end_page": end_index,
                     "pdf_path": part_path,
                     "part_dir": part_dir,
+                    "output_part_dir": output_part_dir,
                 }
             )
         return parts
@@ -150,7 +161,11 @@ class MinerUClient:
 
     def _parts_root(self, username: str, file_name: str) -> Path:
         safe_name = Path(file_name).name
-        return self.data_dir / username / safe_name
+        return self.data_dir / username / "input" / safe_name
+
+    def _output_parts_root(self, username: str, file_name: str) -> Path:
+        safe_name = Path(file_name).name
+        return self.data_dir / username / "output" / safe_name
 
     def _canonicalize_source_pdf(self, source_pdf: Path) -> Path:
         """Move a legacy flat upload into its per-file input directory before splitting."""
@@ -167,15 +182,15 @@ class MinerUClient:
 
     @staticmethod
     def _part_markdown_path(part: Dict) -> Path:
-        return part["part_dir"] / f"{part['pdf_path'].stem}.md"
+        return part.get("output_part_dir", part["part_dir"]) / f"{part['pdf_path'].stem}.md"
 
     def _store_part_markdown(self, markdown_path: Path, part: Dict) -> Path:
-        """Keep each converted part self-contained beside its split PDF."""
+        """Keep each converted part self-contained in the output part directory."""
         stored_markdown_path = self._part_markdown_path(part)
         markdown = markdown_path.read_text(encoding="utf-8")
 
         source_images_dir = markdown_path.parent / "images"
-        target_images_dir = part["part_dir"] / "images"
+        target_images_dir = stored_markdown_path.parent / "images"
         if source_images_dir.exists():
             if target_images_dir.exists():
                 shutil.rmtree(target_images_dir)
@@ -304,6 +319,7 @@ class MinerUClient:
                     "start_page": part["start_page"],
                     "end_page": part["end_page"],
                     "pdf_path": str(part["pdf_path"]),
+                    "output_part_dir": str(part["output_part_dir"]) if part.get("output_part_dir") else None,
                     "markdown_path": str(part["markdown_path"]) if part.get("markdown_path") else None,
                 }
                 for part in parts
@@ -346,7 +362,8 @@ class MinerUClient:
 
         try:
             parts_root = self._parts_root(username, source_pdf.name)
-            parts = self._split_pdf(source_pdf, parts_root, page_count)
+            output_parts_root = self._output_parts_root(username, source_pdf.name)
+            parts = self._split_pdf(source_pdf, parts_root, page_count, output_parts_root)
             self._update_part_statuses(username, source_pdf.name, parts)
             self._write_split_manifest(parts_root, page_count, parts)
             return {
@@ -371,8 +388,9 @@ class MinerUClient:
         page_count: int,
     ) -> Tuple[bool, str, Optional[Path], List[Dict]]:
         parts_root = self._parts_root(username, source_pdf.name)
+        output_parts_root = self._output_parts_root(username, source_pdf.name)
         final_output_dir = project_dir / "hybrid_auto"
-        parts = self._split_pdf(source_pdf, parts_root, page_count)
+        parts = self._split_pdf(source_pdf, parts_root, page_count, output_parts_root)
         self._update_part_statuses(username, source_pdf.name, parts)
 
         for part in parts:
@@ -382,7 +400,7 @@ class MinerUClient:
                 self._update_part_statuses(username, source_pdf.name, parts, part["index"])
                 continue
 
-            part_output_root = part["part_dir"] / "mineru_output"
+            part_output_root = part["output_part_dir"] / "mineru_output"
             part_stem = part["pdf_path"].stem
             markdown_path = self._find_markdown(part_output_root, part_stem)
             if not markdown_path:

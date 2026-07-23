@@ -1,55 +1,54 @@
 {
   "page_count": 699,
-  "pages_per_part": 100,
+  "pages_per_part": 120,
   "merged_markdown": null,
   "parts": [
     {
       "index": 1,
       "start_page": 1,
-      "end_page": 100,
-      "pdf_path": "/Users/hizanli/Documents/github/learn_textbook_with_ai/data/hizan/input/java_long.pdf/part_001/java_long_part_001.pdf",
+      "end_page": 120,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\java_long.pdf\\part_001\\java_long_part_001.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\java_long.pdf\\part_001",
       "markdown_path": null
     },
     {
       "index": 2,
-      "start_page": 101,
-      "end_page": 200,
-      "pdf_path": "/Users/hizanli/Documents/github/learn_textbook_with_ai/data/hizan/input/java_long.pdf/part_002/java_long_part_002.pdf",
+      "start_page": 121,
+      "end_page": 240,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\java_long.pdf\\part_002\\java_long_part_002.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\java_long.pdf\\part_002",
       "markdown_path": null
     },
     {
       "index": 3,
-      "start_page": 201,
-      "end_page": 300,
-      "pdf_path": "/Users/hizanli/Documents/github/learn_textbook_with_ai/data/hizan/input/java_long.pdf/part_003/java_long_part_003.pdf",
+      "start_page": 241,
+      "end_page": 360,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\java_long.pdf\\part_003\\java_long_part_003.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\java_long.pdf\\part_003",
       "markdown_path": null
     },
     {
       "index": 4,
-      "start_page": 301,
-      "end_page": 400,
-      "pdf_path": "/Users/hizanli/Documents/github/learn_textbook_with_ai/data/hizan/input/java_long.pdf/part_004/java_long_part_004.pdf",
+      "start_page": 361,
+      "end_page": 480,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\java_long.pdf\\part_004\\java_long_part_004.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\java_long.pdf\\part_004",
       "markdown_path": null
     },
     {
       "index": 5,
-      "start_page": 401,
-      "end_page": 500,
-      "pdf_path": "/Users/hizanli/Documents/github/learn_textbook_with_ai/data/hizan/input/java_long.pdf/part_005/java_long_part_005.pdf",
+      "start_page": 481,
+      "end_page": 600,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\java_long.pdf\\part_005\\java_long_part_005.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\java_long.pdf\\part_005",
       "markdown_path": null
     },
     {
       "index": 6,
-      "start_page": 501,
-      "end_page": 600,
-      "pdf_path": "/Users/hizanli/Documents/github/learn_textbook_with_ai/data/hizan/input/java_long.pdf/part_006/java_long_part_006.pdf",
-      "markdown_path": null
-    },
-    {
-      "index": 7,
       "start_page": 601,
       "end_page": 699,
-      "pdf_path": "/Users/hizanli/Documents/github/learn_textbook_with_ai/data/hizan/input/java_long.pdf/part_007/java_long_part_007.pdf",
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\java_long.pdf\\part_006\\java_long_part_006.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\java_long.pdf\\part_006",
       "markdown_path": null
     }
   ]

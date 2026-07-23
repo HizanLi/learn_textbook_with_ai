@@ -173,46 +173,7 @@ class MarkdownChunker:
         """
         try:
             markdown_path = Path(markdown_file)
-            if not markdown_path.exists():
-                return False, f"Markdown file not found: {markdown_path}"
-            
-            # Read markdown content
-            with markdown_path.open("r", encoding="utf-8") as f:
-                content = f.read()
-            
-            # Split by # headers using regex - split on lines that start with #
-            lines = content.split('\n')
-            chunks = []
-            current_header = ""
-            current_content = []
-            
-            for line in lines:
-                # Check if line is a header (starts with #)
-                if line.strip().startswith('#'):
-                    # Save previous chunk if it has content
-                    if current_header or current_content:
-                        chunk_text = '\n'.join(current_content).strip()
-                        if chunk_text:
-                            chunks.append({
-                                "content": chunk_text,
-                                "Header": current_header
-                            })
-                    
-                    # Extract header text (remove # symbols)
-                    current_header = line.strip().lstrip('#').strip()
-                    current_content = [line]  # Include the header line in content
-                else:
-                    current_content.append(line)
-            
-            # Don't forget the last chunk
-            if current_header or current_content:
-                chunk_text = '\n'.join(current_content).strip()
-                if chunk_text:
-                    chunks.append({
-                        "content": chunk_text,
-                        "Header": current_header
-                    })
-            
+            chunks = self.process_markdown_file_to_chunks(markdown_path)
             logger.info(f"Successfully split into {len(chunks)} chunks by # headers")
             
             # Save to output file
@@ -228,6 +189,50 @@ class MarkdownChunker:
         except Exception as e:
             logger.exception(f"Error processing markdown: {e}")
             return False, str(e)
+
+    def process_markdown_file_to_chunks(self, markdown_file: PathLike) -> List[Dict]:
+        """
+        Split a Markdown file into chunks without writing an output file.
+
+        This is used by batch jobs that need to combine chunks from several
+        split-PDF Markdown files into one final chunker_step_1.json.
+        """
+        markdown_path = Path(markdown_file)
+        if not markdown_path.exists():
+            raise FileNotFoundError(f"Markdown file not found: {markdown_path}")
+
+        with markdown_path.open("r", encoding="utf-8") as f:
+            content = f.read()
+
+        lines = content.split('\n')
+        chunks = []
+        current_header = ""
+        current_content = []
+
+        for line in lines:
+            if line.strip().startswith('#'):
+                if current_header or current_content:
+                    chunk_text = '\n'.join(current_content).strip()
+                    if chunk_text:
+                        chunks.append({
+                            "content": chunk_text,
+                            "Header": current_header
+                        })
+
+                current_header = line.strip().lstrip('#').strip()
+                current_content = [line]
+            else:
+                current_content.append(line)
+
+        if current_header or current_content:
+            chunk_text = '\n'.join(current_content).strip()
+            if chunk_text:
+                chunks.append({
+                    "content": chunk_text,
+                    "Header": current_header
+                })
+
+        return chunks
 
 
 # if __name__ == "__main__":
