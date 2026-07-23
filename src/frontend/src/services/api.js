@@ -103,6 +103,25 @@ export async function setCurrentProject(username, projectId) {
   return res.json();
 }
 
+export async function updateProjectRemark(username, projectId, remark) {
+  const res = await fetch(`${API_BASE}/api/project-remark`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, projectId, remark }),
+  });
+  const contentType = res.headers.get("content-type") || "";
+  const data = contentType.includes("application/json") ? await res.json() : null;
+  if (!res.ok) {
+    throw new Error(
+      data?.error || "Unable to save the remark. Restart the backend so it loads the latest API routes."
+    );
+  }
+  if (!data) {
+    throw new Error("The backend returned an invalid response while saving the remark.");
+  }
+  return data;
+}
+
 export async function getProjectPdf(username, filename) {
   const url = `${API_BASE}/api/project-pdf?username=${encodeURIComponent(username)}&filename=${encodeURIComponent(filename)}`;
   const res = await fetch(url);

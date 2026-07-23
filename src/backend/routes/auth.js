@@ -64,6 +64,28 @@ router.post("/set-current-project", (req, res) => {
   return res.json(status);
 });
 
+router.post("/project-remark", (req, res) => {
+  const { username, projectId, remark } = req.body || {};
+  if (!username || !projectId || typeof remark !== "string") {
+    return res.status(400).json({ error: "username, projectId, and remark are required" });
+  }
+
+  const normalizedRemark = remark.trim();
+  if (normalizedRemark.length > 500) {
+    return res.status(400).json({ error: "remark must be 500 characters or fewer" });
+  }
+
+  const status = readUserStatus(username);
+  const project = status?.uploadedProjects?.find((item) => item.id === projectId);
+  if (!project) {
+    return res.status(404).json({ error: "Project not found" });
+  }
+
+  project.remark = normalizedRemark;
+  writeUserStatus(username, status);
+  return res.json({ success: true, project });
+});
+
 router.post("/select-project", (req, res) => {
   const { username, projectName } = req.body || {};
   if (!username || !projectName) {
@@ -95,6 +117,7 @@ router.post("/select-project", (req, res) => {
 
   if (matchedProject) {
     status.currentProject = matchedProject.id;
+    matchedProject.lastAccessedAt = new Date().toISOString();
     writeUserStatus(username, status);
   }
 

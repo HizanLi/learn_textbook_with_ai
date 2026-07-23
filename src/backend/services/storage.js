@@ -119,11 +119,16 @@ function addUploadedProject(username, filename, originalName) {
     currentProject: null,
   };
 
+  const createdAt = new Date().toISOString();
   const project = {
     id: `project-${Date.now()}`,
     filename: filename,
     originalName: originalName,
-    uploadedAt: new Date().toISOString(),
+    remark: "",
+    fileFormat: path.extname(originalName || filename).replace(".", "").toUpperCase() || "Unknown",
+    createdAt,
+    uploadedAt: createdAt,
+    lastAccessedAt: null,
     status: "uploaded",
   };
 

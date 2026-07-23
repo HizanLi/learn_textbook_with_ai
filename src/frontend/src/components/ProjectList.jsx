@@ -1,13 +1,16 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Book, CheckCircle } from "lucide-react";
+import { Book, CheckCircle, Clock3, FileText, MessageSquare, Pencil, Save, Tag, X } from "lucide-react";
 import { UserContext } from "../context/UserContext";
-import { selectProject } from "../services/api";
+import { selectProject, updateProjectRemark } from "../services/api";
 
 export default function ProjectList() {
   const { userStatus, username, loadUserStatus } = useContext(UserContext);
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [editingProjectId, setEditingProjectId] = useState(null);
+  const [remarkDraft, setRemarkDraft] = useState("");
+  const [savingRemark, setSavingRemark] = useState(false);
 
   const handleSelectProject = async (project) => {
     setError("");
@@ -24,6 +27,41 @@ export default function ProjectList() {
 
   const projects = userStatus.uploadedProjects || [];
   const currentProjectId = userStatus.currentProject;
+
+  const formatDateTime = (value, emptyLabel = "Not available") => {
+    if (!value) return emptyLabel;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? emptyLabel : date.toLocaleString();
+  };
+
+  const getFileFormat = (project) => {
+    if (project.fileFormat) return project.fileFormat;
+    const filename = project.filename || project.originalName || "";
+    const extension = filename.split(".").pop();
+    return extension && extension !== filename ? extension.toUpperCase() : "Unknown";
+  };
+
+  const beginRemarkEdit = (project) => {
+    setError("");
+    setEditingProjectId(project.id);
+    setRemarkDraft(project.remark || "");
+  };
+
+  const saveRemark = async (projectId) => {
+    if (!username) return;
+
+    setSavingRemark(true);
+    setError("");
+    try {
+      await updateProjectRemark(username, projectId, remarkDraft);
+      await loadUserStatus(username);
+      setEditingProjectId(null);
+    } catch (err) {
+      setError(err.message || "Failed to save remark");
+    } finally {
+      setSavingRemark(false);
+    }
+  };
 
   if (projects.length === 0) {
     return (
@@ -43,31 +81,97 @@ export default function ProjectList() {
     <div className="bg-white rounded-xl shadow p-4">
       <h3 className="font-semibold mb-3 text-slate-700">Projects</h3>
       {error && <p className="text-xs text-red-600 mb-2">{error}</p>}
-      <div className="space-y-2 max-h-96 overflow-y-auto">
+      <div className="space-y-3 max-h-[32rem] overflow-y-auto pr-1">
         {projects.map((project) => (
-          <button
+          <div
             key={project.id}
-            onClick={() => handleSelectProject(project)}
-            className={`w-full text-left p-3 rounded-lg transition-colors ${
+            className={`overflow-hidden rounded-xl border-2 transition-colors ${
               project.id === currentProjectId
                 ? "bg-blue-100 border-2 border-blue-500"
                 : "bg-slate-50 border-2 border-slate-200 hover:bg-slate-100"
             }`}
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">
-                  {project.originalName}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {new Date(project.uploadedAt).toLocaleDateString()}
-                </p>
+            <button
+              type="button"
+              onClick={() => handleSelectProject(project)}
+              className="w-full p-3 text-left"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Filename</p>
+                  <p className="mt-0.5 truncate text-sm font-semibold text-slate-800">
+                    {project.originalName || project.filename || "Untitled project"}
+                  </p>
+                </div>
+                {project.id === currentProjectId && (
+                  <CheckCircle className="h-5 w-5 text-blue-600 ml-2 flex-shrink-0" />
+                )}
               </div>
-              {project.id === currentProjectId && (
-                <CheckCircle className="h-5 w-5 text-blue-600 ml-2 flex-shrink-0" />
-              )}
+
+              <div className="mt-3 space-y-2 text-xs text-slate-600">
+                <div className="flex items-center gap-2">
+                  <Tag className="h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
+                  <span>Format: {getFileFormat(project)}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <FileText className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
+                  <span>Created: {formatDateTime(project.createdAt || project.uploadedAt)}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Clock3 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
+                  <span>Last accessed: {formatDateTime(project.lastAccessedAt, "Not opened yet")}</span>
+                </div>
+              </div>
+            </button>
+
+            <div className="border-t border-slate-200/80 bg-white/60 px-3 py-2.5 text-xs text-slate-600">
+              <div className="flex items-start gap-2">
+                <MessageSquare className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
+                {editingProjectId === project.id ? (
+                  <div className="min-w-0 flex-1">
+                    <textarea
+                      value={remarkDraft}
+                      onChange={(event) => setRemarkDraft(event.target.value)}
+                      maxLength={500}
+                      rows={2}
+                      autoFocus
+                      placeholder="Add a remark..."
+                      className="w-full resize-none rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-blue-500"
+                    />
+                    <div className="mt-2 flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingProjectId(null)}
+                        disabled={savingRemark}
+                        className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+                      >
+                        <X className="h-3.5 w-3.5" /> Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => saveRemark(project.id)}
+                        disabled={savingRemark}
+                        className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:bg-blue-300"
+                      >
+                        <Save className="h-3.5 w-3.5" /> {savingRemark ? "Saving..." : "Save"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex min-w-0 flex-1 items-start justify-between gap-2">
+                    <span className="line-clamp-2">Remark: {project.remark?.trim() || "No remark"}</span>
+                    <button
+                      type="button"
+                      onClick={() => beginRemarkEdit(project)}
+                      className="inline-flex flex-shrink-0 items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50"
+                    >
+                      <Pencil className="h-3.5 w-3.5" /> Edit
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          </button>
+          </div>
         ))}
       </div>
     </div>
