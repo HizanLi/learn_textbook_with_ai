@@ -17,29 +17,29 @@
       "status": "completed"
     },
     {
-      "id": "project-1784786258491",
+      "id": "project-1784809308243",
       "filename": "java_long.pdf",
       "originalName": "java_long.pdf",
       "remark": "",
       "fileFormat": "PDF",
-      "createdAt": "2026-07-23T05:57:38.491Z",
-      "uploadedAt": "2026-07-23T05:57:38.491Z",
-      "lastAccessedAt": "2026-07-23T11:56:40.638Z",
+      "createdAt": "2026-07-23T12:21:48.243Z",
+      "uploadedAt": "2026-07-23T12:21:48.243Z",
+      "lastAccessedAt": null,
       "status": "uploaded",
       "parts": {
-        "part_number1": "converted",
-        "part_number2": "converted",
-        "part_number3": "converted",
-        "part_number4": "converted",
-        "part_number5": "converted",
-        "part_number6": "converted"
+        "part_number1": "uploaded",
+        "part_number2": "uploaded",
+        "part_number3": "uploaded",
+        "part_number4": "uploaded",
+        "part_number5": "uploaded",
+        "part_number6": "uploaded"
       },
       "splitPreparation": {
         "status": "split_ready",
         "pageCount": 699,
-        "partCount": 7,
+        "partCount": 6,
         "error": null,
-        "updatedAt": "2026-07-23T05:57:38.785Z"
+        "updatedAt": "2026-07-23T12:21:51.895Z"
       }
     }
   ],

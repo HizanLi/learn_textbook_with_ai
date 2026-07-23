@@ -85,7 +85,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     
     console.log(`[UPLOAD] User: ${username}, File: ${filename}, Size: ${req.file.size} bytes`);
     
-    // Keep all artifacts for one upload together under data/<user>/input/<filename>/.
+    // Keep all artifacts for one upload together under data/<user>/input/<project-name>/.
     writeDataInputFile(username, filename, req.file.buffer);
 
     // Keep lightweight app state beside the user data root.

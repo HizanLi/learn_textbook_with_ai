@@ -43,9 +43,13 @@ function getInputFilename(filename) {
   return path.basename(String(filename || "").trim());
 }
 
+function getInputProjectName(filename) {
+  return getInputFilename(filename).replace(/\.[^/.]+$/, "");
+}
+
 function ensureDataUserProjectInputDir(username, filename) {
   const inputDir = ensureDataUserInputDir(username);
-  const projectDir = path.join(inputDir, getInputFilename(filename));
+  const projectDir = path.join(inputDir, getInputProjectName(filename));
   ensureDir(projectDir);
   return projectDir;
 }

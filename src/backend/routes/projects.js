@@ -58,13 +58,20 @@ function levenshteinDistance(a, b) {
 function resolvePdfPath(username, requestedFilename) {
   const inputDir = path.join(DATA_DIR, username, "input");
   const safeFilename = path.basename(String(requestedFilename || "").trim());
-  const nestedPath = path.join(inputDir, safeFilename, safeFilename);
+  const projectName = safeFilename.replace(/\.[^/.]+$/, "");
+  const nestedPath = path.join(inputDir, projectName, safeFilename);
 
   if (fs.existsSync(nestedPath)) {
     return nestedPath;
   }
 
-  // Existing uploads used a flat data/<user>/input/<filename> structure.
+  // Existing uploads used data/<user>/input/<filename>/<filename>.
+  const legacyNestedPath = path.join(inputDir, safeFilename, safeFilename);
+  if (fs.existsSync(legacyNestedPath)) {
+    return legacyNestedPath;
+  }
+
+  // Existing uploads also used a flat data/<user>/input/<filename> structure.
   const legacyPath = path.join(inputDir, safeFilename);
   if (fs.existsSync(legacyPath) && fs.statSync(legacyPath).isFile()) {
     return legacyPath;
@@ -76,13 +83,21 @@ function resolvePdfPath(username, requestedFilename) {
 
   const entries = fs.readdirSync(inputDir, { withFileTypes: true });
   const target = normalizeFilename(safeFilename);
-  const matched = entries.find((entry) => normalizeFilename(entry.name) === target);
+  const targetProject = normalizeFilename(projectName);
+  const matched = entries.find((entry) => {
+    const normalizedEntry = normalizeFilename(entry.name);
+    return normalizedEntry === target || normalizedEntry === targetProject;
+  });
 
   if (matched) {
     const candidatePath = path.join(inputDir, matched.name);
     if (matched.isDirectory()) {
-      const nestedCandidate = path.join(candidatePath, matched.name);
-      return fs.existsSync(nestedCandidate) ? nestedCandidate : null;
+      const nestedCandidate = path.join(candidatePath, safeFilename);
+      if (fs.existsSync(nestedCandidate)) {
+        return nestedCandidate;
+      }
+      const legacyNestedCandidate = path.join(candidatePath, matched.name);
+      return fs.existsSync(legacyNestedCandidate) ? legacyNestedCandidate : null;
     }
     return matched.isFile() ? candidatePath : null;
   }
@@ -90,8 +105,12 @@ function resolvePdfPath(username, requestedFilename) {
   const requestedExt = path.extname(safeFilename).toLowerCase();
   const candidateFiles = entries.filter((entry) => {
     const candidatePath = path.join(inputDir, entry.name);
-    const isNestedPdf = entry.isDirectory() && fs.existsSync(path.join(candidatePath, entry.name));
+    const isNestedPdf = entry.isDirectory() && (
+      fs.existsSync(path.join(candidatePath, safeFilename)) ||
+      fs.existsSync(path.join(candidatePath, entry.name))
+    );
     if (!entry.isFile() && !isNestedPdf) return false;
+    if (isNestedPdf) return true;
     if (!requestedExt) return true;
     return path.extname(entry.name).toLowerCase() === requestedExt;
   });
@@ -108,9 +127,13 @@ function resolvePdfPath(username, requestedFilename) {
   }
 
   if (bestMatch && bestDistance <= 2) {
-    const nestedCandidate = path.join(inputDir, bestMatch, bestMatch);
+    const nestedCandidate = path.join(inputDir, bestMatch, safeFilename);
     if (fs.existsSync(nestedCandidate)) {
       return nestedCandidate;
+    }
+    const legacyNestedCandidate = path.join(inputDir, bestMatch, bestMatch);
+    if (fs.existsSync(legacyNestedCandidate)) {
+      return legacyNestedCandidate;
     }
     return path.join(inputDir, bestMatch);
   }

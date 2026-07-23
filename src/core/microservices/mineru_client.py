@@ -153,7 +153,11 @@ class MinerUClient:
     def _source_pdf_path(self, username: str, file_name: str) -> Path:
         """Prefer the per-file input directory, with support for pre-migration uploads."""
         safe_name = Path(file_name).name
+        project_name = Path(safe_name).stem
         input_root = self.data_dir / username / "input"
+        nested_path = input_root / project_name / safe_name
+        if nested_path.exists():
+            return nested_path
         nested_path = input_root / safe_name / safe_name
         if nested_path.exists():
             return nested_path
@@ -161,18 +165,25 @@ class MinerUClient:
 
     def _parts_root(self, username: str, file_name: str) -> Path:
         safe_name = Path(file_name).name
-        return self.data_dir / username / "input" / safe_name
+        return self.data_dir / username / "input" / Path(safe_name).stem
 
     def _output_parts_root(self, username: str, file_name: str) -> Path:
         safe_name = Path(file_name).name
-        return self.data_dir / username / "output" / safe_name
+        return self.data_dir / username / "output" / Path(safe_name).stem
 
     def _canonicalize_source_pdf(self, source_pdf: Path) -> Path:
         """Move a legacy flat upload into its per-file input directory before splitting."""
-        if source_pdf.parent.name == source_pdf.name:
+        if source_pdf.parent.name == source_pdf.stem:
             return source_pdf
 
-        canonical_path = source_pdf.parent / source_pdf.name / source_pdf.name
+        if source_pdf.parent.name == "input":
+            input_root = source_pdf.parent
+            canonical_path = input_root / source_pdf.stem / source_pdf.name
+        elif source_pdf.parent.parent.name == "input":
+            input_root = source_pdf.parent.parent
+            canonical_path = input_root / source_pdf.stem / source_pdf.name
+        else:
+            canonical_path = source_pdf.parent / source_pdf.stem / source_pdf.name
         if canonical_path.exists():
             return canonical_path
 

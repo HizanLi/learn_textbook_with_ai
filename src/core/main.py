@@ -128,12 +128,16 @@ def _find_part_markdown(part_dir: Path, part_pdf_stem: Optional[str] = None) -> 
 
 def _split_roots(data_dir: Path, username: str, file_name: str):
     safe_name = Path(file_name).name
+    project_name = Path(file_name).stem
     pdf_name = f"{Path(file_name).stem}.pdf"
-    # Current upload layout keeps split PDFs under input/<filename>/.
+    # Current upload layout keeps split PDFs under input/<project_name>/.
+    yield data_dir / username / "input" / project_name
+    # Backward-compatible fallbacks for older extension-named split roots.
     yield data_dir / username / "input" / safe_name
     if pdf_name != safe_name:
         yield data_dir / username / "input" / pdf_name
-    # MinerUClient also supports a legacy/alternate split root beside input/.
+    # Legacy/alternate split roots beside input/.
+    yield data_dir / username / project_name
     yield data_dir / username / safe_name
     if pdf_name != safe_name:
         yield data_dir / username / pdf_name
@@ -141,7 +145,9 @@ def _split_roots(data_dir: Path, username: str, file_name: str):
 
 def _output_split_roots(data_dir: Path, username: str, file_name: str):
     safe_name = Path(file_name).name
+    project_name = Path(file_name).stem
     pdf_name = f"{Path(file_name).stem}.pdf"
+    yield data_dir / username / "output" / project_name
     yield data_dir / username / "output" / safe_name
     if pdf_name != safe_name:
         yield data_dir / username / "output" / pdf_name
@@ -168,22 +174,61 @@ def _process_split_markdown_batch(
             detail=f"Split PDF directory not found for {file_name}. Expected input/<filename>/part_*/.",
         )
 
-    part_dirs = sorted(
-        [path for path in split_root.glob("part_*") if path.is_dir()],
-        key=lambda path: _part_number_from_dir(path) or 0,
-    )
-    if not part_dirs:
+    part_records = []
+    manifest_path = split_root / "manifest.json"
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            for manifest_part in manifest.get("parts", []):
+                pdf_path = Path(manifest_part.get("pdf_path", ""))
+                if not pdf_path.exists():
+                    continue
+                markdown_path = Path(manifest_part["markdown_path"]) if manifest_part.get("markdown_path") else None
+                output_part_dir = Path(manifest_part["output_part_dir"]) if manifest_part.get("output_part_dir") else None
+                part_records.append({
+                    "part_dir": pdf_path.parent,
+                    "part_number": manifest_part.get("index") or _part_number_from_dir(pdf_path.parent),
+                    "part_pdf": pdf_path,
+                    "output_part_dir": output_part_dir,
+                    "markdown_path": markdown_path,
+                })
+        except Exception as error:
+            print(f"Unable to read split manifest {manifest_path}: {error}")
+
+    if not part_records:
+        part_dirs = sorted(
+            [path for path in split_root.glob("part_*") if path.is_dir()],
+            key=lambda path: _part_number_from_dir(path) or 0,
+        )
+        part_records = [
+            {
+                "part_dir": part_dir,
+                "part_number": _part_number_from_dir(part_dir),
+                "part_pdf": next(iter(sorted(part_dir.glob("*.pdf"))), None),
+                "output_part_dir": output_split_root / part_dir.name if output_split_root else None,
+                "markdown_path": None,
+            }
+            for part_dir in part_dirs
+        ]
+
+    if not part_records:
         raise HTTPException(status_code=404, detail=f"No split PDF part directories found in {split_root}")
 
     combined_chunks = []
     missing_parts = []
     processed_parts = []
 
-    for part_dir in part_dirs:
-        part_number = _part_number_from_dir(part_dir)
-        part_pdf = next(iter(sorted(part_dir.glob("*.pdf"))), None)
-        output_part_dir = output_split_root / part_dir.name if output_split_root else None
+    for record in sorted(part_records, key=lambda item: item["part_number"] or 0):
+        part_dir = record["part_dir"]
+        part_number = record["part_number"]
+        part_pdf = record["part_pdf"]
+        output_part_dir = record["output_part_dir"]
+        manifest_markdown_path = record["markdown_path"]
         markdown_path = (
+            manifest_markdown_path
+            if manifest_markdown_path and manifest_markdown_path.exists() and manifest_markdown_path.stat().st_size > 0
+            else None
+        ) or (
             _find_part_markdown(output_part_dir, part_pdf.stem if part_pdf else None)
             if output_part_dir and output_part_dir.exists()
             else None
