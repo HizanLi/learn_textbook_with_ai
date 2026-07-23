@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const {
-  ensureUserDir,
+  ensureDataUserDir,
   readUserStatus,
   setCurrentProject,
   findTextbookWithContent,
@@ -30,7 +30,7 @@ router.post("/login", (req, res) => {
     return res.status(400).json({ error: "username is required" });
   }
 
-  const userDir = ensureUserDir(username);
+  const userDir = ensureDataUserDir(username);
   const status = readUserStatus(username) || {
     uploadedProjects: [],
     currentProject: null,

@@ -1,10 +1,9 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
 
 const {
-  writeUserFile,
-  writeUserJson,
+  writeDataUserFile,
+  writeDataUserJson,
   writeDataInputFile,
   addUploadedProject,
   readUserStatus,
@@ -39,16 +38,13 @@ router.post("/upload", upload.single("file"), (req, res) => {
     
     console.log(`[UPLOAD] User: ${username}, File: ${filename}, Size: ${req.file.size} bytes`);
     
-    // Store in data/user/input directory
+    // Store the original upload in data/<user>/input
     writeDataInputFile(username, filename, req.file.buffer);
 
-    // Also store in legacy users directory for backward compatibility
-    writeUserFile(username, filename, req.file.buffer);
-
-    // Generate markdown
+    // Keep lightweight app state beside the user data root.
     const markdown = mockMarkdown(req.file.originalname);
-    writeUserFile(username, "latest.md", Buffer.from(markdown, "utf-8"));
-    writeUserJson(username, "latest_upload.json", {
+    writeDataUserFile(username, "latest.md", Buffer.from(markdown, "utf-8"));
+    writeDataUserJson(username, "latest_upload.json", {
       originalName: req.file.originalname,
       storedName: filename,
       uploadedAt: new Date().toISOString(),

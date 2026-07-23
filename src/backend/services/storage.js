@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 
 const BASE_DIR = path.resolve(__dirname, "..", "..", "..");
-const USERS_DIR = path.join(BASE_DIR, "users");
 const DATA_DIR = path.join(BASE_DIR, "data");
 
 function ensureDir(dirPath) {
@@ -16,28 +15,21 @@ function ensureDir(dirPath) {
   }
 }
 
-function ensureUsersDir() {
-  ensureDir(USERS_DIR);
-}
-
 function ensureDataDir() {
   ensureDir(DATA_DIR);
 }
 
-function ensureUserDir(username) {
-  ensureUsersDir();
-  const safeName = username.trim();
-  const userDir = path.join(USERS_DIR, safeName);
-  ensureDir(userDir);
-  return userDir;
-}
-
+// All user-scoped runtime state lives under data/<user>.
 function ensureDataUserDir(username) {
   ensureDataDir();
   const safeName = username.trim();
   const userDir = path.join(DATA_DIR, safeName);
   ensureDir(userDir);
   return userDir;
+}
+
+function ensureUserDir(username) {
+  return ensureDataUserDir(username);
 }
 
 function ensureDataUserInputDir(username) {
@@ -47,22 +39,30 @@ function ensureDataUserInputDir(username) {
   return inputDir;
 }
 
-function writeUserFile(username, filename, buffer) {
-  const userDir = ensureUserDir(username);
+function writeDataUserFile(username, filename, buffer) {
+  const userDir = ensureDataUserDir(username);
   const target = path.join(userDir, filename);
   fs.writeFileSync(target, buffer);
   return target;
 }
 
-function writeUserJson(username, filename, data) {
-  const userDir = ensureUserDir(username);
+function writeUserFile(username, filename, buffer) {
+  return writeDataUserFile(username, filename, buffer);
+}
+
+function writeDataUserJson(username, filename, data) {
+  const userDir = ensureDataUserDir(username);
   const target = path.join(userDir, filename);
   fs.writeFileSync(target, JSON.stringify(data, null, 2), "utf-8");
   return target;
 }
 
-function readUserFile(username, filename) {
-  const userDir = ensureUserDir(username);
+function writeUserJson(username, filename, data) {
+  return writeDataUserJson(username, filename, data);
+}
+
+function readDataUserFile(username, filename) {
+  const userDir = ensureDataUserDir(username);
   const target = path.join(userDir, filename);
   if (!fs.existsSync(target)) {
     return null;
@@ -70,7 +70,10 @@ function readUserFile(username, filename) {
   return fs.readFileSync(target, "utf-8");
 }
 
-// New functions for data/user structure
+function readUserFile(username, filename) {
+  return readDataUserFile(username, filename);
+}
+
 function writeDataInputFile(username, filename, buffer) {
   try {
     const inputDir = ensureDataUserInputDir(username);
@@ -95,19 +98,6 @@ function readDataUserJson(username, filename) {
   } catch (err) {
     console.error(`Failed to read JSON file ${filename}:`, err);
     return null;
-  }
-}
-
-function writeDataUserJson(username, filename, data) {
-  try {
-    const userDir = ensureDataUserDir(username);
-    const target = path.join(userDir, filename);
-    fs.writeFileSync(target, JSON.stringify(data, null, 2), "utf-8");
-    console.log(`JSON saved to ${target}`);
-    return target;
-  } catch (err) {
-    console.error(`Failed to save JSON file ${filename}:`, err);
-    throw err;
   }
 }
 
@@ -195,16 +185,18 @@ function findTextbookWithContent(username, projectName) {
 }
 
 module.exports = {
-  USERS_DIR,
   DATA_DIR,
+  ensureDataUserDir,
   ensureUserDir,
   ensureDataUserInputDir,
+  writeDataUserFile,
   writeUserFile,
+  writeDataUserJson,
   writeUserJson,
+  readDataUserFile,
   readUserFile,
   writeDataInputFile,
   readDataUserJson,
-  writeDataUserJson,
   readUserStatus,
   writeUserStatus,
   addUploadedProject,

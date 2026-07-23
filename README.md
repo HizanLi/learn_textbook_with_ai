@@ -1,109 +1,190 @@
 # learn_textbook_with_ai
 
-> 📚 基于大型语言模型的教科书辅助学习工具
+基于大语言模型的教科书学习工作台。当前项目已经实现了一个可运行的三层结构：
 
-本项目旨在构建一个可以帮助用户学习教科书的智能系统，利用 GPT、Deepseek、Gemini 等大模型，实现从 PDF 教科书到互动教学内容的完整流程。
+- `src/frontend`: React + Vite 学习界面
+- `src/backend`: Node/Express 协调层
+- `src/core`: FastAPI + Python 内容处理服务
 
----
+用户上传 PDF 后，系统会围绕 `data/<user>/...` 目录组织输入文件、处理中间产物、项目状态和生成结果。
 
-## 🚀 项目目标
+## Current Status
 
-1. **输入教科书**：用户上传一本 PDF 教科书。
-2. **格式转换**：将 PDF 转换为 Markdown，并根据章节和字数将内容切割成较小片段。
-3. **向量化处理**：针对每个片段进行向量化，以便后续检索和生成。
-4. **知识点讲解**：为每个知识点生成详尽的解释、教程和例题。
-5. **多媒体输出**：生成音频以及带有虚拟教师形象的视频讲解。
-6. **评估与反馈**：在学习结束后生成小测验（quiz），评估用户掌握情况。
+当前可用能力：
 
-## 🔧 功能概述
+- 用户登录后上传 PDF 教材
+- 在 Dashboard 中查看项目列表并进入学习页
+- 通过 Node 后端读取 `data/<user>/input` 和 `data/<user>/output`
+- 在学习页查看处理进度、原始 PDF 和结构化教材内容
+- 调用 Python core 完成以下步骤：
+  - Step 1: PDF -> Markdown（MinerU）
+  - Step 2: Markdown -> `chunker_step_1.json`，并支持手动提交目录文本生成 `textbook_toc.json`
+  - Step 3: 章节/小节学习内容分析，生成 `textbook_with_content.json`
+- 基于 OpenAI / DeepSeek / Gemini 生成：
+  - Detailed Explanation
+  - Quiz for Section
 
-- 📄 教科书 PDF 到 Markdown 的转换
-- ✂️ 按章节/字数切割 Markdown
-- ⚙️ 多模型支持（GPT, Deepseek, Gemini）
-- 🧠 向量化与检索（基于 Chroma 或其他向量数据库）
-- 📝 自动生成教程、例题、讲解内容
-- 🎧 语音合成（音频）
-- 🎥 虚拟教师视频生成
-- ✅ 交互式 Quiz 和学习评估
+当前仍然偏开发态的部分：
 
-## 🏗 架构结构
+- `docker-compose.yaml` 主要提供 MinerU 容器环境，尚不是完整的一键开发编排
+- 测试体系还不完整
+- 一些上传后的 `latest.md` / `latest_keypoints.json` 仍然是轻量级应用状态文件，不是最终学习内容主产物
 
+## Project Layout
+
+```text
+.
+├── data/                  # 所有用户输入、输出和运行时状态
+├── docker/                # MinerU 相关 Docker 文件
+├── docs/                  # 模型或参考配置
+├── examples/              # 示例脚本
+├── notebooks/             # 实验性 notebook
+└── src/
+    ├── backend/           # Node/Express API 层
+    ├── core/              # FastAPI + PDF/Chunk/LLM 处理
+    └── frontend/          # React + Vite 前端
 ```
-User Upload (PDF) 
-      |
-      v
-Conversion -> Markdown -> Chunking -> Vectorization
-      |
-      +--> Knowledge Generation (GPT/Deepseek/Gemini)
-               |               |
-         Text Explanation   Examples/Quiz
-               |
-      Multimedia Generation (Audio/Video)
-               |
-           User Interaction
+
+## Data Layout
+
+所有用户运行时数据统一放在 `data/<user>/...` 下：
+
+```text
+data/<user>/
+├── input/                 # 用户上传的原始 PDF
+├── output/                # MinerU、chunker、analysis 产物
+├── chroma_db/             # 向量库
+├── user_status.json       # 项目列表与当前项目
+├── latest.md              # 上传后的轻量级 Markdown 占位内容
+├── latest_upload.json     # 最近一次上传信息
+└── latest_keypoints.json  # summarize 路由生成的轻量级结果
 ```
 
-- **src/main.py**：入口脚本
-- **src/backend/core**：核心逻辑，包括转换、向量化及生成功能
-- **src/backend/frontend**：前端展示层
-- **docker/**：Docker 配置文件
-- **notebooks/**：用于实验和测试的笔记本
+一个典型项目输出目录类似：
 
-## 📁 目录说明
+```text
+data/<user>/output/<project>/hybrid_auto/
+├── <project>.md
+├── chunker_step_1.json
+├── textbook_toc.json
+└── textbook_with_content.json
+```
 
-具体模块详见代码结构：
+## Services And Ports
 
-- `chunker.py`：负责文本切分
-- `vectorization.py`：向量化和数据库交互
-- `mineru_client.py`：与大模型交互的客户端逻辑
+默认开发端口：
 
-## 📝 使用说明
+- Frontend: `http://localhost:3000`
+- Node backend: `http://localhost:4000`
+- Python core: `http://127.0.0.1:8080`
+- MinerU API: `http://127.0.0.1:8000`
 
-1. 克隆仓库并安装依赖：
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. 启动服务（示例）：
-   ```bash
-   python src/main.py
-   ```
-3. 前端/后端（React + Node）开发：
-      ```bash
-      # 后端
-      cd src/backend
-      npm install
-      npm run dev
+请求流向：
 
-      # 前端
-      cd ../frontend
-      npm install
-      npm run dev
-      ```
-4. 在浏览器中访问 http://localhost:5173，输入用户名并开始学习。
+```text
+Browser (3000)
+  -> Node backend (4000)
+     -> Python core (8080)
+        -> MinerU / vectorization / textbook analysis
+```
 
-> 前端会调用 Node 后端（默认 http://localhost:4000）。可通过设置 `VITE_API_BASE` 环境变量修改。
+## Setup
 
-## 🗂 开发计划（To‑Do List）
+1. 安装 Python 依赖
 
-以下是项目的关键开发阶段，帮助 contributors 理解进度和任务：
+```bash
+pip install -r requirements.txt
+```
 
-- [*] **PDF 转 Markdown**：实现稳定的转换工具
-- [*] **文本切分**：按章节与字数切分并保存元数据
-- [*] **向量化**：选型并集成向量数据库（Chroma 等）
-- [*] **大模型接口**：封装 GPT/Deepseek/Gemini 调用逻辑
-- [ ] **生成教程**：文本内容、例题与 Quiz 生成模块
-- [ ] **音频合成**：集成 TTS 引擎输出讲解音频
-- [ ] **视频教师**：实现虚拟教师角色的动画/视频生成
-- [ ] **前端交互**：构建上传、浏览与测验界面
-- [ ] **测试与评估**：编写单元测试和集成测试
-- [ ] **文档与部署**：撰写完整文档并提供 Docker/云部署示例
+2. 安装前后端依赖
 
-> ✨ 本列表会随项目推进动态更新，欢迎提交 PR 添加或调整任务。
+```bash
+cd src/backend
+npm install
 
-## 🤝 贡献
+cd ../frontend
+npm install
+```
 
-欢迎 issue、PR 或建议！请先阅读项目规范。
+3. 准备环境变量
 
----
+复制 `.env.example` 为 `.env`，至少确认这些变量：
 
-*Learn_textbook_with_ai* 让学习更智能、更具互动性。欢迎体验并改进！
+```bash
+DATA_DIR=./data
+VITE_API_BASE=http://localhost:4000
+BACKEND_PORT=4000
+CORE_API=http://127.0.0.1:8080
+PYTHON_API_BASE=http://127.0.0.1:8080
+PYTHON_PORT=8080
+MINERU_API_URL=http://127.0.0.1:8000/file_parse
+```
+
+如果要启用真实 LLM 生成功能，还需要配置：
+
+```bash
+OPENAI_API_KEY=...
+DEEPSEEK_API_KEY=...
+GEMINI_API_KEY=...
+```
+
+## Run
+
+分别启动三个服务：
+
+1. Python core
+
+```bash
+python src/core/main.py
+```
+
+2. Node backend
+
+```bash
+cd src/backend
+npm run dev
+```
+
+3. Frontend
+
+```bash
+cd src/frontend
+npm run dev
+```
+
+启动后访问 `http://localhost:3000`。
+
+## Main API Surface
+
+Node backend 暴露的主要接口：
+
+- `/api/login`
+- `/api/upload`
+- `/api/user-status`
+- `/api/select-project`
+- `/api/project-pdf`
+- `/api/project-markdown`
+- `/api/project-processing-steps`
+- `/api/project-processing-progress`
+- `/api/trigger-processing-step`
+- `/api/parse-project-toc`
+- `/api/llm/detailed-explanation`
+- `/api/llm/quiz-for-section`
+
+Python core 暴露的主要接口：
+
+- `/api/mineru/process`
+- `/api/chunker/process`
+- `/api/vectorization/store`
+- `/api/vectorization/search`
+- `/api/analyze/textbook`
+- `/api/analyze/progress`
+- `/api/analyze/parse-toc`
+- `/health`
+
+## Notes
+
+- 当前前端默认端口是 `3000`，不是 `5173`
+- 当前 Python 入口是 `src/core/main.py`
+- 当前项目主存储目录是 `data/`，不是 `users/`
+- `docs/`、`examples/`、`notebooks/` 仍然保留为研发辅助材料

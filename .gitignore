@@ -1,6 +1,4 @@
 # 忽略数据文件夹（只保留结构）
-data/input/*
-data/output/*
 !data/input/.gitkeep
 !data/output/.gitkeep
 
@@ -15,7 +13,7 @@ venv/
 chroma_db
 .vscode/
 
-# 用户数据
+# 旧版用户目录（当前运行时数据统一存储在 data/<user>/...）
 users/
 src/backend/node_modules/
 src/frontend/node_modules/
