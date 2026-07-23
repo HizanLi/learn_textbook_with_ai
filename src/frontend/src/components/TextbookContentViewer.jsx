@@ -223,21 +223,7 @@ export default function TextbookContentViewer({
   const chapters = useMemo(() => activeData.chapters || [], [activeData]);
   const pdfStateKey = `textbook-pdf-state:${projectKey || activeData.book_title || "default"}`;
 
-  const currentSectionJsonPage = useMemo(() => {
-    if (!selectedSection) {
-      return null;
-    }
-
-    const sectionPage = toPositivePage(selectedSection.page);
-    if (sectionPage) {
-      return sectionPage;
-    }
-
-    const selectedChapter = chapters.find(
-      (chapter) => chapter.chapter_number === selectedSection.chapterNumber
-    );
-    return toPositivePage(selectedChapter?.start_page);
-  }, [chapters, selectedSection]);
+  const firstChapterJsonPage = toPositivePage(chapters[0]?.start_page) || 1;
 
   const applyPageOffset = (jsonPageValue) => {
     const jsonPage = toPositivePage(jsonPageValue);
@@ -490,11 +476,11 @@ export default function TextbookContentViewer({
 
   const handleSetAsInitialPage = () => {
     const actualPdfPage = toPositivePage(pdfPageInput);
-    if (!actualPdfPage || !currentSectionJsonPage) {
+    if (!actualPdfPage) {
       return;
     }
 
-    const nextOffset = actualPdfPage - currentSectionJsonPage;
+    const nextOffset = actualPdfPage - firstChapterJsonPage;
     setPageOffset(nextOffset);
     setCurrentPdfPage(actualPdfPage, { scrollToPage: true });
   };
@@ -652,8 +638,7 @@ export default function TextbookContentViewer({
                 <button
                   type="button"
                   onClick={handleSetAsInitialPage}
-                  disabled={!selectedSection || !currentSectionJsonPage}
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                  className="rounded-md bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-700"
                 >
                   Set as initial page
                 </button>
@@ -661,6 +646,9 @@ export default function TextbookContentViewer({
                   <p>
                     Current book page: <span className="font-semibold text-slate-800">{pdfPage}</span>
                     {pdfPageCount ? ` / ${pdfPageCount}` : ""}
+                  </p>
+                  <p className="mt-1">
+                    Aligns Chapter {chapters[0]?.chapter_number || 1} (TOC page {firstChapterJsonPage})
                   </p>
                   <p className="mt-1">Offset: {pageOffset >= 0 ? `+${pageOffset}` : pageOffset}</p>
                 </div>
