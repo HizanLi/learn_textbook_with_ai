@@ -1,5 +1,3 @@
-<!-- Source PDF pages 1-120 -->
-
 # Introduction to Programming Using Java
 
 Version 5.0, December 2006
@@ -3703,8 +3701,6 @@ In this section, before moving on to programming-in-the-large, we’ll take a lo
 An applet is a Java program that runs on a Web page. An applet is not a stand-alone application, and it does not have a main() routine. In fact, an applet is an object rather than a class. When Java first appeared on the scene, applets were one of its major appeals. Since then, they have become less important, although they can still be very useful. When we study GUI programming in Chapter 6, we will concentrate on stand-alone GUI programs rather than on applets, but applets are a good place to start for our first look at the subject.
 
 When an applet is placed on a Web page, it is assigned a rectangular area on the page. It is the job of the applet to draw the contents of that rectangle. When the region needs to be drawn, the Web page calls a subroutine in the applet to do so. This is not so diferent from what happens with stand-alone programs. When such a program needs to be run, the system calls the main() routine of the program. Similarly, when an applet needs to be drawn, the Web page calls the paint() routine of the applet. The programmer specifies what happens when these routines are called by filling in the bodies of the routines. Programming in the
-
-<!-- Source PDF pages 121-240 -->
 
 small! Applets can do other things besides draw themselves, such as responding when the user clicks the mouse on the applet. Each of the applet’s behaviors is defined by a subroutine. The programmer specifies how the applet behaves by filling in the bodies of the appropriate subroutines.
 
@@ -7622,8 +7618,6 @@ System.out.println("There were " + _______ + " heads.");
 System.out.println("There were " + _______ + " tails.");
 ```
 
-<!-- Source PDF pages 241-360 -->
-
 ## Chapter 6
 
 ## Introduction to GUI Programming
@@ -11482,7 +11476,6 @@ The next obvious step is to check location 250. If the number at that location i
 
 In order to make binary search into a Java subroutine that searches an array A for an item N, we just have to keep track of the range of locations that could possibly contain N. At each step, as we eliminate possibilities, we reduce the size of this range. The basic operation is to look at the item in the middle of the range. If this item is greater than N, then the second half of the range can be eliminated. If it is less than N, then the first half of the range can be eliminated. If the number in the middle just happens to be N exactly, then the search is finished. If the size of the range decreases to zero, then the number N does not occur in the array. Here is a subroutine that returns the location of N in a sorted array A. If N cannot be found in the array, then a value of -1 is returned instead:
 
-<!-- Source PDF pages 361-480 -->
 
 ## 7.4. SEARCHING AND SORTING
 
@@ -15439,8 +15432,6 @@ static boolean treeContains( TreeNode root, String item ) {
     else if ( item.equals(root.item) ) {
 ```
 
-<!-- Source PDF pages 481-600 -->
-
 ```javascript
 // Yes, the item has been found in the root node.
     return true;
@@ -19375,7 +19366,6 @@ public void run() {
 
 This method calls several other methods to do some of its work, but you can see the general outline of how it works. After opening the connection as either a server or client, the run() method enters a while loop in which it receives and processes messages from the other side of the connection until the connection is closed. It is important to understand how the connection can be closed. The GUIChat window has a “Disconnect” button that the user can click to close the connection. The program responds to this event by closing the socket that represents the connection. It is likely that when this happens, the connection-handling thread is blocked in the in.readLine() method, waiting for an incoming message. When the socket is closed by another thread, this method will fail and will throw an exception; this exception causes the thread to terminate. (If the connection-handling thread happens to be between calls to in.readLine() when the socket is closed, the while loop will terminate because the connection state changes
 
-<!-- Source PDF pages 601-699 -->
 
 from CONNECTED to CLOSED.) Note that closing the window will also close the connection in the same way.
 

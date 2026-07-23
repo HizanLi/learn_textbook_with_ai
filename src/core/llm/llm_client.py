@@ -16,6 +16,18 @@ import google.generativeai as genai
 load_dotenv()
 
 
+def _json_parse_error(text_response: str, error: json.JSONDecodeError) -> ValueError:
+    preview = text_response[:1000] if text_response else ""
+    suffix = text_response[-200:] if text_response else ""
+    truncated_hint = ""
+    if text_response and text_response.strip() and text_response.strip()[-1] not in "]}":
+        truncated_hint = " The model response appears to be truncated before the JSON finished."
+    return ValueError(
+        f"Failed to parse JSON response at line {error.lineno}, column {error.colno}.{truncated_hint} "
+        f"Response preview: {preview} ... Response ending: {suffix}"
+    )
+
+
 class ModelProvider(Enum):
     """支持的模型提供商"""
     OPENAI = "openai"  # GPT-3.5, GPT-4
@@ -119,8 +131,8 @@ class OpenAIClient(LLMClient):
                 json_str = text_response.split("```")[1].split("```")[0]
 
             return json.loads(json_str.strip())
-        except json.JSONDecodeError:
-            raise ValueError(f"Failed to parse JSON response: {text_response}")
+        except json.JSONDecodeError as error:
+            raise _json_parse_error(text_response, error)
 
 
 class DeepseekClient(LLMClient):
@@ -190,8 +202,8 @@ class DeepseekClient(LLMClient):
                 json_str = text_response.split("```")[1].split("```")[0]
 
             return json.loads(json_str.strip())
-        except json.JSONDecodeError:
-            raise ValueError(f"Failed to parse JSON response: {text_response}")
+        except json.JSONDecodeError as error:
+            raise _json_parse_error(text_response, error)
 
 
 class GeminiClient(LLMClient):

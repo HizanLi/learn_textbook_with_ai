@@ -4,6 +4,7 @@ Integrates chunker data and table of contents to generate comprehensive learning
 """
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Union, Callable
 from datetime import datetime
@@ -51,15 +52,21 @@ class TextbookAnalyzer:
             Parsed JSON structure or None if failed
         """
         try:
-            prompt = ASK_TABLE_CONTENT_PROMPT.replace(
-                "[PASTE_YOUR_TOC_HERE]",
-                toc_string
-            )
-            
-            toc_json = self.llm_client.generate_json(
-                prompt=prompt,
-                system_prompt="You are a precise data extraction script. Extract table of contents and return ONLY valid JSON without any markdown formatting."
-            )
+            stripped_toc = toc_string.strip()
+            if stripped_toc.startswith("{"):
+                toc_json = json.loads(stripped_toc)
+            else:
+                prompt = ASK_TABLE_CONTENT_PROMPT.replace(
+                    "[PASTE_YOUR_TOC_HERE]",
+                    toc_string
+                )
+                
+                max_tokens = int(os.getenv("TOC_PARSE_MAX_TOKENS", "16000"))
+                toc_json = self.llm_client.generate_json(
+                    prompt=prompt,
+                    max_tokens=max_tokens,
+                    system_prompt="You are a precise data extraction script. Extract table of contents and return ONLY valid JSON without any markdown formatting."
+                )
             
             logger.info("Successfully parsed table of content")
 
@@ -83,7 +90,7 @@ class TextbookAnalyzer:
             return toc_json
         except Exception as e:
             logger.error(f"Failed to parse table of content: {str(e)}")
-            return None
+            raise ValueError(f"Failed to parse table of content: {str(e)}") from e
     
     # 从 chunks 中提取关键信息和主题
     def extract_key_topics(self, section_header: str, section_content: str) -> Dict[str, Any]:

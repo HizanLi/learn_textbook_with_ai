@@ -6,7 +6,7 @@ Prompt definitions for various LLM operations.
 from typing import List
 
 
-ASK_TABLE_CONTENT_PROMPT= f"""
+ASK_TABLE_CONTENT_PROMPT = f"""
 Act as a precise data extraction script. Your task is to parse the Table of Contents provided below and convert it into a valid JSON object.
 
 ### JSON Template / Schema:
@@ -36,10 +36,27 @@ Act as a precise data extraction script. Your task is to parse the Table of Cont
 }}
 
 ### Rules:
-1. **Cleaning:** Remove all leader dots (e.g., '. . .') and trailing whitespace.
-2. **Hierarchy:** Nest sub-sections (like 5.6.1) inside their parent sections. If no sub-sections exist, return an empty array [].
-3. **Data Types:** Ensure 'page' and 'chapter_number' are integers.
-4. **Output:** Return ONLY the raw JSON. Do not include markdown code blocks (```json) or any introductory text.
+1. Preserve OCR text exactly in all title fields:
+   - Do not correct spelling.
+   - Do not normalize words.
+   - Do not fix typos.
+   - Do not rewrite punctuation.
+   - Do not infer a cleaner textbook title.
+   - Keep OCR mistakes such as "ArrrayLists", "BuferedImages", or "Ensums" exactly as written.
+2. Cleaning is only allowed for formatting noise:
+   - Remove leader dots such as ". . ." or ".....".
+   - Remove extra surrounding whitespace.
+   - Remove the trailing page number from title text after storing it in the page field.
+3. Hierarchy:
+   - Nest sub-sections like "5.6.1" inside their parent section "5.6".
+   - If no sub-sections exist, return an empty array [].
+4. Data types:
+   - "page" and "chapter_number" must be integers.
+   - "section_id" and "sub_section_id" must be strings.
+5. Output:
+   - Return ONLY raw valid JSON.
+   - Do not include markdown code blocks.
+   - Do not include commentary or introductory text.
 
 ### Input Text:
 [PASTE_YOUR_TOC_HERE]
