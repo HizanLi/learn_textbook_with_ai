@@ -30,9 +30,9 @@
         "part_number1": "converted",
         "part_number2": "converted",
         "part_number3": "converted",
-        "part_number4": "uploaded",
-        "part_number5": "uploaded",
-        "part_number6": "uploaded"
+        "part_number4": "converted",
+        "part_number5": "converted",
+        "part_number6": "converted"
       },
       "splitPreparation": {
         "status": "split_ready",
