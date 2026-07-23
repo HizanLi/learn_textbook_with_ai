@@ -7,14 +7,7 @@
       "uploadedAt": "2026-02-27T18:48:44.097Z",
       "status": "completed",
       "remark": "No remark",
-      "lastAccessedAt": "2026-07-23T03:03:49.222Z"
-    },
-    {
-      "id": "project-1774208735717",
-      "filename": "java_long.pdf",
-      "originalName": "java_long.pdf",
-      "uploadedAt": "2026-03-22T19:45:35.717Z",
-      "status": "uploaded"
+      "lastAccessedAt": "2026-07-23T03:04:52.252Z"
     },
     {
       "id": "project-1774217088700",
@@ -22,7 +15,34 @@
       "originalName": "java_short.pdf",
       "uploadedAt": "2026-03-22T22:04:48.700Z",
       "status": "completed"
+    },
+    {
+      "id": "project-1784786258491",
+      "filename": "java_long.pdf",
+      "originalName": "java_long.pdf",
+      "remark": "",
+      "fileFormat": "PDF",
+      "createdAt": "2026-07-23T05:57:38.491Z",
+      "uploadedAt": "2026-07-23T05:57:38.491Z",
+      "lastAccessedAt": null,
+      "status": "uploaded",
+      "parts": {
+        "part_number1": "uploaded",
+        "part_number2": "uploaded",
+        "part_number3": "uploaded",
+        "part_number4": "uploaded",
+        "part_number5": "uploaded",
+        "part_number6": "uploaded",
+        "part_number7": "uploaded"
+      },
+      "splitPreparation": {
+        "status": "split_ready",
+        "pageCount": 699,
+        "partCount": 7,
+        "error": null,
+        "updatedAt": "2026-07-23T05:57:38.785Z"
+      }
     }
   ],
-  "currentProject": "project-1772218124097"
+  "currentProject": "project-1784785390097"
 }

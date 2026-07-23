@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Book, CheckCircle, Clock3, FileText, MessageSquare, Pencil, Save, Tag, X } from "lucide-react";
 import { UserContext } from "../context/UserContext";
-import { selectProject, updateProjectRemark } from "../services/api";
+import { prepareProjectPdf, selectProject, updateProjectRemark } from "../services/api";
 
 export default function ProjectList() {
   const { userStatus, username, loadUserStatus } = useContext(UserContext);
@@ -11,6 +11,7 @@ export default function ProjectList() {
   const [editingProjectId, setEditingProjectId] = useState(null);
   const [remarkDraft, setRemarkDraft] = useState("");
   const [savingRemark, setSavingRemark] = useState(false);
+  const [preparingProjectId, setPreparingProjectId] = useState(null);
 
   const handleSelectProject = async (project) => {
     setError("");
@@ -60,6 +61,24 @@ export default function ProjectList() {
       setError(err.message || "Failed to save remark");
     } finally {
       setSavingRemark(false);
+    }
+  };
+
+  const retryPreparation = async (project) => {
+    if (!username) return;
+
+    setPreparingProjectId(project.id);
+    setError("");
+    try {
+      const result = await prepareProjectPdf(username, project.id);
+      if (result?.preparation?.success === false) {
+        setError(result.preparation.error || "PDF preparation failed");
+      }
+      await loadUserStatus(username);
+    } catch (err) {
+      setError(err.message || "Failed to prepare PDF");
+    } finally {
+      setPreparingProjectId(null);
     }
   };
 
@@ -121,6 +140,21 @@ export default function ProjectList() {
                   <Clock3 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
                   <span>Last accessed: {formatDateTime(project.lastAccessedAt, "Not opened yet")}</span>
                 </div>
+                {project.splitPreparation?.status === "split_ready" && (
+                  <p className="rounded-md bg-emerald-50 px-2 py-1.5 text-emerald-700">
+                    Prepared: {project.splitPreparation.pageCount} pages in {project.splitPreparation.partCount} parts
+                  </p>
+                )}
+                {project.splitPreparation?.status === "not_required" && (
+                  <p className="rounded-md bg-slate-100 px-2 py-1.5 text-slate-600">
+                    Prepared: {project.splitPreparation.pageCount} pages, no split needed
+                  </p>
+                )}
+                {project.splitPreparation?.status === "failed" && (
+                  <p className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-amber-800">
+                    PDF preparation failed: {project.splitPreparation.error || "Unknown error"}
+                  </p>
+                )}
               </div>
             </button>
 
@@ -170,6 +204,18 @@ export default function ProjectList() {
                   </div>
                 )}
               </div>
+              {project.splitPreparation?.status === "failed" && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => retryPreparation(project)}
+                    disabled={preparingProjectId === project.id}
+                    className="rounded bg-amber-700 px-2 py-1 text-xs font-medium text-white hover:bg-amber-800 disabled:bg-amber-300"
+                  >
+                    {preparingProjectId === project.id ? "Preparing..." : "Retry preparation"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

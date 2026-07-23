@@ -32,6 +32,19 @@ export async function uploadTextbook(username, file) {
   return data;
 }
 
+export async function prepareProjectPdf(username, projectId) {
+  const res = await fetch(`${API_BASE}/api/prepare-project-pdf`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, projectId }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to prepare PDF");
+  }
+  return data;
+}
+
 export async function processProject(username, projectId) {
   const res = await fetch(`${API_BASE}/api/process-project`, {
     method: "POST",

@@ -57,42 +57,61 @@ function levenshteinDistance(a, b) {
 
 function resolvePdfPath(username, requestedFilename) {
   const inputDir = path.join(DATA_DIR, username, "input");
-  const directPath = path.join(inputDir, requestedFilename);
+  const safeFilename = path.basename(String(requestedFilename || "").trim());
+  const nestedPath = path.join(inputDir, safeFilename, safeFilename);
 
-  if (fs.existsSync(directPath)) {
-    return directPath;
+  if (fs.existsSync(nestedPath)) {
+    return nestedPath;
+  }
+
+  // Existing uploads used a flat data/<user>/input/<filename> structure.
+  const legacyPath = path.join(inputDir, safeFilename);
+  if (fs.existsSync(legacyPath) && fs.statSync(legacyPath).isFile()) {
+    return legacyPath;
   }
 
   if (!fs.existsSync(inputDir)) {
     return null;
   }
 
-  const files = fs.readdirSync(inputDir);
-  const target = normalizeFilename(requestedFilename);
-  const matched = files.find((file) => normalizeFilename(file) === target);
+  const entries = fs.readdirSync(inputDir, { withFileTypes: true });
+  const target = normalizeFilename(safeFilename);
+  const matched = entries.find((entry) => normalizeFilename(entry.name) === target);
 
   if (matched) {
-    return path.join(inputDir, matched);
+    const candidatePath = path.join(inputDir, matched.name);
+    if (matched.isDirectory()) {
+      const nestedCandidate = path.join(candidatePath, matched.name);
+      return fs.existsSync(nestedCandidate) ? nestedCandidate : null;
+    }
+    return matched.isFile() ? candidatePath : null;
   }
 
-  const requestedExt = path.extname(requestedFilename || "").toLowerCase();
-  const candidateFiles = files.filter((file) => {
+  const requestedExt = path.extname(safeFilename).toLowerCase();
+  const candidateFiles = entries.filter((entry) => {
+    const candidatePath = path.join(inputDir, entry.name);
+    const isNestedPdf = entry.isDirectory() && fs.existsSync(path.join(candidatePath, entry.name));
+    if (!entry.isFile() && !isNestedPdf) return false;
     if (!requestedExt) return true;
-    return path.extname(file).toLowerCase() === requestedExt;
+    return path.extname(entry.name).toLowerCase() === requestedExt;
   });
 
   let bestMatch = null;
   let bestDistance = Number.MAX_SAFE_INTEGER;
 
   for (const file of candidateFiles) {
-    const dist = levenshteinDistance(target, normalizeFilename(file));
+    const dist = levenshteinDistance(target, normalizeFilename(file.name));
     if (dist < bestDistance) {
       bestDistance = dist;
-      bestMatch = file;
+      bestMatch = file.name;
     }
   }
 
   if (bestMatch && bestDistance <= 2) {
+    const nestedCandidate = path.join(inputDir, bestMatch, bestMatch);
+    if (fs.existsSync(nestedCandidate)) {
+      return nestedCandidate;
+    }
     return path.join(inputDir, bestMatch);
   }
 

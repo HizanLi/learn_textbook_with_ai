@@ -27,9 +27,14 @@ export default function Dashboard() {
     setStatus("Uploading and converting...");
     setStatusType("neutral");
     try {
-      await uploadTextbook(username, file);
-      setStatus("Upload successful!");
-      setStatusType("success");
+      const uploadResult = await uploadTextbook(username, file);
+      if (uploadResult?.preparation?.success === false) {
+        setStatus(`Uploaded, but PDF preparation is pending: ${uploadResult.preparation.error}`);
+        setStatusType("neutral");
+      } else {
+        setStatus("Upload successful!");
+        setStatusType("success");
+      }
       // Reload user status to update projects
       await loadUserStatus(username);
       setTimeout(() => {

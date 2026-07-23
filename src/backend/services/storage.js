@@ -39,6 +39,22 @@ function ensureDataUserInputDir(username) {
   return inputDir;
 }
 
+function getInputFilename(filename) {
+  return path.basename(String(filename || "").trim());
+}
+
+function ensureDataUserProjectInputDir(username, filename) {
+  const inputDir = ensureDataUserInputDir(username);
+  const projectDir = path.join(inputDir, getInputFilename(filename));
+  ensureDir(projectDir);
+  return projectDir;
+}
+
+function getDataInputFilePath(username, filename) {
+  const safeFilename = getInputFilename(filename);
+  return path.join(ensureDataUserProjectInputDir(username, safeFilename), safeFilename);
+}
+
 function writeDataUserFile(username, filename, buffer) {
   const userDir = ensureDataUserDir(username);
   const target = path.join(userDir, filename);
@@ -76,8 +92,7 @@ function readUserFile(username, filename) {
 
 function writeDataInputFile(username, filename, buffer) {
   try {
-    const inputDir = ensureDataUserInputDir(username);
-    const target = path.join(inputDir, filename);
+    const target = getDataInputFilePath(username, filename);
     fs.writeFileSync(target, buffer);
     console.log(`File saved to ${target}`);
     return target;
@@ -194,6 +209,8 @@ module.exports = {
   ensureDataUserDir,
   ensureUserDir,
   ensureDataUserInputDir,
+  ensureDataUserProjectInputDir,
+  getDataInputFilePath,
   writeDataUserFile,
   writeUserFile,
   writeDataUserJson,

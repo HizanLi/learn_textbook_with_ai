@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const { readUserStatus, writeUserStatus } = require("./storage");
+const { getDataInputFilePath, readUserStatus, writeUserStatus } = require("./storage");
 
 const PYTHON_API_BASE = process.env.PYTHON_API_BASE || "http://localhost:8000";
 const BASE_DIR = path.resolve(__dirname, "..", "..", "..");
@@ -22,7 +22,7 @@ async function processProjectWithPython(username, projectId) {
     }
 
     const userDataDir = path.join(DATA_DIR, username);
-    const inputFile = path.join(userDataDir, "input", project.filename);
+    const inputFile = getDataInputFilePath(username, project.filename);
 
     console.log(
       `[PROCESS] Starting processing for ${username}/${project.filename}`

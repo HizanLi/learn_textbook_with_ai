@@ -27,6 +27,11 @@ class MinerUProcessRequest(BaseModel):
     file_name: str
     description: str = "需要处理的PDF文件名"
 
+class MinerUPrepareRequest(BaseModel):
+    username: str
+    file_name: str
+    description: str = "上传后检查PDF页数并生成分段文件"
+
 class ChunkerProcessRequest(BaseModel):
     username: str
     file_name: str
@@ -82,6 +87,18 @@ def _set_analysis_progress(username: str, project_name: str, **updates):
 # ============================================================================
 # 1. MinerU PDF 处理端点
 # ============================================================================
+
+@app.post("/api/mineru/prepare")
+async def prepare_pdf(request: MinerUPrepareRequest):
+    """Count pages and split a large PDF before MinerU conversion begins."""
+    result = await run_in_threadpool(
+        mineru_client.prepare_file,
+        request.username,
+        request.file_name,
+    )
+    if result["success"]:
+        return result
+    raise HTTPException(status_code=result["status_code"], detail=result["message"])
 
 @app.post("/api/mineru/process")
 async def process_pdf(request: MinerUProcessRequest):
