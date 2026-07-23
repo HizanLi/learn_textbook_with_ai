@@ -112,6 +112,29 @@ export async function getProjectPdf(username, filename) {
   return res.blob();
 }
 
+export async function getProjectPdfPreferences(username, projectId) {
+  const url = `${API_BASE}/api/project-pdf-preferences?username=${encodeURIComponent(username)}&projectId=${encodeURIComponent(projectId)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to fetch PDF preferences");
+  }
+  return data;
+}
+
+export async function saveProjectPdfPreferences(username, projectId, preference) {
+  const res = await fetch(`${API_BASE}/api/project-pdf-preferences`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, projectId, ...preference }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to save PDF preferences");
+  }
+  return data;
+}
+
 export async function getProjectProcessingSteps(username, projectName) {
   const url = `${API_BASE}/api/project-processing-steps?username=${encodeURIComponent(username)}&projectName=${encodeURIComponent(projectName)}`;
   const res = await fetch(url);

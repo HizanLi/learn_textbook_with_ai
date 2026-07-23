@@ -8,6 +8,8 @@ import {
   getUserStatus,
   selectProject,
   getProjectPdf,
+  getProjectPdfPreferences,
+  saveProjectPdfPreferences,
   getProjectProcessingSteps,
   getProjectProcessingProgress,
   triggerProcessingStep,
@@ -25,6 +27,7 @@ export default function Study() {
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("summary"); // summary | pdf
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfPreferences, setPdfPreferences] = useState(null);
   const [processingSteps, setProcessingSteps] = useState(null);
   const [processingStep, setProcessingStep] = useState(null);
   const [summaryProgress, setSummaryProgress] = useState(null);
@@ -51,6 +54,7 @@ export default function Study() {
     setTocInput("");
     setStep2Error("");
     setSummaryProgress(null);
+    setPdfPreferences(null);
     setPdfUrl((prevUrl) => {
       if (prevUrl) {
         URL.revokeObjectURL(prevUrl);
@@ -111,6 +115,13 @@ export default function Study() {
 
         const projectNameToSelect =
           matchedProject.filename || matchedProject.originalName || projectId;
+        let savedPdfPreferences = null;
+        try {
+          const preferenceResult = await getProjectPdfPreferences(username, projectId);
+          savedPdfPreferences = preferenceResult?.data || null;
+        } catch (preferenceErr) {
+          console.error("Failed to load PDF preferences:", preferenceErr);
+        }
         const result = await selectProject(username, projectNameToSelect);
 
         let steps = null;
@@ -137,6 +148,7 @@ export default function Study() {
 
         if (mounted) {
           setTextbookData(result.textbookWithContent.content);
+          setPdfPreferences(savedPdfPreferences);
           setProcessingSteps(null);
           loadedProjectRef.current = projectId;
         }
@@ -429,6 +441,12 @@ export default function Study() {
             viewMode={viewMode}
             pdfUrl={pdfUrl}
             projectKey={`${username}:${projectId}`}
+            pdfPreferences={pdfPreferences}
+            onSavePdfPreferences={(preference) => {
+              saveProjectPdfPreferences(username, projectId, preference).catch((saveError) => {
+                console.error("Failed to save PDF preferences:", saveError);
+              });
+            }}
           />
         )}
       </main>

@@ -192,6 +192,8 @@ export default function TextbookContentViewer({
   viewMode = "summary",
   pdfUrl = null,
   projectKey = null,
+  pdfPreferences = null,
+  onSavePdfPreferences = null,
 }) {
   const [expandedChapterId, setExpandedChapterId] = useState(null);
   const [expandedSectionKey, setExpandedSectionKey] = useState(null);
@@ -320,13 +322,21 @@ export default function TextbookContentViewer({
       // A malformed saved value should not prevent the textbook from opening.
     }
 
-    const savedPage = toPositivePage(savedState?.page);
-    const savedOffset = Number.parseInt(savedState?.pageOffset, 10);
+    const browserSavedPage = toPositivePage(savedState?.page);
+    const browserSavedOffset = Number.parseInt(savedState?.pageOffset, 10);
+    const savedPage = toPositivePage(pdfPreferences?.lastPage) || browserSavedPage;
+    const savedOffset = Number.parseInt(pdfPreferences?.pageOffset, 10);
     const nextPage = savedPage || firstPage;
 
-    setPageOffset(Number.isFinite(savedOffset) ? savedOffset : 0);
+    setPageOffset(
+      Number.isFinite(savedOffset)
+        ? savedOffset
+        : Number.isFinite(browserSavedOffset)
+          ? browserSavedOffset
+          : 0
+    );
     setCurrentPdfPage(nextPage, { scrollToPage: true });
-  }, [pdfStateKey]);
+  }, [pdfPreferences?.lastPage, pdfPreferences?.pageOffset, pdfStateKey]);
 
   useEffect(() => {
     try {
@@ -483,6 +493,10 @@ export default function TextbookContentViewer({
     const nextOffset = actualPdfPage - firstChapterJsonPage;
     setPageOffset(nextOffset);
     setCurrentPdfPage(actualPdfPage, { scrollToPage: true });
+    onSavePdfPreferences?.({
+      pageOffset: nextOffset,
+      lastPage: actualPdfPage,
+    });
   };
 
   const handleGoToPage = () => {

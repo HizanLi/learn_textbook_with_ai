@@ -1,9 +1,30 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const { DATA_DIR, readUserStatus } = require("../services/storage");
+const {
+  DATA_DIR,
+  readDataUserJson,
+  readUserStatus,
+  writeDataUserJson,
+} = require("../services/storage");
 
 const router = express.Router();
+
+const PDF_PREFERENCES_FILE = "project_preferences.json";
+
+function readProjectPdfPreference(username, projectId) {
+  const preferences = readDataUserJson(username, PDF_PREFERENCES_FILE) || {};
+  return preferences?.projects?.[projectId]?.pdf || null;
+}
+
+function saveProjectPdfPreference(username, projectId, preference) {
+  const preferences = readDataUserJson(username, PDF_PREFERENCES_FILE) || {};
+  preferences.projects = preferences.projects || {};
+  preferences.projects[projectId] = preferences.projects[projectId] || {};
+  preferences.projects[projectId].pdf = preference;
+  writeDataUserJson(username, PDF_PREFERENCES_FILE, preferences);
+  return preference;
+}
 
 function normalizeFilename(name) {
   return String(name || "")
@@ -168,6 +189,43 @@ router.get("/project-pdf", (req, res) => {
   
   const fileStream = fs.createReadStream(pdfPath);
   fileStream.pipe(res);
+});
+
+router.get("/project-pdf-preferences", (req, res) => {
+  const { username, projectId } = req.query;
+  if (!username || !projectId) {
+    return res.status(400).json({ error: "username and projectId are required" });
+  }
+
+  const preference = readProjectPdfPreference(
+    String(username).trim(),
+    String(projectId).trim()
+  );
+  return res.json({ success: true, data: preference });
+});
+
+router.post("/project-pdf-preferences", (req, res) => {
+  const { username, projectId, pageOffset, lastPage } = req.body || {};
+  if (!username || !projectId) {
+    return res.status(400).json({ error: "username and projectId are required" });
+  }
+
+  const parsedOffset = Number(pageOffset);
+  const parsedLastPage = Number(lastPage);
+  if (!Number.isInteger(parsedOffset) || !Number.isInteger(parsedLastPage) || parsedLastPage < 1) {
+    return res.status(400).json({ error: "pageOffset must be an integer and lastPage must be positive" });
+  }
+
+  const preference = saveProjectPdfPreference(
+    String(username).trim(),
+    String(projectId).trim(),
+    {
+      pageOffset: parsedOffset,
+      lastPage: parsedLastPage,
+      updatedAt: new Date().toISOString(),
+    }
+  );
+  return res.json({ success: true, data: preference });
 });
 
 router.get("/project-processing-steps", (req, res) => {
