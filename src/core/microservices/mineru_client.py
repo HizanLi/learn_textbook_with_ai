@@ -148,13 +148,9 @@ class MinerUClient:
             return nested_path
         return input_root / safe_name
 
-    @staticmethod
-    def _parts_root(source_pdf: Path) -> Path:
-        # New uploads keep the source PDF and split parts in one per-file directory.
-        if source_pdf.parent.name == source_pdf.name:
-            return source_pdf.parent
-        # Pre-migration flat PDFs still get their parts in the new requested location.
-        return source_pdf.parent / source_pdf.name
+    def _parts_root(self, username: str, file_name: str) -> Path:
+        safe_name = Path(file_name).name
+        return self.data_dir / username / safe_name
 
     def _canonicalize_source_pdf(self, source_pdf: Path) -> Path:
         """Move a legacy flat upload into its per-file input directory before splitting."""
@@ -168,6 +164,28 @@ class MinerUClient:
         canonical_path.parent.mkdir(parents=True, exist_ok=True)
         source_pdf.replace(canonical_path)
         return canonical_path
+
+    @staticmethod
+    def _part_markdown_path(part: Dict) -> Path:
+        return part["part_dir"] / f"{part['pdf_path'].stem}.md"
+
+    def _store_part_markdown(self, markdown_path: Path, part: Dict) -> Path:
+        """Keep each converted part self-contained beside its split PDF."""
+        stored_markdown_path = self._part_markdown_path(part)
+        markdown = markdown_path.read_text(encoding="utf-8")
+
+        source_images_dir = markdown_path.parent / "images"
+        target_images_dir = part["part_dir"] / "images"
+        if source_images_dir.exists():
+            if target_images_dir.exists():
+                shutil.rmtree(target_images_dir)
+            shutil.copytree(source_images_dir, target_images_dir)
+
+        header = f"<!-- Source PDF pages {part['start_page']}-{part['end_page']} -->"
+        temporary_path = stored_markdown_path.with_suffix(".md.tmp")
+        temporary_path.write_text(f"{header}\n\n{markdown.strip()}\n", encoding="utf-8")
+        temporary_path.replace(stored_markdown_path)
+        return stored_markdown_path
 
     def _update_part_statuses(
         self,
@@ -259,9 +277,10 @@ class MinerUClient:
                 final_output_dir,
                 record["index"],
             )
-            combined_parts.append(
-                f"<!-- Source PDF pages {record['start_page']}-{record['end_page']} -->\n\n{markdown.strip()}"
-            )
+            markdown = markdown.strip()
+            if not markdown.startswith("<!-- Source PDF pages "):
+                markdown = f"<!-- Source PDF pages {record['start_page']}-{record['end_page']} -->\n\n{markdown}"
+            combined_parts.append(markdown)
 
         temporary_path = merged_markdown_path.with_suffix(".md.tmp")
         temporary_path.write_text("\n\n".join(combined_parts) + "\n", encoding="utf-8")
@@ -326,7 +345,7 @@ class MinerUClient:
             }
 
         try:
-            parts_root = self._parts_root(source_pdf)
+            parts_root = self._parts_root(username, source_pdf.name)
             parts = self._split_pdf(source_pdf, parts_root, page_count)
             self._update_part_statuses(username, source_pdf.name, parts)
             self._write_split_manifest(parts_root, page_count, parts)
@@ -351,12 +370,18 @@ class MinerUClient:
         project_dir: Path,
         page_count: int,
     ) -> Tuple[bool, str, Optional[Path], List[Dict]]:
-        parts_root = self._parts_root(source_pdf)
+        parts_root = self._parts_root(username, source_pdf.name)
         final_output_dir = project_dir / "hybrid_auto"
         parts = self._split_pdf(source_pdf, parts_root, page_count)
         self._update_part_statuses(username, source_pdf.name, parts)
 
         for part in parts:
+            stored_markdown_path = self._part_markdown_path(part)
+            if stored_markdown_path.exists() and stored_markdown_path.stat().st_size > 0:
+                part["markdown_path"] = stored_markdown_path
+                self._update_part_statuses(username, source_pdf.name, parts, part["index"])
+                continue
+
             part_output_root = part["part_dir"] / "mineru_output"
             part_stem = part["pdf_path"].stem
             markdown_path = self._find_markdown(part_output_root, part_stem)
@@ -368,7 +393,7 @@ class MinerUClient:
                 markdown_path = self._find_markdown(part_output_root, part_stem)
                 if not markdown_path:
                     return False, f"Part {part['index']} completed but no Markdown output was found", None, parts
-            part["markdown_path"] = markdown_path
+            part["markdown_path"] = self._store_part_markdown(markdown_path, part)
             self._update_part_statuses(username, source_pdf.name, parts, part["index"])
 
         merged_markdown_path = self._merge_markdown_parts(parts, final_output_dir, source_pdf.stem)
