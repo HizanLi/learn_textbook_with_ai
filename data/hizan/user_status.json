@@ -24,15 +24,15 @@
       "fileFormat": "PDF",
       "createdAt": "2026-07-23T12:21:48.243Z",
       "uploadedAt": "2026-07-23T12:21:48.243Z",
-      "lastAccessedAt": null,
+      "lastAccessedAt": "2026-07-23T12:29:35.478Z",
       "status": "uploaded",
       "parts": {
-        "part_number1": "uploaded",
-        "part_number2": "uploaded",
-        "part_number3": "uploaded",
-        "part_number4": "uploaded",
-        "part_number5": "uploaded",
-        "part_number6": "uploaded"
+        "part_number1": "converted",
+        "part_number2": "converted",
+        "part_number3": "converted",
+        "part_number4": "converted",
+        "part_number5": "converted",
+        "part_number6": "converted"
       },
       "splitPreparation": {
         "status": "split_ready",
@@ -43,5 +43,5 @@
       }
     }
   ],
-  "currentProject": "project-1784786258491"
+  "currentProject": "project-1784809308243"
 }

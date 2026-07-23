@@ -24,6 +24,7 @@ class MinerUClient:
         self.data_dir = configured_path if configured_path.is_absolute() else repository_root / configured_path
         self.image_name = "mineru:latest"
         self.part_pages = self._read_part_pages()
+        self.keep_raw_output = os.getenv("MINERU_KEEP_RAW_OUTPUT", "").strip().lower() in {"1", "true", "yes"}
         self.container_id = self._get_container_id()
 
     @staticmethod
@@ -212,6 +213,15 @@ class MinerUClient:
         temporary_path.write_text(f"{header}\n\n{markdown.strip()}\n", encoding="utf-8")
         temporary_path.replace(stored_markdown_path)
         return stored_markdown_path
+
+    def _cleanup_raw_part_output(self, part_output_root: Path) -> None:
+        if self.keep_raw_output or not part_output_root.exists():
+            return
+
+        try:
+            shutil.rmtree(part_output_root)
+        except Exception as error:
+            print(f"Unable to remove raw MinerU output {part_output_root}: {error}")
 
     def _update_part_statuses(
         self,
@@ -423,6 +433,7 @@ class MinerUClient:
                 if not markdown_path:
                     return False, f"Part {part['index']} completed but no Markdown output was found", None, parts
             part["markdown_path"] = self._store_part_markdown(markdown_path, part)
+            self._cleanup_raw_part_output(part_output_root)
             self._update_part_statuses(username, source_pdf.name, parts, part["index"])
 
         merged_markdown_path = self._merge_markdown_parts(parts, final_output_dir, source_pdf.stem)
