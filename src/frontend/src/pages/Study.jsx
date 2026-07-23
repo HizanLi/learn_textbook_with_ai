@@ -424,7 +424,12 @@ export default function Study() {
             </div>
           </div>
         ) : (
-          <TextbookContentViewer data={textbookData} viewMode={viewMode} pdfUrl={pdfUrl} />
+          <TextbookContentViewer
+            data={textbookData}
+            viewMode={viewMode}
+            pdfUrl={pdfUrl}
+            projectKey={`${username}:${projectId}`}
+          />
         )}
       </main>
     </div>

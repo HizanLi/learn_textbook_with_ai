@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   ChevronDown,
@@ -10,7 +10,13 @@ import {
   Sparkles,
   FileText,
 } from "lucide-react";
+import { Document, Page, pdfjs } from "react-pdf";
 import { generateDetailedExplanation, generateQuizForSection } from "../services/api";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 export const mockData = {
   book_title: "Python for Everybody",
@@ -181,7 +187,12 @@ const toPositivePage = (value) => {
   return parsed;
 };
 
-export default function TextbookContentViewer({ data, viewMode = "summary", pdfUrl = null }) {
+export default function TextbookContentViewer({
+  data,
+  viewMode = "summary",
+  pdfUrl = null,
+  projectKey = null,
+}) {
   const [expandedChapterId, setExpandedChapterId] = useState(null);
   const [expandedSectionKey, setExpandedSectionKey] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
@@ -189,6 +200,9 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
   const [pdfPage, setPdfPage] = useState(1);
   const [pageOffset, setPageOffset] = useState(0);
   const [pdfPageInput, setPdfPageInput] = useState("1");
+  const [pdfPageCount, setPdfPageCount] = useState(0);
+  const [pdfLoadError, setPdfLoadError] = useState("");
+  const [requestedPdfPage, setRequestedPdfPage] = useState(null);
   const [draggingKey, setDraggingKey] = useState(null);
   const [droppedKey, setDroppedKey] = useState(null);
   const [generatedText, setGeneratedText] = useState("");
@@ -196,6 +210,8 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
   const [quizAnswers, setQuizAnswers] = useState({});
   const [revealedAnswers, setRevealedAnswers] = useState({});
   const [isGenerating, setIsGenerating] = useState(false);
+  const pdfScrollRef = useRef(null);
+  const pdfPageRefs = useRef(new Map());
 
   const activeData = useMemo(() => {
     if (data && Array.isArray(data.chapters) && data.chapters.length) {
@@ -205,6 +221,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
   }, [data]);
 
   const chapters = useMemo(() => activeData.chapters || [], [activeData]);
+  const pdfStateKey = `textbook-pdf-state:${projectKey || activeData.book_title || "default"}`;
 
   const currentSectionJsonPage = useMemo(() => {
     if (!selectedSection) {
@@ -230,16 +247,111 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
     return Math.max(1, jsonPage + pageOffset);
   };
 
+  const setCurrentPdfPage = (page, { scrollToPage = false } = {}) => {
+    const nextPage = toPositivePage(page);
+    if (!nextPage) {
+      return false;
+    }
+
+    // Keep the editable field synchronized before another click can use it.
+    setPdfPage(nextPage);
+    setPdfPageInput(String(nextPage));
+    if (scrollToPage) {
+      setRequestedPdfPage(nextPage);
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    if (!requestedPdfPage || !pdfPageCount || viewMode !== "pdf") {
+      return;
+    }
+
+    const targetPage = Math.min(requestedPdfPage, pdfPageCount);
+    const target = pdfPageRefs.current.get(targetPage);
+    if (!target) {
+      return;
+    }
+
+    target.scrollIntoView({ block: "start", behavior: "auto" });
+    setRequestedPdfPage(null);
+  }, [pdfPageCount, requestedPdfPage, viewMode]);
+
+  useEffect(() => {
+    const scrollContainer = pdfScrollRef.current;
+    if (!scrollContainer || !pdfPageCount || viewMode !== "pdf") {
+      return undefined;
+    }
+
+    let animationFrame = null;
+    const updateCurrentPage = () => {
+      animationFrame = null;
+      const containerTop = scrollContainer.getBoundingClientRect().top;
+      let closestPage = null;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      pdfPageRefs.current.forEach((pageElement, pageNumber) => {
+        const distance = Math.abs(pageElement.getBoundingClientRect().top - containerTop);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestPage = pageNumber;
+        }
+      });
+
+      if (closestPage) {
+        setCurrentPdfPage(closestPage);
+      }
+    };
+
+    const handleScroll = () => {
+      if (animationFrame === null) {
+        animationFrame = window.requestAnimationFrame(updateCurrentPage);
+      }
+    };
+
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+    updateCurrentPage();
+
+    return () => {
+      scrollContainer.removeEventListener("scroll", handleScroll);
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [pdfPageCount, viewMode]);
+
   useEffect(() => {
     setExpandedChapterId(null);
     setExpandedSectionKey(null);
     setSelectedSection(null);
     setSelectedCategory("key_topics_analysis");
-    setPageOffset(0);
     const firstPage = toPositivePage(activeData?.chapters?.[0]?.start_page) || 1;
-    setPdfPage(firstPage);
-    setPdfPageInput(String(firstPage));
-  }, [activeData]);
+    let savedState = null;
+
+    try {
+      savedState = JSON.parse(sessionStorage.getItem(pdfStateKey) || "null");
+    } catch {
+      // A malformed saved value should not prevent the textbook from opening.
+    }
+
+    const savedPage = toPositivePage(savedState?.page);
+    const savedOffset = Number.parseInt(savedState?.pageOffset, 10);
+    const nextPage = savedPage || firstPage;
+
+    setPageOffset(Number.isFinite(savedOffset) ? savedOffset : 0);
+    setCurrentPdfPage(nextPage, { scrollToPage: true });
+  }, [pdfStateKey]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(
+        pdfStateKey,
+        JSON.stringify({ page: pdfPage, pageOffset })
+      );
+    } catch {
+      // Session storage is optional; keep the in-memory viewer working.
+    }
+  }, [pageOffset, pdfPage, pdfStateKey]);
 
   useEffect(() => {
     setDroppedKey(null);
@@ -248,6 +360,12 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
     setQuizAnswers({});
     setRevealedAnswers({});
   }, [selectedSection?.section_id, selectedCategory]);
+
+  useEffect(() => {
+    pdfPageRefs.current.clear();
+    setPdfPageCount(0);
+    setPdfLoadError("");
+  }, [pdfUrl]);
 
   useEffect(() => {
     setPdfPageInput(String(pdfPage));
@@ -265,7 +383,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
 
     const targetPdfPage = applyPageOffset(chapter?.start_page);
     if (targetPdfPage) {
-      setPdfPage(targetPdfPage);
+      setCurrentPdfPage(targetPdfPage, { scrollToPage: true });
     }
   };
 
@@ -285,7 +403,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
 
     const targetPage = applyPageOffset(section?.page) || applyPageOffset(chapter?.start_page);
     if (targetPage) {
-      setPdfPage(targetPage);
+      setCurrentPdfPage(targetPage, { scrollToPage: true });
     }
 
     setExpandedSectionKey((prev) => {
@@ -378,7 +496,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
 
     const nextOffset = actualPdfPage - currentSectionJsonPage;
     setPageOffset(nextOffset);
-    setPdfPage(actualPdfPage);
+    setCurrentPdfPage(actualPdfPage, { scrollToPage: true });
   };
 
   const handleGoToPage = () => {
@@ -386,7 +504,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
     if (!targetPage) {
       return;
     }
-    setPdfPage(targetPage);
+    setCurrentPdfPage(targetPage, { scrollToPage: true });
   };
 
   return (
@@ -502,9 +620,16 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
           </div>
         </aside>
 
-        <main className="h-full overflow-y-auto bg-white p-6">
-          {viewMode === "pdf" ? (
-            <div className="h-full min-h-[420px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <main className="relative h-full overflow-y-auto bg-white p-6">
+          <div
+            aria-hidden={viewMode !== "pdf"}
+            className={
+              viewMode === "pdf"
+                ? "h-full"
+                : "pointer-events-none absolute inset-0 -z-10 h-full opacity-0"
+            }
+          >
+            <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <div className="flex flex-wrap items-end gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
                 <div className="min-w-[190px]">
                   <p className="text-xs font-medium text-slate-700">Current PDF page</p>
@@ -532,17 +657,66 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
                 >
                   Set as initial page
                 </button>
-                <p className="text-xs text-slate-600">Offset: {pageOffset >= 0 ? `+${pageOffset}` : pageOffset}</p>
+                <div className="text-xs text-slate-600">
+                  <p>
+                    Current book page: <span className="font-semibold text-slate-800">{pdfPage}</span>
+                    {pdfPageCount ? ` / ${pdfPageCount}` : ""}
+                  </p>
+                  <p className="mt-1">Offset: {pageOffset >= 0 ? `+${pageOffset}` : pageOffset}</p>
+                </div>
               </div>
               {pdfUrl ? (
-                <iframe
-                  key={`${pdfUrl}-${pdfPage}`}
-                  src={`${pdfUrl}#page=${pdfPage}&toolbar=0`}
-                  className="h-[calc(100%-60px)] w-full border-none"
-                  title="pdf-viewer"
-                />
+                <div ref={pdfScrollRef} className="min-h-0 flex-1 overflow-auto bg-slate-200">
+                  <Document
+                    file={pdfUrl}
+                    loading={
+                      <div className="flex min-h-full items-center justify-center p-8 text-sm text-slate-600">
+                        Loading original textbook...
+                      </div>
+                    }
+                    error={
+                      <div className="flex min-h-full items-center justify-center p-8 text-sm text-red-700">
+                        {pdfLoadError || "Unable to load the original PDF."}
+                      </div>
+                    }
+                    onLoadSuccess={({ numPages }) => {
+                      pdfPageRefs.current.clear();
+                      setPdfPageCount(numPages);
+                      setPdfLoadError("");
+                    }}
+                    onLoadError={(error) => {
+                      setPdfPageCount(0);
+                      setPdfLoadError(error.message || "Unable to load the original PDF.");
+                    }}
+                    className="mx-auto flex w-fit min-w-full flex-col items-center gap-4 p-4"
+                  >
+                    {Array.from({ length: pdfPageCount }, (_, index) => {
+                      const pageNumber = index + 1;
+                      return (
+                        <div
+                          key={pageNumber}
+                          ref={(element) => {
+                            if (element) {
+                              pdfPageRefs.current.set(pageNumber, element);
+                            } else {
+                              pdfPageRefs.current.delete(pageNumber);
+                            }
+                          }}
+                          className="rounded-sm bg-white shadow-md"
+                        >
+                          <Page
+                            pageNumber={pageNumber}
+                            width={780}
+                            renderAnnotationLayer={false}
+                            renderTextLayer={false}
+                          />
+                        </div>
+                      );
+                    })}
+                  </Document>
+                </div>
               ) : (
-                <div className="flex h-[calc(100%-60px)] items-center justify-center">
+                <div className="flex min-h-0 flex-1 items-center justify-center">
                   <div className="text-center">
                     <FileText className="mx-auto mb-3 h-10 w-10 text-slate-400" />
                     <p className="text-sm font-medium text-slate-700">Loading original textbook...</p>
@@ -550,7 +724,9 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
                 </div>
               )}
             </div>
-          ) : !selectedSection ? (
+          </div>
+
+          {viewMode !== "pdf" && (!selectedSection ? (
             <div className="flex h-full min-h-[420px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50">
               <div className="text-center">
                 <FileText className="mx-auto mb-3 h-10 w-10 text-slate-400" />
@@ -772,7 +948,7 @@ export default function TextbookContentViewer({ data, viewMode = "summary", pdfU
                 </div>
               </div>
             </article>
-          )}
+          ))}
         </main>
       </div>
     </div>
