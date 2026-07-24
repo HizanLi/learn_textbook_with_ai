@@ -13,6 +13,7 @@ import {
 import { Document, Page, pdfjs } from "react-pdf";
 import { getAvailableLlmProviders, generateDetailedExplanation, generateQuizForSection } from "../services/api";
 import { UserContext } from "../context/UserContext";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -989,11 +990,16 @@ export default function TextbookContentViewer({
                       })}
                     </div>
                   ) : (
-                    <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
-                      {generatedText || (selectedCategory === "quiz-for-section"
-                        ? t("viewer.chooseQuizSource")
-                        : t("viewer.generatedPlaceholder"))}
-                    </pre>
+                    <div className="mt-2">
+                      <MarkdownRenderer
+                        markdown={generatedText}
+                        emptyText={
+                          selectedCategory === "quiz-for-section"
+                            ? t("viewer.chooseQuizSource")
+                            : t("viewer.generatedPlaceholder")
+                        }
+                      />
+                    </div>
                   )}
                 </div>
               </div>

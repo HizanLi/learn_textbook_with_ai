@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, GripVertical } from "lucide-react";
 import { UserContext } from "../context/UserContext";
+import MarkdownRenderer from "../components/MarkdownRenderer";
 
 const BOX_CONFIG = [
   { key: "core_concepts", labelKey: "viewer.coreConcepts" },
@@ -149,9 +150,9 @@ export default function SectionLab() {
 
           <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
             <h3 className="text-sm font-semibold text-slate-800">{t("viewer.generatedResult")}</h3>
-            <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
-              {generatedText || t("viewer.generatedPlaceholder")}
-            </pre>
+            <div className="mt-2">
+              <MarkdownRenderer markdown={generatedText} emptyText={t("viewer.generatedPlaceholder")} />
+            </div>
           </div>
         </div>
       </main>
