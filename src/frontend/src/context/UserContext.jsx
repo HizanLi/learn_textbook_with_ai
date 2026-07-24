@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { translate } from "../i18n";
 
 export const UserContext = createContext(null);
 
@@ -14,6 +15,18 @@ export function UserProvider({ children }) {
     core: "loading",
     minerU: "loading"
   });
+  const [language, setLanguageState] = useState("en");
+
+  const setLanguage = useCallback((nextLanguage) => {
+    const safeLanguage = nextLanguage === "zh" ? "zh" : "en";
+    setLanguageState(safeLanguage);
+    localStorage.setItem("language", safeLanguage);
+  }, []);
+
+  const t = useCallback(
+    (key, values) => translate(language, key, values),
+    [language]
+  );
 
   const checkHealth = useCallback(async () => {
     try {
@@ -44,6 +57,10 @@ export function UserProvider({ children }) {
     const saved = localStorage.getItem("username");
     if (saved) {
       setUsername(saved);
+    }
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage === "zh" || savedLanguage === "en") {
+      setLanguageState(savedLanguage);
     }
   }, []);
 
@@ -81,8 +98,11 @@ export function UserProvider({ children }) {
       loadUserStatus,
       health,
       checkHealth,
+      language,
+      setLanguage,
+      t,
     }),
-    [username, userStatus, loading, loadUserStatus, health, checkHealth]
+    [username, userStatus, loading, loadUserStatus, health, checkHealth, language, setLanguage, t]
   );
 
   return (

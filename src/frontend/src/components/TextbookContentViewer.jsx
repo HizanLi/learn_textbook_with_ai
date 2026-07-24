@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   ChevronDown,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { generateDetailedExplanation, generateQuizForSection } from "../services/api";
+import { UserContext } from "../context/UserContext";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -134,25 +135,25 @@ export const mockData = {
 
 const sectionStyles = {
   core_concepts: {
-    title: "Core Concepts",
+    titleKey: "viewer.coreConcepts",
     icon: Lightbulb,
     color: "text-amber-600",
     bg: "bg-amber-50",
   },
   fundamental_rules: {
-    title: "Fundamental Rules",
+    titleKey: "viewer.fundamentalRules",
     icon: CheckCircle2,
     color: "text-blue-600",
     bg: "bg-blue-50",
   },
   common_pitfalls: {
-    title: "Common Pitfalls",
+    titleKey: "viewer.commonPitfalls",
     icon: ShieldAlert,
     color: "text-rose-600",
     bg: "bg-rose-50",
   },
   examples: {
-    title: "Examples",
+    titleKey: "viewer.examples",
     icon: Sparkles,
     color: "text-emerald-600",
     bg: "bg-emerald-50",
@@ -160,10 +161,10 @@ const sectionStyles = {
 };
 
 const LAB_BOX_CONFIG = [
-  { key: "core_concepts", label: "Core Concepts" },
-  { key: "fundamental_rules", label: "Fundamental Rules" },
-  { key: "common_pitfalls", label: "Common Pitfalls" },
-  { key: "examples", label: "Examples" },
+  { key: "core_concepts", labelKey: "viewer.coreConcepts" },
+  { key: "fundamental_rules", labelKey: "viewer.fundamentalRules" },
+  { key: "common_pitfalls", labelKey: "viewer.commonPitfalls" },
+  { key: "examples", labelKey: "viewer.examples" },
 ];
 
 const LAB_BOX_THEME = {
@@ -195,6 +196,7 @@ export default function TextbookContentViewer({
   pdfPreferences = null,
   onSavePdfPreferences = null,
 }) {
+  const { language, t } = useContext(UserContext);
   const [expandedChapterId, setExpandedChapterId] = useState(null);
   const [expandedSectionKey, setExpandedSectionKey] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
@@ -419,16 +421,17 @@ export default function TextbookContentViewer({
     const topics = selectedSection?.key_topics_analysis || {};
     return LAB_BOX_CONFIG.map((item) => ({
       ...item,
+      label: t(item.labelKey),
       points: normalizeList(topics[item.key]),
     }));
-  }, [selectedSection]);
+  }, [selectedSection, t]);
 
   const droppedCard = labCards.find((card) => card.key === droppedKey);
   const quizQuestions = Array.isArray(generatedQuiz?.quiz) ? generatedQuiz.quiz : [];
 
   const generateContent = async () => {
     if (!droppedCard) {
-      setGeneratedText("Please drag one small box into the large box first.");
+      setGeneratedText(t("viewer.dragFirst"));
       return;
     }
 
@@ -446,7 +449,7 @@ export default function TextbookContentViewer({
         topicType: droppedCard.key,
         points: droppedCard.points,
         content: selectedSection?.content || "",
-        language: "en-US",
+        language: language === "zh" ? "zh-CN" : "en-US",
         includeRaw: false,
       };
 
@@ -462,7 +465,7 @@ export default function TextbookContentViewer({
         if (result?.quiz) {
           setGeneratedQuiz(result.quiz);
         } else {
-          setGeneratedText(result?.text || "No quiz output returned.");
+          setGeneratedText(result?.text || t("viewer.noQuizOutput"));
         }
       } else {
         const result = await generateDetailedExplanation({
@@ -470,14 +473,14 @@ export default function TextbookContentViewer({
           temperature: 0.5,
           maxTokens: 1400,
         });
-        setGeneratedText(result?.text || "No explanation output returned.");
+        setGeneratedText(result?.text || t("viewer.noExplanationOutput"));
       }
     } catch (err) {
       const apiText = err?.data?.text;
       setGeneratedText(
         apiText
-          ? `Request failed: ${err.message}\n\nModel output:\n${apiText}`
-          : `Request failed: ${err.message}`
+          ? `${t("viewer.requestFailed", { message: err.message })}\n\n${t("viewer.modelOutput")}\n${apiText}`
+          : t("viewer.requestFailed", { message: err.message })
       );
     } finally {
       setIsGenerating(false);
@@ -514,9 +517,9 @@ export default function TextbookContentViewer({
           <div className="sticky top-0 z-10 border-b border-slate-200 bg-slate-50/95 px-4 py-4 backdrop-blur">
             <div className="flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-indigo-600" />
-              <h2 className="text-sm font-semibold text-slate-800">{activeData.book_title || "Textbook"}</h2>
+              <h2 className="text-sm font-semibold text-slate-800">{activeData.book_title || t("viewer.textbook")}</h2>
             </div>
-            <p className="mt-1 text-xs text-slate-500">Chapter and section navigation</p>
+            <p className="mt-1 text-xs text-slate-500">{t("viewer.navigation")}</p>
           </div>
 
           <div className="space-y-2 p-3">
@@ -531,7 +534,7 @@ export default function TextbookContentViewer({
                     className="flex w-full items-center justify-between gap-2 px-3 py-3 text-left hover:bg-slate-100"
                   >
                     <div>
-                      <p className="text-[11px] font-medium text-slate-500">Chapter {chapter.chapter_number}</p>
+                      <p className="text-[11px] font-medium text-slate-500">{t("viewer.chapter", { number: chapter.chapter_number })}</p>
                       <p className="text-sm font-semibold text-slate-800">{chapter.chapter_title}</p>
                     </div>
                     <ChevronDown
@@ -584,7 +587,7 @@ export default function TextbookContentViewer({
                                     : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                                 }`}
                               >
-                                key_topics_analysis
+                                {t("viewer.keyTopics")}
                               </button>
                               <button
                                 type="button"
@@ -595,7 +598,7 @@ export default function TextbookContentViewer({
                                     : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                                 }`}
                               >
-                                detailed explanation
+                                {t("viewer.detailedExplanation")}
                               </button>
                               <button
                                 type="button"
@@ -606,7 +609,7 @@ export default function TextbookContentViewer({
                                     : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                                 }`}
                               >
-                                quiz for section
+                                {t("viewer.quizForSection")}
                               </button>
                             </div>
                           </div>
@@ -632,14 +635,14 @@ export default function TextbookContentViewer({
             <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <div className="flex flex-wrap items-end gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
                 <div className="min-w-[190px]">
-                  <p className="text-xs font-medium text-slate-700">Current PDF page</p>
+                  <p className="text-xs font-medium text-slate-700">{t("viewer.currentPdfPage")}</p>
                   <input
                     type="number"
                     min="1"
                     value={pdfPageInput}
                     onChange={(e) => setPdfPageInput(e.target.value)}
                     className="mt-1 w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-800 outline-none focus:border-indigo-400"
-                    placeholder="Page number"
+                    placeholder={t("viewer.pageNumber")}
                   />
                 </div>
                 <button
@@ -647,24 +650,24 @@ export default function TextbookContentViewer({
                   onClick={handleGoToPage}
                   className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100"
                 >
-                  Go
+                  {t("viewer.go")}
                 </button>
                 <button
                   type="button"
                   onClick={handleSetAsInitialPage}
                   className="rounded-md bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-700"
                 >
-                  Set as initial page
+                  {t("viewer.setInitialPage")}
                 </button>
                 <div className="text-xs text-slate-600">
                   <p>
-                    Current book page: <span className="font-semibold text-slate-800">{pdfPage}</span>
+                    {t("viewer.currentBookPage")} <span className="font-semibold text-slate-800">{pdfPage}</span>
                     {pdfPageCount ? ` / ${pdfPageCount}` : ""}
                   </p>
                   <p className="mt-1">
-                    Aligns Chapter {chapters[0]?.chapter_number || 1} (TOC page {firstChapterJsonPage})
+                    {t("viewer.alignsChapter", { chapter: chapters[0]?.chapter_number || 1, page: firstChapterJsonPage })}
                   </p>
-                  <p className="mt-1">Offset: {pageOffset >= 0 ? `+${pageOffset}` : pageOffset}</p>
+                  <p className="mt-1">{t("viewer.offset", { offset: pageOffset >= 0 ? `+${pageOffset}` : pageOffset })}</p>
                 </div>
               </div>
               {pdfUrl ? (
@@ -673,12 +676,12 @@ export default function TextbookContentViewer({
                     file={pdfUrl}
                     loading={
                       <div className="flex min-h-full items-center justify-center p-8 text-sm text-slate-600">
-                        Loading original textbook...
+                        {t("viewer.loadingOriginal")}
                       </div>
                     }
                     error={
                       <div className="flex min-h-full items-center justify-center p-8 text-sm text-red-700">
-                        {pdfLoadError || "Unable to load the original PDF."}
+                        {pdfLoadError || t("viewer.loadPdfFailed")}
                       </div>
                     }
                     onLoadSuccess={({ numPages }) => {
@@ -688,7 +691,7 @@ export default function TextbookContentViewer({
                     }}
                     onLoadError={(error) => {
                       setPdfPageCount(0);
-                      setPdfLoadError(error.message || "Unable to load the original PDF.");
+                      setPdfLoadError(error.message || t("viewer.loadPdfFailed"));
                     }}
                     className="mx-auto flex w-fit min-w-full flex-col items-center gap-4 p-4"
                   >
@@ -721,7 +724,7 @@ export default function TextbookContentViewer({
                 <div className="flex min-h-0 flex-1 items-center justify-center">
                   <div className="text-center">
                     <FileText className="mx-auto mb-3 h-10 w-10 text-slate-400" />
-                    <p className="text-sm font-medium text-slate-700">Loading original textbook...</p>
+                    <p className="text-sm font-medium text-slate-700">{t("viewer.loadingOriginal")}</p>
                   </div>
                 </div>
               )}
@@ -732,15 +735,15 @@ export default function TextbookContentViewer({
             <div className="flex h-full min-h-[420px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50">
               <div className="text-center">
                 <FileText className="mx-auto mb-3 h-10 w-10 text-slate-400" />
-                <p className="text-sm font-medium text-slate-700">Please select a section from the left panel</p>
-                <p className="mt-1 text-xs text-slate-500">Key topic analysis will appear after selecting a section</p>
+                <p className="text-sm font-medium text-slate-700">{t("viewer.selectSection")}</p>
+                <p className="mt-1 text-xs text-slate-500">{t("viewer.sectionHint")}</p>
               </div>
             </div>
           ) : selectedCategory === "key_topics_analysis" ? (
             <article className="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-5 border-b border-slate-200 pb-4">
                 <p className="text-xs font-medium text-slate-500">
-                  Chapter {selectedSection.chapterNumber} · Section {selectedSection.section_id}
+                  {t("viewer.chapter", { number: selectedSection.chapterNumber })} · {t("viewer.section", { number: selectedSection.section_id })}
                 </p>
                 <h3 className="mt-1 text-xl font-bold text-slate-900">{selectedSection.section_title}</h3>
                 <p className="mt-1 text-sm text-slate-500">{selectedSection.chapterTitle}</p>
@@ -755,7 +758,7 @@ export default function TextbookContentViewer({
                     <section key={field} className={`rounded-xl border border-slate-200 ${meta.bg} p-4`}>
                       <div className="mb-2 flex items-center gap-2">
                         <Icon className={`h-4 w-4 ${meta.color}`} />
-                        <h4 className="text-sm font-semibold text-slate-800">{meta.title}</h4>
+                        <h4 className="text-sm font-semibold text-slate-800">{t(meta.titleKey)}</h4>
                       </div>
                       {items.length ? (
                         <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700">
@@ -764,16 +767,16 @@ export default function TextbookContentViewer({
                           ))}
                         </ul>
                       ) : (
-                        <p className="text-sm text-slate-500">No content available</p>
+                        <p className="text-sm text-slate-500">{t("viewer.noContent")}</p>
                       )}
                     </section>
                   );
                 })}
 
                 <section className="rounded-xl border border-slate-200 bg-indigo-50 p-4">
-                  <h4 className="mb-2 text-sm font-semibold text-indigo-700">One-Sentence Summary</h4>
+                  <h4 className="mb-2 text-sm font-semibold text-indigo-700">{t("viewer.oneSentenceSummary")}</h4>
                   <p className="text-sm leading-relaxed text-slate-700">
-                    {selectedSection?.key_topics_analysis?.one_sentence_summary || "No summary available"}
+                    {selectedSection?.key_topics_analysis?.one_sentence_summary || t("viewer.noSummary")}
                   </p>
                 </section>
               </div>
@@ -782,11 +785,11 @@ export default function TextbookContentViewer({
             <article className="mx-auto max-w-5xl space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-2 border-b border-slate-200 pb-3">
                 <p className="text-xs font-medium text-slate-500">
-                  Chapter {selectedSection.chapterNumber} · Section {selectedSection.section_id}
+                  {t("viewer.chapter", { number: selectedSection.chapterNumber })} · {t("viewer.section", { number: selectedSection.section_id })}
                 </p>
                 <h3 className="mt-1 text-xl font-bold text-slate-900">{selectedSection.section_title}</h3>
                 <p className="mt-1 text-sm text-indigo-700">
-                  {selectedCategory === "quiz-for-section" ? "Quiz for Section" : "Detailed Explanation"}
+                  {selectedCategory === "quiz-for-section" ? t("viewer.quizForSection") : t("viewer.detailedExplanation")}
                 </p>
               </div>
 
@@ -809,10 +812,10 @@ export default function TextbookContentViewer({
                     </div>
                     <p className="text-xs text-slate-500">
                       {selectedCategory === "quiz-for-section"
-                        ? "Use these points as the quiz source"
-                        : "Drag into the large box below"}
+                        ? t("viewer.dragQuizSource")
+                        : t("viewer.dragIntoBox")}
                     </p>
-                    <p className="mt-2 text-xs text-slate-600">Point count: {card.points.length}</p>
+                    <p className="mt-2 text-xs text-slate-600">{t("viewer.pointCount", { count: card.points.length })}</p>
                   </div>
                 ))}
               </div>
@@ -827,13 +830,13 @@ export default function TextbookContentViewer({
                 className="min-h-[180px] rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-6"
               >
                 <h2 className="text-sm font-semibold text-indigo-700">
-                  {selectedCategory === "quiz-for-section" ? "Quiz Source Selection" : "Content Generation Workspace (Large Box)"}
+                  {selectedCategory === "quiz-for-section" ? t("viewer.quizSourceSelection") : t("viewer.workspace")}
                 </h2>
                 {!droppedCard ? (
                   <p className="mt-2 text-sm text-slate-600">
                     {selectedCategory === "quiz-for-section"
-                      ? "Drag one knowledge-point category here to generate a source-grounded quiz."
-                      : "Drag any small box from above into this area."}
+                      ? t("viewer.dragQuizPrompt")
+                      : t("viewer.dragPrompt")}
                   </p>
                 ) : (
                   <div
@@ -841,7 +844,7 @@ export default function TextbookContentViewer({
                       LAB_BOX_THEME[droppedCard.key] || "bg-white border-indigo-200"
                     }`}
                   >
-                    <p className="text-sm font-semibold text-slate-800">Selected: {droppedCard.label}</p>
+                    <p className="text-sm font-semibold text-slate-800">{t("viewer.selected", { label: droppedCard.label })}</p>
                     <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
                       {droppedCard.points.slice(0, 5).map((point, idx) => (
                         <li key={`${droppedCard.key}-${idx}`}>{point}</li>
@@ -858,13 +861,13 @@ export default function TextbookContentViewer({
                   className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
                 >
                   {isGenerating
-                    ? selectedCategory === "quiz-for-section" ? "Generating Quiz..." : "Generating..."
-                    : selectedCategory === "quiz-for-section" ? "Generate Quiz" : "Generate Content"}
+                    ? selectedCategory === "quiz-for-section" ? t("viewer.generatingQuiz") : t("viewer.generating")
+                    : selectedCategory === "quiz-for-section" ? t("viewer.generateQuiz") : t("viewer.generateContent")}
                 </button>
 
                 <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
                   <h3 className="text-sm font-semibold text-slate-800">
-                    {selectedCategory === "quiz-for-section" ? "Your Quiz" : "Generated Result"}
+                    {selectedCategory === "quiz-for-section" ? t("viewer.yourQuiz") : t("viewer.generatedResult")}
                   </h3>
                   {selectedCategory === "quiz-for-section" && quizQuestions.length ? (
                     <div className="mt-4 space-y-5">
@@ -879,7 +882,7 @@ export default function TextbookContentViewer({
                           <section key={questionKey} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                             <div className="flex items-center justify-between gap-3">
                               <span className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
-                                Question {index + 1} · {isMultipleChoice ? "Multiple choice" : "Short answer"}
+                                {t("viewer.question", { number: index + 1 })} · {isMultipleChoice ? t("viewer.multipleChoice") : t("viewer.shortAnswer")}
                               </span>
                               {question.difficulty && (
                                 <span className="rounded-full bg-white px-2 py-1 text-xs text-slate-500">{question.difficulty}</span>
@@ -911,7 +914,7 @@ export default function TextbookContentViewer({
                               <textarea
                                 value={answer}
                                 onChange={(event) => setQuizAnswers((current) => ({ ...current, [questionKey]: event.target.value }))}
-                                placeholder="Write your answer here..."
+                                placeholder={t("viewer.answerPlaceholder")}
                                 className="mt-3 min-h-24 w-full rounded-lg border border-slate-300 p-3 text-sm outline-none focus:border-indigo-500"
                               />
                             )}
@@ -922,13 +925,15 @@ export default function TextbookContentViewer({
                               disabled={!answer.trim()}
                               className="mt-3 rounded-md border border-indigo-200 bg-white px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                              Check answer
+                              {t("viewer.checkAnswer")}
                             </button>
 
                             {revealed && (
                               <div className={`mt-3 rounded-lg border p-3 text-sm ${isCorrect ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
                                 <p className="font-semibold text-slate-800">
-                                  {isCorrect ? "Correct" : `Suggested answer: ${question.correct_answer || "Not provided"}`}
+                                  {isCorrect
+                                    ? t("viewer.correct")
+                                    : t("viewer.suggestedAnswer", { answer: question.correct_answer || t("viewer.notProvided") })}
                                 </p>
                                 {question.explanation && <p className="mt-1 text-slate-700">{question.explanation}</p>}
                                 {question.source_alignment_note && (
@@ -943,8 +948,8 @@ export default function TextbookContentViewer({
                   ) : (
                     <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
                       {generatedText || (selectedCategory === "quiz-for-section"
-                        ? "Choose a source category, then generate your quiz."
-                        : "Generated content will appear here after clicking the button.")}
+                        ? t("viewer.chooseQuizSource")
+                        : t("viewer.generatedPlaceholder"))}
                     </pre>
                   )}
                 </div>

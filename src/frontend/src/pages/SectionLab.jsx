@@ -1,12 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, GripVertical } from "lucide-react";
+import { UserContext } from "../context/UserContext";
 
 const BOX_CONFIG = [
-  { key: "core_concepts", label: "Core Concepts" },
-  { key: "fundamental_rules", label: "Fundamental Rules" },
-  { key: "common_pitfalls", label: "Common Pitfalls" },
-  { key: "examples", label: "Examples" },
+  { key: "core_concepts", labelKey: "viewer.coreConcepts" },
+  { key: "fundamental_rules", labelKey: "viewer.fundamentalRules" },
+  { key: "common_pitfalls", labelKey: "viewer.commonPitfalls" },
+  { key: "examples", labelKey: "viewer.examples" },
 ];
 
 const normalizeList = (value) => {
@@ -16,6 +17,7 @@ const normalizeList = (value) => {
 };
 
 export default function SectionLab() {
+  const { t } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
   const { mode } = useParams();
@@ -25,32 +27,33 @@ export default function SectionLab() {
   const [droppedKey, setDroppedKey] = useState(null);
   const [generatedText, setGeneratedText] = useState("");
 
-  const modeLabel = mode === "quiz-for-section" ? "Quiz for Section" : "Detailed Explanation";
+  const modeLabel = mode === "quiz-for-section" ? t("viewer.quizForSection") : t("viewer.detailedExplanation");
 
   const cards = useMemo(() => {
     const topics = section?.key_topics_analysis || {};
     return BOX_CONFIG.map((item) => ({
       ...item,
+      label: t(item.labelKey),
       points: normalizeList(topics[item.key]),
     }));
-  }, [section]);
+  }, [section, t]);
 
   const droppedCard = cards.find((card) => card.key === droppedKey);
 
   const generateContent = () => {
     if (!droppedCard) {
-      setGeneratedText("Please drag one small box into the large box first.");
+      setGeneratedText(t("viewer.dragFirst"));
       return;
     }
 
     const points = droppedCard.points.length
       ? droppedCard.points.map((p, i) => `${i + 1}. ${p}`).join("\n")
-      : "No available key points.";
+      : t("sectionLab.noPoints");
 
     const prefix =
       mode === "quiz-for-section"
-        ? `[${droppedCard.label}] Quiz Generation\nDesign 3 questions based on the key points below (with short answers):\n`
-        : `[${droppedCard.label}] Detailed Explanation Generation\nCreate a structured explanation based on the key points below:\n`;
+        ? `[${droppedCard.label}] ${t("sectionLab.quizPrefix")}\n`
+        : `[${droppedCard.label}] ${t("sectionLab.explanationPrefix")}\n`;
 
     setGeneratedText(`${prefix}${points}`);
   };
@@ -59,12 +62,12 @@ export default function SectionLab() {
     return (
       <div className="min-h-screen bg-slate-100 p-6">
         <div className="mx-auto max-w-4xl rounded-xl border border-red-200 bg-white p-6">
-          <p className="text-red-700">Missing section data. Please return to the Study page and select again.</p>
+          <p className="text-red-700">{t("sectionLab.missing")}</p>
           <button
             onClick={() => navigate(-1)}
             className="mt-4 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white"
           >
-            Back
+            {t("sectionLab.back")}
           </button>
         </div>
       </div>
@@ -84,7 +87,7 @@ export default function SectionLab() {
           <div>
             <h1 className="text-xl font-semibold">{modeLabel}</h1>
             <p className="text-sm text-slate-500">
-              Chapter {section.chapterNumber} · Section {section.section_id} · {section.section_title}
+              {t("viewer.chapter", { number: section.chapterNumber })} · {t("viewer.section", { number: section.section_id })} · {section.section_title}
             </p>
           </div>
         </div>
@@ -106,8 +109,8 @@ export default function SectionLab() {
                 <h3 className="text-sm font-semibold text-slate-800">{card.label}</h3>
                 <GripVertical className="h-4 w-4 text-slate-400" />
               </div>
-              <p className="text-xs text-slate-500">Drag into the large box below</p>
-              <p className="mt-2 text-xs text-slate-600">Point count: {card.points.length}</p>
+              <p className="text-xs text-slate-500">{t("viewer.dragIntoBox")}</p>
+              <p className="mt-2 text-xs text-slate-600">{t("viewer.pointCount", { count: card.points.length })}</p>
             </div>
           ))}
         </div>
@@ -121,12 +124,12 @@ export default function SectionLab() {
           }}
           className="min-h-[180px] rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-6"
         >
-          <h2 className="text-sm font-semibold text-indigo-700">Content Generation Workspace (Large Box)</h2>
+          <h2 className="text-sm font-semibold text-indigo-700">{t("viewer.workspace")}</h2>
           {!droppedCard ? (
-            <p className="mt-2 text-sm text-slate-600">Drag any small box from above into this area.</p>
+            <p className="mt-2 text-sm text-slate-600">{t("viewer.dragPrompt")}</p>
           ) : (
             <div className="mt-3 rounded-lg border border-indigo-200 bg-white p-3">
-              <p className="text-sm font-semibold text-slate-800">Selected: {droppedCard.label}</p>
+              <p className="text-sm font-semibold text-slate-800">{t("viewer.selected", { label: droppedCard.label })}</p>
               <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
                 {droppedCard.points.slice(0, 5).map((point, idx) => (
                   <li key={`${droppedCard.key}-${idx}`}>{point}</li>
@@ -141,13 +144,13 @@ export default function SectionLab() {
             onClick={generateContent}
             className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
           >
-            Generate Content
+            {t("viewer.generateContent")}
           </button>
 
           <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-800">Generated Result</h3>
+            <h3 className="text-sm font-semibold text-slate-800">{t("viewer.generatedResult")}</h3>
             <pre className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
-              {generatedText || "Generated content will appear here after clicking the button."}
+              {generatedText || t("viewer.generatedPlaceholder")}
             </pre>
           </div>
         </div>

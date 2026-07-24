@@ -20,9 +20,9 @@ import {
 export default function Study() {
   const navigate = useNavigate();
   const { projectId } = useParams();
-  const { username } = useContext(UserContext);
+  const { username, t } = useContext(UserContext);
   const [textbookData, setTextbookData] = useState(null);
-  const [projectName, setProjectName] = useState("Project");
+  const [projectName, setProjectName] = useState(t("study.project"));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("summary"); // summary | pdf
@@ -108,10 +108,10 @@ export default function Study() {
         );
 
         if (!matchedProject) {
-          throw new Error("未找到对应项目，请返回 Dashboard 重新选择。");
+          throw new Error(t("study.projectNotFound"));
         }
 
-        setProjectName(matchedProject.originalName || matchedProject.filename || "Project");
+        setProjectName(matchedProject.originalName || matchedProject.filename || t("study.project"));
 
         const projectNameToSelect =
           matchedProject.filename || matchedProject.originalName || projectId;
@@ -156,7 +156,7 @@ export default function Study() {
         // Fetch PDF by username + filename and cache in browser memory
         const pdfFilename = matchedProject.filename || matchedProject.originalName;
         if (!pdfFilename) {
-          throw new Error("未找到 PDF 文件名");
+          throw new Error(t("study.pdfNameMissing"));
         }
         const pdfBlob = await getProjectPdf(username, pdfFilename);
         const url = URL.createObjectURL(pdfBlob);
@@ -165,7 +165,7 @@ export default function Study() {
         }
       } catch (err) {
         if (mounted) {
-          setError(err.message || "加载项目内容失败");
+          setError(err.message || t("study.loadFailed"));
           loadedProjectRef.current = null;
         }
       } finally {
@@ -180,7 +180,16 @@ export default function Study() {
     return () => {
       mounted = false;
     };
-  }, [username, projectId, navigate]);
+  }, [username, projectId, navigate, t]);
+
+  const getStepName = (stepKey, step) => {
+    const labels = {
+      step1: t("study.step1"),
+      step2: t("study.step2"),
+      step3: t("study.step3"),
+    };
+    return labels[stepKey] || step?.name || stepKey;
+  };
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -194,7 +203,7 @@ export default function Study() {
               <ArrowLeft className="h-5 w-5 text-slate-600" />
             </button>
             <div>
-              <h1 className="text-xl font-semibold">Textbook Knowledge Explorer</h1>
+              <h1 className="text-xl font-semibold">{t("study.title")}</h1>
               <p className="text-sm text-slate-500">{projectName}</p>
             </div>
           </div>
@@ -209,7 +218,7 @@ export default function Study() {
               }`}
             >
               <Layout className="h-4 w-4" />
-              Summary
+              {t("study.summary")}
             </button>
             <button
               onClick={() => setViewMode("pdf")}
@@ -220,7 +229,7 @@ export default function Study() {
               }`}
             >
               <FileText className="h-4 w-4" />
-              Original PDF
+              {t("study.originalPdf")}
             </button>
           </div>
 
@@ -238,14 +247,14 @@ export default function Study() {
         {loading ? (
           <div className="flex min-h-[420px] items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white">
             <Loader className="h-5 w-5 animate-spin text-indigo-600" />
-            <p className="text-sm text-slate-600">正在从 /select-project 返回内容加载数据...</p>
+            <p className="text-sm text-slate-600">{t("study.loading")}</p>
           </div>
         ) : processingSteps ? (
           <div className="flex min-h-[420px] items-center justify-center rounded-2xl border border-slate-200 bg-white p-8">
             <div className="w-full max-w-6xl space-y-6">
               <div className="text-center">
-                <h2 className="text-lg font-semibold text-slate-900">Processing textbook...</h2>
-                <p className="mt-1 text-sm text-slate-600">File is being prepared for study mode</p>
+                <h2 className="text-lg font-semibold text-slate-900">{t("study.processingTitle")}</h2>
+                <p className="mt-1 text-sm text-slate-600">{t("study.processingSubtitle")}</p>
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 {["step1", "step2", "step3"].map((stepKey) => {
@@ -263,7 +272,7 @@ export default function Study() {
                         <span className={`text-sm font-medium ${
                           step.complete ? "text-green-700" : "text-slate-600"
                         }`}>
-                          {step.name}
+                          {getStepName(stepKey, step)}
                         </span>
                       </div>
                       {!step.complete && (
@@ -279,7 +288,7 @@ export default function Study() {
                                 setShowStep2Panel(true);
                               } catch (err) {
                                 console.error("Failed to load markdown for step2:", err);
-                                setStep2Error(err.message || "Failed to load markdown content");
+                                setStep2Error(err.message || t("study.loadMarkdownFailed"));
                                 setShowStep2Panel(false);
                               } finally {
                                 setProcessingStep(null);
@@ -307,23 +316,23 @@ export default function Study() {
                           {isProcessing ? (
                             <span className="flex items-center gap-1">
                               <Loader className="h-3 w-3 animate-spin" />
-                              Processing...
+                              {t("study.processing")}
                             </span>
                           ) : (
-                            "Start"
+                            t("study.start")
                           )}
                         </button>
                       )}
                       {stepKey === "step2" && step2Disabled && (
-                        <p className="text-xs text-amber-700">Please complete Step 1 first.</p>
+                        <p className="text-xs text-amber-700">{t("study.completeStep1First")}</p>
                       )}
                       {stepKey === "step3" && isProcessing && (
                         <div className="rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-2 text-xs text-indigo-800">
                           {summaryProgress?.status === "processing" && summaryProgress.total_chapters > 0 ? (
                             <>
                               {summaryProgress.item_title
-                                ? `正在分析：${summaryProgress.item_title}`
-                                : `正在处理第 ${summaryProgress.current_chapter}/${summaryProgress.total_chapters} 章`}
+                                ? t("study.analysisItem", { title: summaryProgress.item_title })
+                                : t("study.analysisCurrent", { current: summaryProgress.current_chapter, total: summaryProgress.total_chapters })}
                               {summaryProgress.item_title
                                 ? `（第 ${summaryProgress.current_chapter}/${summaryProgress.total_chapters} 章）`
                                 : summaryProgress.chapter_title
@@ -331,7 +340,7 @@ export default function Study() {
                                   : ""}
                             </>
                           ) : (
-                            "正在准备章节分析..."
+                            t("study.analysisPreparing")
                           )}
                         </div>
                       )}
@@ -342,13 +351,13 @@ export default function Study() {
               {showStep2Panel && (
                 <div className="space-y-4 rounded-lg border border-indigo-200 bg-indigo-50/40 p-5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-slate-900">Step 2 Input</h3>
-                    <span className="text-xs text-slate-500">Left: Markdown | Right: Paste TOC</span>
+                    <h3 className="text-sm font-semibold text-slate-900">{t("study.step2Input")}</h3>
+                    <span className="text-xs text-slate-500">{t("study.step2Hint")}</span>
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="rounded-md border border-slate-200 bg-white p-2">
-                      <div className="mb-2 text-xs font-medium text-slate-600">Converted Markdown</div>
+                      <div className="mb-2 text-xs font-medium text-slate-600">{t("study.convertedMarkdown")}</div>
                       <textarea
                         value={markdownPreview}
                         readOnly
@@ -357,11 +366,11 @@ export default function Study() {
                     </div>
 
                     <div className="rounded-md border border-slate-200 bg-white p-2">
-                      <div className="mb-2 text-xs font-medium text-slate-600">Table Of Contents (paste here)</div>
+                      <div className="mb-2 text-xs font-medium text-slate-600">{t("study.toc")}</div>
                       <textarea
                         value={tocInput}
                         onChange={(e) => setTocInput(e.target.value)}
-                        placeholder="Paste your textbook table of contents here..."
+                        placeholder={t("study.tocPlaceholder")}
                         className="h-80 w-full resize-none rounded border border-slate-300 bg-white p-3 text-sm text-slate-700"
                       />
                     </div>
@@ -382,7 +391,7 @@ export default function Study() {
                       }}
                       className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                     >
-                      Close
+                      {t("study.close")}
                     </button>
                     <button
                       type="button"
@@ -399,21 +408,21 @@ export default function Study() {
                           }
                         } catch (err) {
                           console.error("Failed to submit TOC for step2:", err);
-                          setStep2Error(err.message || "Failed to process table of contents");
+                          setStep2Error(err.message || t("study.processTocFailed"));
                         } finally {
                           setSubmittingToc(false);
                         }
                       }}
                       className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                     >
-                      {submittingToc ? "Processing..." : "Generate TOC and Complete Step 2"}
+                      {submittingToc ? t("study.processing") : t("study.generateToc")}
                     </button>
                   </div>
                 </div>
               )}
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
                 <p className="text-xs text-amber-800">
-                  <strong>Tip:</strong> Processing may take a few minutes. Click "Start" for each step in order.
+                  <strong>{t("study.tip")}</strong> {t("study.tipText")}
                 </p>
               </div>
               <div className="flex justify-center pt-2">
@@ -430,7 +439,7 @@ export default function Study() {
             <div className="flex max-w-xl items-start gap-3 text-red-700">
               <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
               <div>
-                <p className="font-semibold">读取失败</p>
+                <p className="font-semibold">{t("study.readFailed")}</p>
                 <p className="text-sm">{error}</p>
               </div>
             </div>

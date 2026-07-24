@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Globe2 } from "lucide-react";
 import { UserContext } from "../context/UserContext";
 import UploadZone from "../components/UploadZone";
 import ProjectList from "../components/ProjectList";
-import { uploadTextbook, checkServerHealth } from "../services/api";
+import { uploadTextbook } from "../services/api";
 import bankLogo from "../images/LogoHNoBackground.png";
+import { languageOptions } from "../i18n";
 
 export default function Dashboard() {
-  const { username, loadUserStatus, health, checkHealth } = useContext(UserContext);
+  const { username, loadUserStatus, health, checkHealth, language, setLanguage, t } = useContext(UserContext);
   const navigate = useNavigate();
-  const [status, setStatus] = useState("Ready");
+  const [statusKey, setStatusKey] = useState("dashboard.ready");
+  const [statusValues, setStatusValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [statusType, setStatusType] = useState("neutral"); // neutral, success, error
 
@@ -24,25 +27,30 @@ export default function Dashboard() {
   const handleFileSelected = async (file) => {
     if (!username) return;
     setLoading(true);
-    setStatus("Uploading and converting...");
+    setStatusKey("dashboard.uploading");
+    setStatusValues({});
     setStatusType("neutral");
     try {
       const uploadResult = await uploadTextbook(username, file);
       if (uploadResult?.preparation?.success === false) {
-        setStatus(`Uploaded, but PDF preparation is pending: ${uploadResult.preparation.error}`);
+        setStatusKey("dashboard.uploadPending");
+        setStatusValues({ error: uploadResult.preparation.error });
         setStatusType("neutral");
       } else {
-        setStatus("Upload successful!");
+        setStatusKey("dashboard.uploadSuccess");
+        setStatusValues({});
         setStatusType("success");
       }
       // Reload user status to update projects
       await loadUserStatus(username);
       setTimeout(() => {
-        setStatus("Ready");
+        setStatusKey("dashboard.ready");
+        setStatusValues({});
         setStatusType("neutral");
       }, 3000);
     } catch (err) {
-      setStatus(err.message || "Upload failed");
+      setStatusKey(null);
+      setStatusValues({ message: err.message || t("dashboard.uploadFailed") });
       setStatusType("error");
       console.error("Upload error:", err);
     } finally {
@@ -71,7 +79,7 @@ export default function Dashboard() {
       <div className="flex flex-col items-center">
         <span className="text-[10px] uppercase font-bold text-slate-400 mb-1">{label}</span>
         <div className={`px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>
-          {status}
+          {t(`health.status.${status}`)}
         </div>
       </div>
     );
@@ -83,19 +91,37 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div>
-              <h1 className="text-xl font-semibold">Dashboard</h1>
-              <p className="text-sm text-slate-500">Welcome, {username}</p>
+              <h1 className="text-xl font-semibold">{t("dashboard.title")}</h1>
+              <p className="text-sm text-slate-500">{t("dashboard.welcome", { username })}</p>
             </div>
             
             <div className="flex gap-4 border-l pl-8 border-slate-200">
-              <HealthBadge label="Backend" status={health.backend} />
-              <HealthBadge label="Python" status={health.core} />
-              <HealthBadge label="MinerU" status={health.minerU} />
+              <HealthBadge label={t("health.backend")} status={health.backend} />
+              <HealthBadge label={t("health.python")} status={health.core} />
+              <HealthBadge label={t("health.mineru")} status={health.minerU} />
             </div>
           </div>
           
-          <div className={`px-4 py-2 rounded-lg border text-sm transition-all ${getStatusStyle()}`}>
-            Status: {status}
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              <Globe2 className="h-4 w-4 text-slate-400" />
+              <span className="sr-only">{t("dashboard.language")}</span>
+              <select
+                value={language}
+                onChange={(event) => setLanguage(event.target.value)}
+                className="bg-transparent text-sm outline-none"
+                aria-label={t("dashboard.language")}
+              >
+                {languageOptions.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className={`px-4 py-2 rounded-lg border text-sm transition-all ${getStatusStyle()}`}>
+              {t("dashboard.status")}: {statusKey ? t(statusKey, statusValues) : statusValues.message}
+            </div>
           </div>
         </div>
       </header>

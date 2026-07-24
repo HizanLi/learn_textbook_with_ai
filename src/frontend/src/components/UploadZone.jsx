@@ -1,8 +1,10 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { UploadCloud } from "lucide-react";
+import { UserContext } from "../context/UserContext";
 
 export default function UploadZone({ onFileSelected, isLoading }) {
   const inputRef = useRef(null);
+  const { t } = useContext(UserContext);
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -38,15 +40,15 @@ export default function UploadZone({ onFileSelected, isLoading }) {
         className="hidden"
       />
       <UploadCloud className="h-10 w-10 text-blue-500 mx-auto mb-3" />
-      <p className="font-medium">Drag & drop textbooks here</p>
-      <p className="text-sm text-slate-500">PDF, Markdown, or text files (multiple supported)</p>
+      <p className="font-medium">{t("upload.drop")}</p>
+      <p className="text-sm text-slate-500">{t("upload.supported")}</p>
       <button
         type="button"
         disabled={isLoading}
         onClick={handleBrowse}
         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-blue-400"
       >
-        {isLoading ? "Uploading..." : "Browse files"}
+        {isLoading ? t("upload.uploading") : t("upload.browse")}
       </button>
     </div>
   );
