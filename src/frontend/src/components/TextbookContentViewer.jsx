@@ -11,7 +11,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { generateDetailedExplanation, generateQuizForSection } from "../services/api";
+import { getAvailableLlmProviders, generateDetailedExplanation, generateQuizForSection } from "../services/api";
 import { UserContext } from "../context/UserContext";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -214,6 +214,10 @@ export default function TextbookContentViewer({
   const [quizAnswers, setQuizAnswers] = useState({});
   const [revealedAnswers, setRevealedAnswers] = useState({});
   const [isGenerating, setIsGenerating] = useState(false);
+  const [llmProviders, setLlmProviders] = useState([
+    { id: "openai", label: "OpenAI", defaultModel: "gpt-4o" },
+  ]);
+  const [selectedProvider, setSelectedProvider] = useState("openai");
   const pdfScrollRef = useRef(null);
   const pdfPageRefs = useRef(new Map());
 
@@ -369,6 +373,29 @@ export default function TextbookContentViewer({
     setPdfPageInput(String(pdfPage));
   }, [pdfPage]);
 
+  useEffect(() => {
+    let active = true;
+    getAvailableLlmProviders()
+      .then((result) => {
+        if (!active || !Array.isArray(result?.providers) || !result.providers.length) {
+          return;
+        }
+        setLlmProviders(result.providers);
+        setSelectedProvider((current) =>
+          result.providers.some((provider) => provider.id === current)
+            ? current
+            : result.providers[0].id
+        );
+      })
+      .catch((error) => {
+        console.error("Failed to load LLM providers:", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const handleToggleChapter = (chapter) => {
     const chapterId = chapter.chapter_number;
     setExpandedChapterId((prev) => {
@@ -443,7 +470,7 @@ export default function TextbookContentViewer({
 
     try {
       const payload = {
-        provider: "openai",
+        provider: selectedProvider,
         chapterTitle: selectedSection?.chapterTitle || "",
         sectionTitle: selectedSection?.section_title || "",
         topicType: droppedCard.key,
@@ -855,15 +882,31 @@ export default function TextbookContentViewer({
               </div>
 
               <div className="space-y-3">
-                <button
-                  onClick={generateContent}
-                  disabled={isGenerating}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-                >
-                  {isGenerating
-                    ? selectedCategory === "quiz-for-section" ? t("viewer.generatingQuiz") : t("viewer.generating")
-                    : selectedCategory === "quiz-for-section" ? t("viewer.generateQuiz") : t("viewer.generateContent")}
-                </button>
+                <div className="flex flex-wrap items-end gap-3">
+                  <button
+                    onClick={generateContent}
+                    disabled={isGenerating}
+                    className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:bg-indigo-300"
+                  >
+                    {isGenerating
+                      ? selectedCategory === "quiz-for-section" ? t("viewer.generatingQuiz") : t("viewer.generating")
+                      : selectedCategory === "quiz-for-section" ? t("viewer.generateQuiz") : t("viewer.generateContent")}
+                  </button>
+                  <label className="min-w-[190px] text-xs font-medium text-slate-600">
+                    {t("viewer.modelProvider")}
+                    <select
+                      value={selectedProvider}
+                      onChange={(event) => setSelectedProvider(event.target.value)}
+                      className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500"
+                    >
+                      {llmProviders.map((provider) => (
+                        <option key={provider.id} value={provider.id}>
+                          {provider.label || provider.id}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
 
                 <div className="min-h-[180px] rounded-xl border border-slate-200 bg-white p-4">
                   <h3 className="text-sm font-semibold text-slate-800">

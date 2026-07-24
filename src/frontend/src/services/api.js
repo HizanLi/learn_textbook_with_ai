@@ -244,6 +244,15 @@ export async function selectProject(username, projectName) {
   return res.json();
 }
 
+export async function getAvailableLlmProviders() {
+  const res = await fetch(`${API_BASE}/api/llm/providers`);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to fetch LLM providers");
+  }
+  return data;
+}
+
 export async function generateDetailedExplanation(payload) {
   const res = await fetch(`${API_BASE}/api/llm/detailed-explanation`, {
     method: "POST",

@@ -5,16 +5,16 @@
     const DEFAULT_MODELS = {
     openai: "gpt-4o",
     deepseek: "deepseek-chat",
-    gemini: "gemini-3-flash-preview",
+    google: "gemini-3-flash-preview",
     };
 
-    const SUPPORTED_PROVIDERS = ["openai", "deepseek", "gemini"];
+    const SUPPORTED_PROVIDERS = ["openai", "deepseek", "google"];
 
     function getProviderConfig(provider) {
     const keyMap = {
         openai: process.env.OPENAI_API_KEY,
         deepseek: process.env.DEEPSEEK_API_KEY,
-        gemini: process.env.GEMINI_API_KEY,
+        google: process.env.GEMINI_API_KEY,
     };
 
     const apiKey = keyMap[provider];
@@ -426,9 +426,9 @@
     router.get("/llm/providers", (req, res) => {
     res.json({
         providers: [
-        { id: "openai", defaultModel: DEFAULT_MODELS.openai },
-        { id: "deepseek", defaultModel: DEFAULT_MODELS.deepseek },
-        { id: "gemini", defaultModel: DEFAULT_MODELS.gemini },
+        { id: "openai", label: "OpenAI", defaultModel: DEFAULT_MODELS.openai },
+        { id: "deepseek", label: "DeepSeek", defaultModel: DEFAULT_MODELS.deepseek },
+        { id: "google", label: "Google Gemini", defaultModel: DEFAULT_MODELS.google },
         ],
     });
     });
@@ -448,7 +448,7 @@
 
         if (!provider || !SUPPORTED_PROVIDERS.includes(provider)) {
         return res.status(400).json({
-            error: "provider is required and must be one of: openai, deepseek, gemini",
+            error: "provider is required and must be one of: openai, deepseek, google",
         });
         }
 
@@ -522,7 +522,7 @@
 
         if (!provider || !SUPPORTED_PROVIDERS.includes(provider)) {
         return res.status(400).json({
-            error: "provider is required and must be one of: openai, deepseek, gemini",
+            error: "provider is required and must be one of: openai, deepseek, google",
         });
         }
 
@@ -603,7 +603,7 @@
 
         if (!provider || !SUPPORTED_PROVIDERS.includes(provider)) {
         return res.status(400).json({
-            error: "provider is required and must be one of: openai, deepseek, gemini",
+            error: "provider is required and must be one of: openai, deepseek, google",
         });
         }
 

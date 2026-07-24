@@ -14,6 +14,7 @@ from microservices.chunker import MarkdownChunker, save_chunks_to_json
 from microservices.vectorization import VectorStorageManager
 from microservices.mineru_client import MinerUClient
 from llm.analyze_textbook import TextbookAnalyzer
+from llm.llm_client import ModelProvider
 from scripts.merge_toc_content import map_chunks_to_toc
 import uvicorn
 from dotenv import load_dotenv
@@ -71,6 +72,31 @@ vector_manager = None
 mineru_client = MinerUClient()
 analysis_progress = {}
 analysis_progress_lock = Lock()
+
+
+@app.get("/api/llm/providers")
+async def get_llm_providers():
+    """Return the model providers supported by the core LLM client."""
+    labels = {
+        ModelProvider.OPENAI: "OpenAI",
+        ModelProvider.DEEPSEEK: "DeepSeek",
+        ModelProvider.GOOGLE: "Google Gemini",
+    }
+    default_models = {
+        ModelProvider.OPENAI: "gpt-4o",
+        ModelProvider.DEEPSEEK: "deepseek-chat",
+        ModelProvider.GOOGLE: "gemini-3-flash-preview",
+    }
+    return {
+        "providers": [
+            {
+                "id": provider.value,
+                "label": labels[provider],
+                "defaultModel": default_models[provider],
+            }
+            for provider in ModelProvider
+        ]
+    }
 
 
 def _analysis_progress_key(username: str, project_name: str) -> str:
