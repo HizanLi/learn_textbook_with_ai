@@ -219,9 +219,16 @@
     language = "en-US",
     }) {
     const topicLabel = topicType || "core knowledge points";
+    const categoryFocusInstructions = {
+        core_concepts: "Explain only the main ideas and definitions in the selected points. Do not focus on examples, mistakes, or broad chapter summaries unless they directly clarify a selected concept.",
+        fundamental_rules: "Explain only the rules, principles, procedures, and how to apply them. Do not restate general concepts unless they are needed to understand a selected rule.",
+        common_pitfalls: "Explain only the mistakes, misunderstandings, risks, and how to avoid or correct them. Do not give a general lesson summary.",
+        examples: "Explain only the selected examples. Break down what each example demonstrates and how it connects to the source text. Do not turn the answer into a general concept summary.",
+    };
+    const categoryFocus = categoryFocusInstructions[topicType] || "Explain only the selected category and selected key points. Do not summarize the whole section.";
     const pointsText = points.length
         ? points.map((p, i) => `${i + 1}. ${p}`).join("\n")
-        : "(No key points provided. Infer reasonable points from chapter/section context.)";
+        : "(No selected key points were provided for this category.)";
 
     const contentText =
         typeof content === "string" && content.trim()
@@ -229,7 +236,16 @@
         : "(No textbook content provided.)";
 
         const prompt = ` 
-            You are an expert tutor designing educational materials for beginners. Your task is to generate a structured, easy-to-understand explanation based STRICTLY on the provided textbook content. 
+            You are an expert tutor designing educational materials for beginners.
+
+            ### SELECTED LEARNING TARGET
+            Selected category: ${topicLabel}
+            Category-specific instruction: ${categoryFocus}
+
+            Selected key points:
+            ${pointsText}
+
+            Your task is to generate a structured, easy-to-understand explanation for the SELECTED category and SELECTED key points only. The selected key points are the primary target. The textbook content is only supporting evidence.
 
             ### CONSTRAINTS & RULES:
             1. Strict Markdown: Your entire response MUST be formatted in valid Markdown. You must use the exact heading levels (###) provided below. Use bullet points (-), bolding (**text**), and blockquotes (>) to make the text highly scannable.
@@ -237,48 +253,56 @@
             3. Fallback Behavior: If the source material is too sparse to fulfill a specific section (e.g., no clear pitfalls or examples), output exactly: "> *The source material does not provide enough information for this section.*" Do not guess.
             4. Audience: Use simple, jargon-free language suitable for an absolute beginner. Keep sentences concise.
             5. Language: The entire output MUST be written in ${language}.
+            6. Selection Focus: Focus ONLY on <selected_category> and <selected_key_points>. Do NOT summarize the whole section. Use <textbook_content> only as supporting evidence for the selected points.
+            7. Distinct Output: Different selected categories must produce meaningfully different explanations. If the selected category is "examples", explain the examples. If it is "common_pitfalls", explain mistakes and corrections. If it is "fundamental_rules", explain rules and how to apply them. If it is "core_concepts", explain the main ideas.
+            8. Point Coverage: Address every item in <selected_key_points>. If a point is unsupported by <textbook_content>, explicitly say the source material is insufficient for that point.
+            9. Relevance Check: Every paragraph or bullet must clearly relate to one selected key point. Delete any sentence that would still make sense if the user had selected a different category.
+            10. Empty Selection: If <selected_key_points> says no selected key points were provided, ask the user to choose a populated category instead of generating a generic explanation.
 
             ### REQUIRED OUTPUT STRUCTURE:
             You must use the exact Markdown headers below. Do not add extra sections.
 
             ### Concept Explanation
-            [Provide a clear, simple summary of the core concept based on the source text. Use **bolding** for key terms.]
+            [Explain the selected key points under the selected category only. Explicitly mention which selected point each explanation belongs to.]
 
             ### Why It Matters
-            [Explain the relevance or application of the concept, as supported by the text.]
+            [Explain why these selected points matter, as supported by the text.]
 
             ### Common Pitfalls
-            - [Identify common misunderstanding 1 mentioned or heavily implied by the text.]
-            - [Identify common misunderstanding 2, if applicable.]
+            - [Identify misunderstanding or risk related to the selected points only.]
+            - [If not enough source support exists, use the fallback sentence.]
 
             ### Example
-            > [Provide one small, concrete example blockquoted here. If the text lacks an example, construct a simple hypothetical that directly illustrates the provided principles without adding new factual claims.]
+            > [Provide one or twosmall example that illustrates the selected points. Prefer examples from the source text; if none exists, make a minimal hypothetical that does not add new factual claims.]
 
             ### Study Suggestions
-            - [**Actionable step:** Study tip 1 based on the material]
-            - [**Actionable step:** Study tip 2 based on the material]
+            - [**Actionable step:** Study tip 1 for mastering the selected points.]
+            - [**Actionable step:** Study tip 2 for checking understanding of the selected points.]
 
             ---
             ### INPUT DATA:
             <metadata>
             Chapter: ${chapterTitle || "Unknown chapter"}
             Section: ${sectionTitle || "Unknown section"}
-            Category: ${topicLabel}
             </metadata>
+
+            <selected_category>
+            ${topicLabel}
+            </selected_category>
 
             <textbook_content>
             ${contentText}
             </textbook_content>
 
-            <key_points>
+            <selected_key_points>
             ${pointsText}
-            </key_points>
+            </selected_key_points>
         `;
 
 
-    console.log("\n[LLM PROMPT][DETAILED EXPLANATION]--------------------");
-    console.log(prompt);
-    console.log("[LLM PROMPT][DETAILED EXPLANATION END]----------------\n");
+    // console.log("\n[LLM PROMPT][DETAILED EXPLANATION]--------------------");
+    // console.log(prompt);
+    // console.log("[LLM PROMPT][DETAILED EXPLANATION END]----------------\n");
 
     return prompt;
     }
