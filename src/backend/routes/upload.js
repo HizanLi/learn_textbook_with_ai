@@ -15,6 +15,22 @@ const { mockMarkdown } = require("../services/mock");
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+function normalizeUploadedFilename(filename) {
+  const rawName = String(filename || "").trim();
+  if (!rawName) {
+    return rawName;
+  }
+
+  const decodedName = Buffer.from(rawName, "latin1").toString("utf8");
+  if (decodedName.includes("\uFFFD")) {
+    return rawName;
+  }
+
+  const looksLikeMojibake = /[ÃÂåçäèéêëíîïðñóôõöøùúûü]/.test(rawName);
+  const decodedHasUnicode = /[^\x00-\x7F]/.test(decodedName);
+  return looksLikeMojibake && decodedHasUnicode ? decodedName : rawName;
+}
+
 async function requestPdfPreparation(username, filename) {
   try {
     const coreApi = process.env.CORE_API || "http://127.0.0.1:8080";
@@ -70,35 +86,36 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "file is required" });
     }
 
+    const originalName = normalizeUploadedFilename(req.file.originalname);
+    const filename = path.basename(originalName);
+
     // Check for duplicated filename in user_status.json
     const userStatus = readUserStatus(username);
     if (userStatus && userStatus.uploadedProjects) {
       const isDuplicate = userStatus.uploadedProjects.some(
-        (p) => p.originalName === req.file.originalname
+        (p) => p.originalName === originalName || p.filename === filename
       );
       if (isDuplicate) {
         return res.status(400).json({ error: "duplicated file" });
       }
     }
 
-    const filename = path.basename(req.file.originalname);
-    
     console.log(`[UPLOAD] User: ${username}, File: ${filename}, Size: ${req.file.size} bytes`);
     
     // Keep all artifacts for one upload together under data/<user>/input/<project-name>/.
     writeDataInputFile(username, filename, req.file.buffer);
 
     // Keep lightweight app state beside the user data root.
-    const markdown = mockMarkdown(req.file.originalname);
+    const markdown = mockMarkdown(originalName);
     writeDataUserFile(username, "latest.md", Buffer.from(markdown, "utf-8"));
     writeDataUserJson(username, "latest_upload.json", {
-      originalName: req.file.originalname,
+      originalName,
       storedName: filename,
       uploadedAt: new Date().toISOString(),
     });
 
     // Add to user's uploaded projects and update user_status.json
-    const project = addUploadedProject(username, filename, req.file.originalname);
+    const project = addUploadedProject(username, filename, originalName);
     const preparation = await requestPdfPreparation(username, filename);
     const status = savePreparationStatus(username, project.id, preparation);
 
