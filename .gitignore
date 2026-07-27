@@ -23,3 +23,5 @@ src/frontend/.env.local
 src/backend/.env
 src/backend/*.log
 src/backend/logs/
+
+.DS_Store
