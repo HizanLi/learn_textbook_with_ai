@@ -9,9 +9,15 @@ import {
   ShieldAlert,
   Sparkles,
   FileText,
+  RefreshCw,
 } from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { getAvailableLlmProviders, generateDetailedExplanation, generateQuizForSection } from "../services/api";
+import {
+  getAvailableLlmProviders,
+  generateDetailedExplanation,
+  generateQuizForSection,
+  retrySectionAnalysis,
+} from "../services/api";
 import { UserContext } from "../context/UserContext";
 import MarkdownRenderer from "./MarkdownRenderer";
 
@@ -189,15 +195,57 @@ const toPositivePage = (value) => {
   return parsed;
 };
 
+const updateSectionAnalysisInData = (data, targetSection) => {
+  if (!data || !targetSection) {
+    return data;
+  }
+
+  return {
+    ...data,
+    chapters: (data.chapters || []).map((chapter) => {
+      if (targetSection.chapterNumber && chapter.chapter_number !== targetSection.chapterNumber) {
+        return chapter;
+      }
+
+      return {
+        ...chapter,
+        sections: (chapter.sections || []).map((section) => {
+          if (String(section.section_id) !== String(targetSection.section_id)) {
+            return section;
+          }
+
+          if (targetSection.sub_section_id) {
+            return {
+              ...section,
+              sub_sections: (section.sub_sections || []).map((subsection) =>
+                String(subsection.sub_section_id) === String(targetSection.sub_section_id)
+                  ? { ...subsection, key_topics_analysis: targetSection.key_topics_analysis }
+                  : subsection
+              ),
+            };
+          }
+
+          return {
+            ...section,
+            key_topics_analysis: targetSection.key_topics_analysis,
+          };
+        }),
+      };
+    }),
+  };
+};
+
 export default function TextbookContentViewer({
   data,
   viewMode = "summary",
   pdfUrl = null,
   projectKey = null,
+  projectName = null,
   pdfPreferences = null,
   onSavePdfPreferences = null,
 }) {
-  const { language, t } = useContext(UserContext);
+  const { username, language, t } = useContext(UserContext);
+  const [localData, setLocalData] = useState(data);
   const [expandedChapterId, setExpandedChapterId] = useState(null);
   const [expandedSectionKey, setExpandedSectionKey] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
@@ -215,6 +263,8 @@ export default function TextbookContentViewer({
   const [quizAnswers, setQuizAnswers] = useState({});
   const [revealedAnswers, setRevealedAnswers] = useState({});
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRegeneratingAnalysis, setIsRegeneratingAnalysis] = useState(false);
+  const [analysisRetryError, setAnalysisRetryError] = useState("");
   const [llmProviders, setLlmProviders] = useState([
     { id: "openai", label: "OpenAI", defaultModel: "gpt-4o" },
   ]);
@@ -222,12 +272,16 @@ export default function TextbookContentViewer({
   const pdfScrollRef = useRef(null);
   const pdfPageRefs = useRef(new Map());
 
+  useEffect(() => {
+    setLocalData(data);
+  }, [data]);
+
   const activeData = useMemo(() => {
-    if (data && Array.isArray(data.chapters) && data.chapters.length) {
-      return data;
+    if (localData && Array.isArray(localData.chapters) && localData.chapters.length) {
+      return localData;
     }
     return mockData;
-  }, [data]);
+  }, [localData]);
 
   const chapters = useMemo(() => activeData.chapters || [], [activeData]);
   const pdfStateKey = `textbook-pdf-state:${projectKey || activeData.book_title || "default"}`;
@@ -362,6 +416,7 @@ export default function TextbookContentViewer({
     setGeneratedQuiz(null);
     setQuizAnswers({});
     setRevealedAnswers({});
+    setAnalysisRetryError("");
   }, [selectedSection?.section_id, selectedCategory]);
 
   useEffect(() => {
@@ -456,6 +511,40 @@ export default function TextbookContentViewer({
 
   const droppedCard = labCards.find((card) => card.key === droppedKey);
   const quizQuestions = Array.isArray(generatedQuiz?.quiz) ? generatedQuiz.quiz : [];
+
+  const regenerateSelectedSectionAnalysis = async () => {
+    if (!username || !projectName || !selectedSection?.section_id) {
+      setAnalysisRetryError(t("viewer.retryAnalysisMissingProject"));
+      return;
+    }
+
+    setIsRegeneratingAnalysis(true);
+    setAnalysisRetryError("");
+
+    try {
+      const result = await retrySectionAnalysis({
+        username,
+        projectName,
+        chapterNumber: selectedSection.chapterNumber,
+        sectionId: selectedSection.section_id,
+        subSectionId: selectedSection.sub_section_id || null,
+      });
+      const updatedSection = {
+        ...selectedSection,
+        ...(result?.data?.section || {}),
+        chapterTitle: selectedSection.chapterTitle,
+        chapterNumber: selectedSection.chapterNumber,
+      };
+
+      setSelectedSection(updatedSection);
+      setLocalData((current) => updateSectionAnalysisInData(current, updatedSection));
+    } catch (error) {
+      console.error("Failed to retry section analysis:", error);
+      setAnalysisRetryError(error.message || t("viewer.retryAnalysisFailed"));
+    } finally {
+      setIsRegeneratingAnalysis(false);
+    }
+  };
 
   const generateContent = async () => {
     if (!droppedCard) {
@@ -770,11 +859,29 @@ export default function TextbookContentViewer({
           ) : selectedCategory === "key_topics_analysis" ? (
             <article className="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-5 border-b border-slate-200 pb-4">
-                <p className="text-xs font-medium text-slate-500">
-                  {t("viewer.chapter", { number: selectedSection.chapterNumber })} · {t("viewer.section", { number: selectedSection.section_id })}
-                </p>
-                <h3 className="mt-1 text-xl font-bold text-slate-900">{selectedSection.section_title}</h3>
-                <p className="mt-1 text-sm text-slate-500">{selectedSection.chapterTitle}</p>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500">
+                      {t("viewer.chapter", { number: selectedSection.chapterNumber })} · {t("viewer.section", { number: selectedSection.section_id })}
+                    </p>
+                    <h3 className="mt-1 text-xl font-bold text-slate-900">{selectedSection.section_title}</h3>
+                    <p className="mt-1 text-sm text-slate-500">{selectedSection.chapterTitle}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={regenerateSelectedSectionAnalysis}
+                    disabled={isRegeneratingAnalysis}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 transition-colors hover:bg-indigo-100 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
+                  >
+                    <RefreshCw className={`h-3.5 w-3.5 ${isRegeneratingAnalysis ? "animate-spin" : ""}`} />
+                    {isRegeneratingAnalysis ? t("viewer.regeneratingAnalysis") : t("viewer.retryAnalysis")}
+                  </button>
+                </div>
+                {analysisRetryError && (
+                  <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                    {analysisRetryError}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-4">

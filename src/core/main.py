@@ -59,6 +59,14 @@ class TextbookAnalysisRequest(BaseModel):
     project_name: str
     description: str = "Analyze textbook content and generate learning material"
 
+class SectionAnalysisRetryRequest(BaseModel):
+    username: str
+    project_name: str
+    chapter_number: Optional[int] = None
+    section_id: str
+    sub_section_id: Optional[str] = None
+    description: str = "Regenerate key topic analysis for one section or subsection"
+
 class ParseTocRequest(BaseModel):
     username: str
     project_name: Optional[str] = None
@@ -634,6 +642,90 @@ async def get_textbook_analysis_progress(username: str, project_name: str):
             "error": None,
         },
     }
+
+
+@app.post("/api/analyze/retry-section")
+async def retry_section_analysis(request: SectionAnalysisRetryRequest):
+    """
+    Regenerate key_topics_analysis for one section or subsection in textbook_with_content.json.
+    """
+    try:
+        data_dir = os.getenv("DATA_DIR")
+        if not data_dir:
+            raise HTTPException(status_code=500, detail="DATA_DIR is not configured")
+
+        project_name = request.project_name.strip().replace(".pdf", "").replace(".md", "")
+        project_dir = os.path.join(data_dir, request.username, "output", project_name, "hybrid_auto")
+        textbook_with_content_path = os.path.join(project_dir, "textbook_with_content.json")
+
+        if not os.path.exists(textbook_with_content_path):
+            raise HTTPException(
+                status_code=404,
+                detail=f"textbook_with_content.json not found at {textbook_with_content_path}",
+            )
+
+        with open(textbook_with_content_path, "r", encoding="utf-8") as f:
+            textbook_data = json.load(f)
+
+        target_node = None
+        target_chapter = None
+        for chapter in textbook_data.get("chapters", []):
+            if request.chapter_number is not None and chapter.get("chapter_number") != request.chapter_number:
+                continue
+
+            for section in chapter.get("sections", []):
+                if str(section.get("section_id")) != str(request.section_id):
+                    continue
+
+                target_chapter = chapter
+                if request.sub_section_id:
+                    for subsection in section.get("sub_sections", []):
+                        if str(subsection.get("sub_section_id")) == str(request.sub_section_id):
+                            target_node = subsection
+                            break
+                else:
+                    target_node = section
+                break
+
+            if target_node:
+                break
+
+        if not target_node:
+            raise HTTPException(status_code=404, detail="Target section or subsection not found")
+
+        title = (
+            target_node.get("section_title")
+            or target_node.get("sub_section_title")
+            or "Untitled Section"
+        )
+        content = target_node.get("content", "")
+        if not content:
+            raise HTTPException(status_code=400, detail="Target section has no content to analyze")
+
+        analyzer = TextbookAnalyzer()
+        analysis = await run_in_threadpool(analyzer.extract_key_topics, title, content)
+        target_node["key_topics_analysis"] = analysis
+
+        with open(textbook_with_content_path, "w", encoding="utf-8") as f:
+            json.dump(textbook_data, f, ensure_ascii=False, indent=4)
+
+        return {
+            "success": True,
+            "message": "Section analysis regenerated",
+            "data": {
+                "project_name": project_name,
+                "output_path": textbook_with_content_path,
+                "chapter_number": target_chapter.get("chapter_number") if target_chapter else request.chapter_number,
+                "section_id": request.section_id,
+                "sub_section_id": request.sub_section_id,
+                "section": target_node,
+            },
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to regenerate section analysis: {str(e)}")
 
 
 @app.post("/api/analyze/parse-toc")

@@ -488,6 +488,53 @@ router.get("/project-processing-progress", async (req, res) => {
   }
 });
 
+router.post("/retry-section-analysis", async (req, res) => {
+  const {
+    username,
+    projectName,
+    chapterNumber,
+    sectionId,
+    subSectionId,
+  } = req.body || {};
+
+  if (!username || !projectName || !sectionId) {
+    return res.status(400).json({
+      error: "username, projectName, and sectionId are required",
+    });
+  }
+
+  const safeUsername = String(username).trim();
+  const noExtProjectName = String(projectName).trim().replace(/\.[^/.]+$/, "");
+  const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
+  const parsedChapterNumber = Number(chapterNumber);
+
+  try {
+    const response = await fetch(`${CORE_API}/api/analyze/retry-section`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: safeUsername,
+        project_name: noExtProjectName,
+        chapter_number: Number.isFinite(parsedChapterNumber) ? parsedChapterNumber : null,
+        section_id: String(sectionId),
+        sub_section_id: subSectionId ? String(subSectionId) : null,
+      }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: result.detail || result.message || "Failed to regenerate section analysis",
+      });
+    }
+
+    return res.json(result);
+  } catch (err) {
+    console.error(`Error retrying section analysis for ${safeUsername}/${noExtProjectName}: ${err.message}`);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 router.post("/trigger-processing-step", async (req, res) => {
   const { username, projectName, step } = req.body;
 

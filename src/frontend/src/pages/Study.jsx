@@ -575,6 +575,7 @@ export default function Study() {
             viewMode={viewMode}
             pdfUrl={pdfUrl}
             projectKey={`${username}:${projectId}`}
+            projectName={projectName}
             pdfPreferences={pdfPreferences}
             onSavePdfPreferences={(preference) => {
               saveProjectPdfPreferences(username, projectId, preference).catch((saveError) => {
