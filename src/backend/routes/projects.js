@@ -488,6 +488,27 @@ router.get("/project-processing-progress", async (req, res) => {
   }
 });
 
+router.get("/mineru-jobs", async (req, res) => {
+  const { username } = req.query;
+  const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
+  const params = new URLSearchParams();
+  if (username) {
+    params.set("username", String(username).trim());
+  }
+
+  try {
+    const response = await fetch(`${CORE_API}/api/mineru/jobs?${params}`);
+    const result = await response.json();
+    if (!response.ok) {
+      return res.status(response.status).json(result);
+    }
+    return res.json(result);
+  } catch (err) {
+    console.error(`Error fetching MinerU jobs: ${err.message}`);
+    return res.status(502).json({ error: "Failed to fetch MinerU jobs" });
+  }
+});
+
 router.post("/retry-section-analysis", async (req, res) => {
   const {
     username,
@@ -570,9 +591,12 @@ router.post("/trigger-processing-step", async (req, res) => {
         throw new Error(result.detail || result.message || "Failed to process PDF");
       }
 
-      return res.json({
-        status: "completed",
-        message: "Step 1 (PDF to Markdown) processing completed",
+      const isProcessing = result?.data?.status === "processing" || result?.status_code === 202;
+      return res.status(isProcessing ? 202 : 200).json({
+        status: isProcessing ? "processing" : "completed",
+        message: isProcessing
+          ? "Step 1 (PDF to Markdown) processing started"
+          : "Step 1 (PDF to Markdown) processing completed",
         data: result.data,
       });
     } else if (safeStep === "step2") {

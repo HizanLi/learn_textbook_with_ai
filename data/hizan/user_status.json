@@ -42,7 +42,42 @@
         "error": null,
         "updatedAt": "2026-07-23T12:21:51.895Z"
       }
+    },
+    {
+      "id": "project-1785166561922",
+      "filename": "MySQL必知必会 MySQL Crash Course.pdf",
+      "originalName": "MySQL必知必会 MySQL Crash Course.pdf",
+      "remark": "",
+      "fileFormat": "PDF",
+      "createdAt": "2026-07-27T15:36:01.922Z",
+      "uploadedAt": "2026-07-27T15:36:01.922Z",
+      "lastAccessedAt": "2026-07-27T15:50:22.691Z",
+      "status": "completed",
+      "parts": {
+        "part_number1": "converted",
+        "part_number2": "converted",
+        "part_number3": "converted"
+      },
+      "splitProcessing": {
+        "status": "completed",
+        "pageCount": 252,
+        "partCount": 3,
+        "convertedCount": 3,
+        "currentPart": null,
+        "currentStartPage": null,
+        "currentEndPage": null,
+        "failedPart": null,
+        "failedStartPage": null,
+        "failedEndPage": null
+      },
+      "splitPreparation": {
+        "status": "split_ready",
+        "pageCount": 252,
+        "partCount": 3,
+        "error": null,
+        "updatedAt": "2026-07-27T15:36:02.384Z"
+      }
     }
   ],
-  "currentProject": "project-1772218124097"
+  "currentProject": "project-1785166561922"
 }

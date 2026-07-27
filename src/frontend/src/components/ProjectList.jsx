@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Book, CheckCircle, Clock3, FileText, MessageSquare, Pencil, Save, Tag, X } from "lucide-react";
 import { UserContext } from "../context/UserContext";
-import { prepareProjectPdf, selectProject, updateProjectRemark } from "../services/api";
+import { getMineruJobs, prepareProjectPdf, selectProject, updateProjectRemark } from "../services/api";
 
 export default function ProjectList() {
   const { userStatus, username, loadUserStatus, language, t } = useContext(UserContext);
@@ -12,6 +12,7 @@ export default function ProjectList() {
   const [remarkDraft, setRemarkDraft] = useState("");
   const [savingRemark, setSavingRemark] = useState(false);
   const [preparingProjectId, setPreparingProjectId] = useState(null);
+  const [mineruJobs, setMineruJobs] = useState([]);
 
   const handleSelectProject = async (project) => {
     setError("");
@@ -28,6 +29,55 @@ export default function ProjectList() {
 
   const projects = userStatus.uploadedProjects || [];
   const currentProjectId = userStatus.currentProject;
+  const projectNameFromFile = (name) => String(name || "").trim().replace(/\.[^/.]+$/, "");
+  const findProjectJob = (project) => {
+    const names = new Set([
+      project.filename,
+      project.originalName,
+      `${projectNameFromFile(project.filename || project.originalName)}.pdf`,
+    ].filter(Boolean).map((name) => String(name).trim()));
+    const stems = new Set(Array.from(names).map(projectNameFromFile));
+    return mineruJobs.find((job) => (
+      names.has(String(job.file_name || "").trim()) ||
+      stems.has(String(job.project_name || "").trim()) ||
+      stems.has(projectNameFromFile(job.file_name))
+    ));
+  };
+  const hasActiveConversion = projects.some(
+    (project) =>
+      findProjectJob(project) ||
+      project.splitProcessing?.status === "processing" ||
+      Object.values(project.parts || {}).some((value) => value === "processing")
+  );
+
+  useEffect(() => {
+    if (!username) {
+      return undefined;
+    }
+
+    let active = true;
+    const pollStatus = async () => {
+      try {
+        const result = await getMineruJobs(username);
+        if (active) {
+          setMineruJobs(result?.data?.jobs || []);
+        }
+      } catch (err) {
+        if (active) {
+          setMineruJobs([]);
+        }
+      }
+      loadUserStatus(username);
+    };
+
+    pollStatus();
+    const intervalId = window.setInterval(pollStatus, hasActiveConversion ? 1500 : 5000);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, [username, hasActiveConversion, loadUserStatus]);
 
   const formatDateTime = (value, emptyLabel = t("projects.notAvailable")) => {
     if (!value) return emptyLabel;
@@ -40,6 +90,72 @@ export default function ProjectList() {
     const filename = project.filename || project.originalName || "";
     const extension = filename.split(".").pop();
     return extension && extension !== filename ? extension.toUpperCase() : t("projects.unknown");
+  };
+
+  const getPartStatusSummary = (project) => {
+    const activeJob = findProjectJob(project);
+    const parts = project.parts || {};
+    const fallbackConverted = Object.values(parts).filter((value) => value === "converted").length;
+    const fallbackCurrent = Object.entries(parts)
+      .find(([, value]) => value === "processing")?.[0]
+      ?.replace("part_number", "");
+    const progress = activeJob
+      ? { status: "processing", ...(project.splitProcessing || {}) }
+      : (project.splitProcessing || {});
+    const total = progress.partCount || project.splitPreparation?.partCount || Object.keys(parts).length;
+    const converted = progress.convertedCount ?? fallbackConverted;
+    const current = progress.currentPart || fallbackCurrent;
+    const startPage = progress.currentStartPage;
+    const endPage = progress.currentEndPage;
+
+    if (progress.status === "completed" || (total && converted === total)) {
+      return {
+        tone: "success",
+        text: t("projects.conversionCompleted", { converted, total }),
+      };
+    }
+
+    if (progress.status === "failed") {
+      return {
+        tone: "error",
+        text: t("projects.conversionFailed", {
+          part: progress.failedPart || current || "?",
+          total: total || "?",
+        }),
+      };
+    }
+
+    if (current && total) {
+      const pageRange = startPage && endPage
+        ? t("projects.conversionPageRange", { start: startPage, end: endPage })
+        : "";
+      return {
+        tone: "active",
+        text: t("projects.conversionPart", { current, total, converted, pageRange }),
+      };
+    }
+
+    if (activeJob) {
+      return {
+        tone: "active",
+        text: t("projects.conversionStarting"),
+      };
+    }
+
+    if (converted > 0 && total) {
+      return {
+        tone: "active",
+        text: t("projects.conversionConverted", { converted, total }),
+      };
+    }
+
+    return null;
+  };
+
+  const getProgressStyle = (tone) => {
+    if (tone === "success") return "bg-emerald-50 text-emerald-700";
+    if (tone === "error") return "border border-red-200 bg-red-50 text-red-700";
+    return "border border-indigo-100 bg-indigo-50 text-indigo-800";
   };
 
   const beginRemarkEdit = (project) => {
@@ -101,15 +217,17 @@ export default function ProjectList() {
       <h3 className="font-semibold mb-3 text-slate-700">{t("projects.title")}</h3>
       {error && <p className="text-xs text-red-600 mb-2">{error}</p>}
       <div className="space-y-3 max-h-[32rem] overflow-y-auto pr-1">
-        {projects.map((project) => (
-          <div
-            key={project.id}
-            className={`overflow-hidden rounded-xl border-2 transition-colors ${
-              project.id === currentProjectId
-                ? "bg-blue-100 border-2 border-blue-500"
-                : "bg-slate-50 border-2 border-slate-200 hover:bg-slate-100"
-            }`}
-          >
+        {projects.map((project) => {
+          const partStatusSummary = getPartStatusSummary(project);
+          return (
+            <div
+              key={project.id}
+              className={`overflow-hidden rounded-xl border-2 transition-colors ${
+                project.id === currentProjectId
+                  ? "bg-blue-100 border-2 border-blue-500"
+                  : "bg-slate-50 border-2 border-slate-200 hover:bg-slate-100"
+              }`}
+            >
             <button
               type="button"
               onClick={() => handleSelectProject(project)}
@@ -153,6 +271,11 @@ export default function ProjectList() {
                 {project.splitPreparation?.status === "failed" && (
                   <p className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-amber-800">
                     {t("projects.preparationFailed", { error: project.splitPreparation.error || t("projects.unknown") })}
+                  </p>
+                )}
+                {partStatusSummary && (
+                  <p className={`rounded-md px-2 py-1.5 ${getProgressStyle(partStatusSummary.tone)}`}>
+                    {partStatusSummary.text}
                   </p>
                 )}
               </div>
@@ -218,7 +341,8 @@ export default function ProjectList() {
               )}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

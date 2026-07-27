@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
 
-from fastapi import FastAPI, HTTPException
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from typing import Optional
@@ -80,6 +80,16 @@ vector_manager = None
 mineru_client = MinerUClient()
 analysis_progress = {}
 analysis_progress_lock = Lock()
+mineru_jobs = {}
+mineru_jobs_lock = Lock()
+
+
+def _mineru_job_snapshot(username: Optional[str] = None):
+    with mineru_jobs_lock:
+        jobs = list(mineru_jobs.values())
+    if username:
+        jobs = [job for job in jobs if job.get("username") == username]
+    return jobs
 
 
 @app.get("/api/llm/providers")
@@ -325,31 +335,66 @@ async def prepare_pdf(request: MinerUPrepareRequest):
     raise HTTPException(status_code=result["status_code"], detail=result["message"])
 
 @app.post("/api/mineru/process")
-async def process_pdf(request: MinerUProcessRequest):
+async def process_pdf(request: MinerUProcessRequest, background_tasks: BackgroundTasks):
     """
     调用 MinerU 处理 PDF 文件并转换为 Markdown
     - 输入：用户名 + PDF 文件名
     - 输出：Markdown 文件路径和状态
     """
-    try:
-        result = mineru_client.process_file(
-            username=request.username,
-            file_name=request.file_name
-        )
-        if result["success"]:
+    job_key = f"{request.username}:{request.file_name}"
+
+    def run_mineru_job(username: str, file_name: str, key: str):
+        try:
+            mineru_client.process_file(username=username, file_name=file_name)
+        except Exception:
+            traceback.print_exc()
+        finally:
+            with mineru_jobs_lock:
+                mineru_jobs.pop(key, None)
+
+    with mineru_jobs_lock:
+        existing_job = mineru_jobs.get(job_key)
+        if existing_job:
             return {
                 "success": True,
-                "status_code": result["status_code"],
-                "message": result["message"],
-                "data": result["data"]
+                "status_code": 202,
+                "message": "PDF processing is already running",
+                "data": existing_job,
             }
-        else:
-            raise HTTPException(status_code=result["status_code"], detail=result["message"])
-    except HTTPException:
-        raise
-    except Exception as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"PDF processing error: {type(e).__name__}: {str(e)}")
+        mineru_jobs[job_key] = {
+            "status": "processing",
+            "username": request.username,
+            "file_name": request.file_name,
+            "project_name": Path(request.file_name).stem,
+            "started_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    background_tasks.add_task(run_mineru_job, request.username, request.file_name, job_key)
+    return {
+        "success": True,
+        "status_code": 202,
+        "message": "PDF processing started",
+        "data": {
+            "status": "processing",
+            "username": request.username,
+            "file_name": request.file_name,
+            "project_name": Path(request.file_name).stem,
+        },
+    }
+
+
+@app.get("/api/mineru/jobs")
+async def get_mineru_jobs(username: Optional[str] = None):
+    """Return MinerU jobs currently active in this Python process."""
+    jobs = _mineru_job_snapshot(username)
+    return {
+        "success": True,
+        "status_code": 200,
+        "data": {
+            "jobs": jobs,
+            "count": len(jobs),
+        },
+    }
 
 # ============================================================================
 # 2. 文本分块端点

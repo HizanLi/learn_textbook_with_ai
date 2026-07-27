@@ -229,6 +229,8 @@ class MinerUClient:
         file_name: str,
         parts: List[Dict],
         converted_part_index: Optional[int] = None,
+        active_part_index: Optional[int] = None,
+        failed_part_index: Optional[int] = None,
     ) -> None:
         """Persist split-part progress without making conversion depend on UI metadata."""
         status_path = self.data_dir / username / "user_status.json"
@@ -254,9 +256,36 @@ class MinerUClient:
                     "converted"
                     if part["index"] == converted_part_index
                     or previous_statuses.get(f"part_number{part['index']}") == "converted"
+                    else "failed"
+                    if part["index"] == failed_part_index
+                    else "processing"
+                    if part["index"] == active_part_index
                     else "uploaded"
                 )
                 for part in parts
+            }
+            converted_count = sum(1 for status in project["parts"].values() if status == "converted")
+            active_part = next((part for part in parts if part["index"] == active_part_index), None)
+            failed_part = next((part for part in parts if part["index"] == failed_part_index), None)
+            project["splitProcessing"] = {
+                "status": (
+                    "failed"
+                    if failed_part_index
+                    else "completed"
+                    if parts and converted_count == len(parts)
+                    else "processing"
+                    if active_part_index
+                    else "idle"
+                ),
+                "pageCount": parts[-1]["end_page"] if parts else None,
+                "partCount": len(parts),
+                "convertedCount": converted_count,
+                "currentPart": active_part_index,
+                "currentStartPage": active_part["start_page"] if active_part else None,
+                "currentEndPage": active_part["end_page"] if active_part else None,
+                "failedPart": failed_part_index,
+                "failedStartPage": failed_part["start_page"] if failed_part else None,
+                "failedEndPage": failed_part["end_page"] if failed_part else None,
             }
             temporary_path = status_path.with_suffix(".json.tmp")
             temporary_path.write_text(json.dumps(status_data, indent=2), encoding="utf-8")
@@ -426,11 +455,14 @@ class MinerUClient:
             markdown_path = self._find_markdown(part_output_root, part_stem)
             if not markdown_path:
                 part_output_root.mkdir(parents=True, exist_ok=True)
+                self._update_part_statuses(username, source_pdf.name, parts, active_part_index=part["index"])
                 success, message = self._run_mineru(part["pdf_path"], part_output_root)
                 if not success:
+                    self._update_part_statuses(username, source_pdf.name, parts, failed_part_index=part["index"])
                     return False, f"Part {part['index']} ({part['start_page']}-{part['end_page']}) failed: {message}", None, parts
                 markdown_path = self._find_markdown(part_output_root, part_stem)
                 if not markdown_path:
+                    self._update_part_statuses(username, source_pdf.name, parts, failed_part_index=part["index"])
                     return False, f"Part {part['index']} completed but no Markdown output was found", None, parts
             part["markdown_path"] = self._store_part_markdown(markdown_path, part)
             self._cleanup_raw_part_output(part_output_root)

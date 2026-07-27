@@ -6,6 +6,7 @@ import { UserContext } from "../context/UserContext";
 import bankLogo from "../images/LogoHNoBackground.png";
 import {
   getUserStatus,
+  getMineruJobs,
   selectProject,
   getProjectPdf,
   getProjectPdfPreferences,
@@ -32,6 +33,10 @@ export default function Study() {
   const [pdfPreferences, setPdfPreferences] = useState(null);
   const [processingSteps, setProcessingSteps] = useState(null);
   const [processingStep, setProcessingStep] = useState(null);
+  const [startingStep, setStartingStep] = useState(null);
+  const [currentProjectStatus, setCurrentProjectStatus] = useState(null);
+  const [mineruJobs, setMineruJobs] = useState([]);
+  const [pdfProcessingProgress, setPdfProcessingProgress] = useState(null);
   const [summaryProgress, setSummaryProgress] = useState(null);
   const [showStep2Panel, setShowStep2Panel] = useState(false);
   const [markdownPreview, setMarkdownPreview] = useState("");
@@ -63,6 +68,10 @@ export default function Study() {
     setTocPreviewError("");
     setTocRetryStatus("");
     setRetryingToc(false);
+    setStartingStep(null);
+    setCurrentProjectStatus(null);
+    setMineruJobs([]);
+    setPdfProcessingProgress(null);
     setSummaryProgress(null);
     setPdfPreferences(null);
     setPdfUrl((prevUrl) => {
@@ -72,6 +81,108 @@ export default function Study() {
       return null;
     });
   }, [projectId]);
+
+  const isProjectPdfProcessing = (project) => (
+    project?.splitProcessing?.status === "processing" ||
+    Object.values(project?.parts || {}).some((value) => value === "processing")
+  );
+
+  const projectNameFromFile = (name) => String(name || "").trim().replace(/\.[^/.]+$/, "");
+  const findActiveMineruJob = (project) => {
+    const names = new Set([
+      project?.filename,
+      project?.originalName,
+      projectName,
+      `${projectNameFromFile(project?.filename || project?.originalName || projectName)}.pdf`,
+    ].filter(Boolean).map((name) => String(name).trim()));
+    const stems = new Set(Array.from(names).map(projectNameFromFile));
+    return mineruJobs.find((job) => (
+      names.has(String(job.file_name || "").trim()) ||
+      stems.has(String(job.project_name || "").trim()) ||
+      stems.has(projectNameFromFile(job.file_name))
+    ));
+  };
+  const activeMineruJob = findActiveMineruJob(currentProjectStatus);
+  const isBackendStep1Active = !!activeMineruJob || isProjectPdfProcessing(currentProjectStatus);
+
+  useEffect(() => {
+    if (processingStep !== "step1" && !isBackendStep1Active) {
+      return undefined;
+    }
+    if (!username || !projectId) {
+      return undefined;
+    }
+
+    let active = true;
+    const pollProgress = async () => {
+      try {
+        const [status, jobsResult] = await Promise.all([
+          getUserStatus(username),
+          getMineruJobs(username),
+        ]);
+        const project = (status.uploadedProjects || []).find((item) => item.id === projectId);
+        if (!active || !project) {
+          return;
+        }
+
+        const jobs = jobsResult?.data?.jobs || [];
+        setMineruJobs(jobs);
+        setCurrentProjectStatus(project);
+        const hasActiveJob = jobs.some((job) => (
+          String(job.file_name || "").trim() === String(project.filename || project.originalName || "").trim() ||
+          String(job.project_name || "").trim() === projectNameFromFile(project.filename || project.originalName)
+        ));
+        setPdfProcessingProgress(project.splitProcessing || {
+          status: (hasActiveJob || isProjectPdfProcessing(project)) ? "processing" : "idle",
+          partCount: project.splitPreparation?.partCount || null,
+          convertedCount: Object.values(project.parts || {}).filter((value) => value === "converted").length,
+          currentPart: Object.entries(project.parts || {})
+            .find(([, value]) => value === "processing")?.[0]
+            ?.replace("part_number", "") || null,
+        });
+
+        if (!hasActiveJob && !isProjectPdfProcessing(project)) {
+          const steps = await getProjectProcessingSteps(username, project.filename || project.originalName || projectName);
+          if (!active) {
+            return;
+          }
+
+          setProcessingSteps(steps);
+          const terminalStatus = project.splitProcessing?.status;
+          const step1Finished = !!steps?.step1?.complete || terminalStatus === "completed" || terminalStatus === "failed";
+          if (steps?.step1?.complete && terminalStatus !== "failed") {
+            const completedProgress = {
+              ...(project.splitProcessing || {}),
+              status: "completed",
+              partCount: project.splitProcessing?.partCount || project.splitPreparation?.partCount || null,
+              convertedCount: project.splitProcessing?.convertedCount ?? Object.values(project.parts || {}).filter((value) => value === "converted").length,
+              currentPart: null,
+              currentStartPage: null,
+              currentEndPage: null,
+            };
+            setCurrentProjectStatus({
+              ...project,
+              splitProcessing: completedProgress,
+            });
+            setPdfProcessingProgress(completedProgress);
+          }
+          if (processingStep === "step1" && step1Finished) {
+            setProcessingStep(null);
+            setStartingStep(null);
+          }
+        }
+      } catch (err) {
+        // Keep the last known progress visible if a polling request fails briefly.
+      }
+    };
+
+    pollProgress();
+    const intervalId = window.setInterval(pollProgress, 1500);
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, [processingStep, isBackendStep1Active, username, projectId, projectName]);
 
   useEffect(() => {
     if (processingStep !== "step3" || !username || !projectName) {
@@ -112,7 +223,13 @@ export default function Study() {
       setError("");
 
       try {
-        const status = await getUserStatus(username);
+          const [status, jobsResult] = await Promise.all([
+            getUserStatus(username),
+            getMineruJobs(username),
+          ]);
+          if (mounted) {
+            setMineruJobs(jobsResult?.data?.jobs || []);
+          }
         const matchedProject = (status.uploadedProjects || []).find(
           (project) => project.id === projectId
         );
@@ -121,6 +238,8 @@ export default function Study() {
           throw new Error(t("study.projectNotFound"));
         }
 
+        setCurrentProjectStatus(matchedProject);
+        setPdfProcessingProgress(matchedProject.splitProcessing || null);
         setProjectName(matchedProject.originalName || matchedProject.filename || t("study.project"));
 
         const projectNameToSelect =
@@ -216,6 +335,40 @@ export default function Study() {
     return labels[stepKey] || step?.name || stepKey;
   };
 
+  const renderPdfProgress = () => {
+    if (!pdfProcessingProgress) {
+      return t("study.pdfProcessingPreparing");
+    }
+
+    const total = pdfProcessingProgress.partCount;
+    const converted = pdfProcessingProgress.convertedCount ?? 0;
+    const current = pdfProcessingProgress.currentPart;
+    const startPage = pdfProcessingProgress.currentStartPage;
+    const endPage = pdfProcessingProgress.currentEndPage;
+
+    if (pdfProcessingProgress.status === "completed") {
+      return t("study.pdfProcessingCompleted", { converted, total });
+    }
+
+    if (pdfProcessingProgress.status === "failed") {
+      return t("study.pdfProcessingFailed", {
+        part: pdfProcessingProgress.failedPart || current || "?",
+        total: total || "?",
+      });
+    }
+
+    if (current && total) {
+      const pageRange = startPage && endPage ? t("study.pdfProcessingPageRange", { start: startPage, end: endPage }) : "";
+      return t("study.pdfProcessingPart", { current, total, converted, pageRange });
+    }
+
+    if (total) {
+      return t("study.pdfProcessingConverted", { converted, total });
+    }
+
+    return t("study.pdfProcessingPreparing");
+  };
+
   return (
     <div className="min-h-screen bg-slate-100">
       <header className="bg-white shadow-sm">
@@ -284,10 +437,17 @@ export default function Study() {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 {["step1", "step2", "step3"].map((stepKey) => {
                   const step = processingSteps[stepKey];
-                  const isProcessing = processingStep === stepKey;
+                  const isStep1Processing = stepKey === "step1" && (processingStep === "step1" || startingStep === "step1" || isBackendStep1Active);
+                  const isProcessing = processingStep === stepKey || startingStep === stepKey || isStep1Processing;
+                  const hasAnyProcessing = processingStep !== null || startingStep !== null || isBackendStep1Active;
                   const isRetryingTocStep = retryingToc && (stepKey === "step2" || stepKey === "step3");
-                  const displayedComplete = step.complete && !isRetryingTocStep;
-                  const step2Disabled = stepKey === "step2" && !processingSteps?.step1?.complete;
+                  const step1CompletedByStatus = (
+                    currentProjectStatus?.splitProcessing?.status === "completed" ||
+                    pdfProcessingProgress?.status === "completed"
+                  );
+                  const displayedComplete = (step.complete || (stepKey === "step1" && step1CompletedByStatus)) && !isRetryingTocStep;
+                  const step1Complete = !!processingSteps?.step1?.complete || step1CompletedByStatus;
+                  const step2Disabled = stepKey === "step2" && (!step1Complete || isBackendStep1Active);
                   return (
                     <div key={stepKey} className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
                       <div className="flex items-center gap-3">
@@ -302,7 +462,7 @@ export default function Study() {
                           {isRetryingTocStep ? t("study.regeneratingToc") : getStepName(stepKey, step)}
                         </span>
                       </div>
-                      {!step.complete && (
+                      {!displayedComplete && (
                         <button
                           type="button"
                           onClick={async () => {
@@ -326,18 +486,49 @@ export default function Study() {
                             if (stepKey === "step3") {
                               setSummaryProgress(null);
                             }
+                            if (stepKey === "step1") {
+                              setStartingStep("step1");
+                              setPdfProcessingProgress({
+                                status: "processing",
+                                partCount: currentProjectStatus?.splitPreparation?.partCount || null,
+                                convertedCount: Object.values(currentProjectStatus?.parts || {}).filter((value) => value === "converted").length,
+                                currentPart: Object.entries(currentProjectStatus?.parts || {})
+                                  .find(([, value]) => value === "processing")?.[0]
+                                  ?.replace("part_number", "") || null,
+                              });
+                            }
                             setProcessingStep(stepKey);
+                            let keepStep1Processing = false;
                             try {
-                              await triggerProcessingStep(username, projectName, stepKey);
+                              const triggerResult = await triggerProcessingStep(username, projectName, stepKey);
+                              if (stepKey === "step1" && triggerResult?.status === "processing") {
+                                keepStep1Processing = true;
+                                setStartingStep(null);
+                                const status = await getUserStatus(username);
+                                const project = (status.uploadedProjects || []).find((item) => item.id === projectId);
+                                setCurrentProjectStatus(project || null);
+                                setPdfProcessingProgress(project?.splitProcessing || {
+                                  status: "processing",
+                                  partCount: project?.splitPreparation?.partCount || null,
+                                  convertedCount: Object.values(project?.parts || {}).filter((value) => value === "converted").length,
+                                  currentPart: Object.entries(project?.parts || {})
+                                    .find(([, value]) => value === "processing")?.[0]
+                                    ?.replace("part_number", "") || null,
+                                });
+                                return;
+                              }
                               const steps = await getProjectProcessingSteps(username, projectName);
                               setProcessingSteps(steps);
                             } catch (err) {
                               console.error(`Failed to trigger ${stepKey}:`, err);
                             } finally {
-                              setProcessingStep(null);
+                              if (stepKey !== "step1" || !keepStep1Processing) {
+                                setProcessingStep(null);
+                                setStartingStep(null);
+                              }
                             }
                           }}
-                          disabled={isProcessing || processingStep !== null || step2Disabled}
+                          disabled={isProcessing || hasAnyProcessing || step2Disabled}
                           className="ml-auto rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                         >
                           {isProcessing ? (
@@ -352,6 +543,11 @@ export default function Study() {
                       )}
                       {stepKey === "step2" && step2Disabled && (
                         <p className="text-xs text-amber-700">{t("study.completeStep1First")}</p>
+                      )}
+                      {stepKey === "step1" && isProcessing && (
+                        <div className="rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-2 text-xs text-indigo-800">
+                          {renderPdfProgress()}
+                        </div>
                       )}
                       {stepKey === "step3" && isProcessing && (
                         <div className="rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-2 text-xs text-indigo-800">

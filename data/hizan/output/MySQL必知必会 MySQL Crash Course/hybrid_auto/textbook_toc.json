@@ -1,0 +1,1363 @@
+{
+    "book_title": "MySQL必知必会",
+    "chapters": [
+        {
+            "chapter_number": 1,
+            "chapter_title": "了解SQL",
+            "start_page": 1,
+            "sections": [
+                {
+                    "section_id": "1.1",
+                    "section_title": "数据库基础",
+                    "page": 1,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "1.1.1",
+                            "sub_section_title": "什么是数据库",
+                            "page": 2
+                        },
+                        {
+                            "sub_section_id": "1.1.2",
+                            "sub_section_title": "表",
+                            "page": 2
+                        },
+                        {
+                            "sub_section_id": "1.1.3",
+                            "sub_section_title": "列和数据类型",
+                            "page": 3
+                        },
+                        {
+                            "sub_section_id": "1.1.4",
+                            "sub_section_title": "行",
+                            "page": 4
+                        },
+                        {
+                            "sub_section_id": "1.1.5",
+                            "sub_section_title": "主键",
+                            "page": 4
+                        }
+                    ]
+                },
+                {
+                    "section_id": "1.2",
+                    "section_title": "什么是SQL",
+                    "page": 5,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.3",
+                    "section_title": "动手实践",
+                    "page": 6,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "1.4",
+                    "section_title": "小结",
+                    "page": 7,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 2,
+            "chapter_title": "MySQL简介",
+            "start_page": 8,
+            "sections": [
+                {
+                    "section_id": "2.1",
+                    "section_title": "什么是MySQL",
+                    "page": 8,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "2.1.1",
+                            "sub_section_title": "客户机-服务器软件",
+                            "page": 8
+                        },
+                        {
+                            "sub_section_id": "2.1.2",
+                            "sub_section_title": "MySQL版本",
+                            "page": 9
+                        }
+                    ]
+                },
+                {
+                    "section_id": "2.2",
+                    "section_title": "MySQL工具",
+                    "page": 10,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "2.2.1",
+                            "sub_section_title": "mysql命令行实用程序",
+                            "page": 11
+                        },
+                        {
+                            "sub_section_id": "2.2.2",
+                            "sub_section_title": "MySQL Administrator",
+                            "page": 12
+                        },
+                        {
+                            "sub_section_id": "2.2.3",
+                            "sub_section_title": "MySQL Query Browser",
+                            "page": 13
+                        }
+                    ]
+                },
+                {
+                    "section_id": "2.3",
+                    "section_title": "小结",
+                    "page": 14,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 3,
+            "chapter_title": "使用MySQL",
+            "start_page": 15,
+            "sections": [
+                {
+                    "section_id": "3.1",
+                    "section_title": "连接",
+                    "page": 15,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.2",
+                    "section_title": "选择数据库",
+                    "page": 16,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.3",
+                    "section_title": "了解数据库和表",
+                    "page": 17,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "3.4",
+                    "section_title": "小结",
+                    "page": 19,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 4,
+            "chapter_title": "检索数据",
+            "start_page": 20,
+            "sections": [
+                {
+                    "section_id": "4.1",
+                    "section_title": "SELECT语句",
+                    "page": 20,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.2",
+                    "section_title": "检索单个列",
+                    "page": 20,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.3",
+                    "section_title": "检索多个列",
+                    "page": 22,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.4",
+                    "section_title": "检索所有列",
+                    "page": 23,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.5",
+                    "section_title": "检索不同的行",
+                    "page": 24,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.6",
+                    "section_title": "限制结果",
+                    "page": 25,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.7",
+                    "section_title": "使用完全限定的表名",
+                    "page": 26,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "4.8",
+                    "section_title": "小结",
+                    "page": 27,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 5,
+            "chapter_title": "排序检索数据",
+            "start_page": 28,
+            "sections": [
+                {
+                    "section_id": "5.1",
+                    "section_title": "排序数据",
+                    "page": 28,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.2",
+                    "section_title": "按多个列排序",
+                    "page": 30,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.3",
+                    "section_title": "指定排序方向",
+                    "page": 31,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "5.4",
+                    "section_title": "小结",
+                    "page": 33,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 6,
+            "chapter_title": "过滤数据",
+            "start_page": 34,
+            "sections": [
+                {
+                    "section_id": "6.1",
+                    "section_title": "使用WHERE子句",
+                    "page": 34,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "6.2",
+                    "section_title": "WHERE子句操作符",
+                    "page": 35,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "6.2.1",
+                            "sub_section_title": "检查单个值",
+                            "page": 36
+                        },
+                        {
+                            "sub_section_id": "6.2.2",
+                            "sub_section_title": "不匹配检查",
+                            "page": 37
+                        },
+                        {
+                            "sub_section_id": "6.2.3",
+                            "sub_section_title": "范围值检查",
+                            "page": 37
+                        },
+                        {
+                            "sub_section_id": "6.2.4",
+                            "sub_section_title": "空值检查",
+                            "page": 38
+                        }
+                    ]
+                },
+                {
+                    "section_id": "6.3",
+                    "section_title": "小结",
+                    "page": 39,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 7,
+            "chapter_title": "数据过滤",
+            "start_page": 40,
+            "sections": [
+                {
+                    "section_id": "7.1",
+                    "section_title": "组合WHERE子句",
+                    "page": 40,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "7.1.1",
+                            "sub_section_title": "AND操作符",
+                            "page": 40
+                        },
+                        {
+                            "sub_section_id": "7.1.2",
+                            "sub_section_title": "OR操作符",
+                            "page": 41
+                        },
+                        {
+                            "sub_section_id": "7.1.3",
+                            "sub_section_title": "计算次序",
+                            "page": 42
+                        }
+                    ]
+                },
+                {
+                    "section_id": "7.2",
+                    "section_title": "IN操作符",
+                    "page": 43,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.3",
+                    "section_title": "NOT操作符",
+                    "page": 44,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "7.4",
+                    "section_title": "小结",
+                    "page": 45,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 8,
+            "chapter_title": "用通配符进行过滤",
+            "start_page": 46,
+            "sections": [
+                {
+                    "section_id": "8.1",
+                    "section_title": "LIKE操作符",
+                    "page": 46,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "8.1.1",
+                            "sub_section_title": "百分号（%）通配符",
+                            "page": 47
+                        },
+                        {
+                            "sub_section_id": "8.1.2",
+                            "sub_section_title": "下划线（_）通配符",
+                            "page": 48
+                        }
+                    ]
+                },
+                {
+                    "section_id": "8.2",
+                    "section_title": "使用通配符的技巧",
+                    "page": 49,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "8.3",
+                    "section_title": "小结",
+                    "page": 50,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 9,
+            "chapter_title": "用正则表达式进行搜索",
+            "start_page": 51,
+            "sections": [
+                {
+                    "section_id": "9.1",
+                    "section_title": "正则表达式介绍",
+                    "page": 51,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "9.2",
+                    "section_title": "使用MySQL正则表达式",
+                    "page": 52,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "9.2.1",
+                            "sub_section_title": "基本字符匹配",
+                            "page": 52
+                        },
+                        {
+                            "sub_section_id": "9.2.2",
+                            "sub_section_title": "进行OR匹配",
+                            "page": 54
+                        },
+                        {
+                            "sub_section_id": "9.2.3",
+                            "sub_section_title": "匹配几个字符之一",
+                            "page": 54
+                        },
+                        {
+                            "sub_section_id": "9.2.4",
+                            "sub_section_title": "匹配范围",
+                            "page": 55
+                        },
+                        {
+                            "sub_section_id": "9.2.5",
+                            "sub_section_title": "匹配特殊字符",
+                            "page": 56
+                        },
+                        {
+                            "sub_section_id": "9.2.6",
+                            "sub_section_title": "匹配字符类",
+                            "page": 58
+                        },
+                        {
+                            "sub_section_id": "9.2.7",
+                            "sub_section_title": "匹配多个实例",
+                            "page": 58
+                        },
+                        {
+                            "sub_section_id": "9.2.8",
+                            "sub_section_title": "定位符",
+                            "page": 59
+                        }
+                    ]
+                },
+                {
+                    "section_id": "9.3",
+                    "section_title": "小结",
+                    "page": 61,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 10,
+            "chapter_title": "创建计算字段",
+            "start_page": 62,
+            "sections": [
+                {
+                    "section_id": "10.1",
+                    "section_title": "计算字段",
+                    "page": 62,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.2",
+                    "section_title": "拼接字段",
+                    "page": 63,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.3",
+                    "section_title": "执行算术计算",
+                    "page": 66,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "10.4",
+                    "section_title": "小结",
+                    "page": 67,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 11,
+            "chapter_title": "使用数据处理函数",
+            "start_page": 68,
+            "sections": [
+                {
+                    "section_id": "11.1",
+                    "section_title": "函数",
+                    "page": 68,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "11.2",
+                    "section_title": "使用函数",
+                    "page": 68,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "11.2.1",
+                            "sub_section_title": "文本处理函数",
+                            "page": 69
+                        },
+                        {
+                            "sub_section_id": "11.2.2",
+                            "sub_section_title": "日期和时间处理函数",
+                            "page": 71
+                        },
+                        {
+                            "sub_section_id": "11.2.3",
+                            "sub_section_title": "数值处理函数",
+                            "page": 74
+                        }
+                    ]
+                },
+                {
+                    "section_id": "11.3",
+                    "section_title": "小结",
+                    "page": 74,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 12,
+            "chapter_title": "汇总数据",
+            "start_page": 75,
+            "sections": [
+                {
+                    "section_id": "12.1",
+                    "section_title": "聚集函数",
+                    "page": 75,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "12.1.1",
+                            "sub_section_title": "AVG()函数",
+                            "page": 76
+                        },
+                        {
+                            "sub_section_id": "12.1.2",
+                            "sub_section_title": "COUNT()函数",
+                            "page": 77
+                        },
+                        {
+                            "sub_section_id": "12.1.3",
+                            "sub_section_title": "MAX()函数",
+                            "page": 78
+                        },
+                        {
+                            "sub_section_id": "12.1.4",
+                            "sub_section_title": "MIN()函数",
+                            "page": 79
+                        },
+                        {
+                            "sub_section_id": "12.1.5",
+                            "sub_section_title": "SUM()函数",
+                            "page": 79
+                        }
+                    ]
+                },
+                {
+                    "section_id": "12.2",
+                    "section_title": "聚集不同值",
+                    "page": 80,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.3",
+                    "section_title": "组合聚集函数",
+                    "page": 81,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "12.4",
+                    "section_title": "小结",
+                    "page": 82,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 13,
+            "chapter_title": "分组数据",
+            "start_page": 83,
+            "sections": [
+                {
+                    "section_id": "13.1",
+                    "section_title": "数据分组",
+                    "page": 83,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.2",
+                    "section_title": "创建分组",
+                    "page": 83,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.3",
+                    "section_title": "过滤分组",
+                    "page": 85,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.4",
+                    "section_title": "分组和排序",
+                    "page": 87,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.5",
+                    "section_title": "SELECT子句顺序",
+                    "page": 88,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "13.6",
+                    "section_title": "小结",
+                    "page": 89,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 14,
+            "chapter_title": "使用子查询",
+            "start_page": 90,
+            "sections": [
+                {
+                    "section_id": "14.1",
+                    "section_title": "子查询",
+                    "page": 90,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.2",
+                    "section_title": "利用子查询进行过滤",
+                    "page": 90,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.3",
+                    "section_title": "作为计算字段使用\n子查询",
+                    "page": 93,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "14.4",
+                    "section_title": "小结",
+                    "page": 96,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 15,
+            "chapter_title": "联结表",
+            "start_page": 97,
+            "sections": [
+                {
+                    "section_id": "15.1",
+                    "section_title": "联结",
+                    "page": 97,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "15.1.1",
+                            "sub_section_title": "关系表",
+                            "page": 97
+                        },
+                        {
+                            "sub_section_id": "15.1.2",
+                            "sub_section_title": "为什么要使用\n联结",
+                            "page": 99
+                        }
+                    ]
+                },
+                {
+                    "section_id": "15.2",
+                    "section_title": "创建联结",
+                    "page": 99,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "15.2.1",
+                            "sub_section_title": "WHERE子句的\n重要性",
+                            "page": 100
+                        },
+                        {
+                            "sub_section_id": "15.2.2",
+                            "sub_section_title": "内部联结",
+                            "page": 103
+                        },
+                        {
+                            "sub_section_id": "15.2.3",
+                            "sub_section_title": "联结多个表",
+                            "page": 104
+                        }
+                    ]
+                },
+                {
+                    "section_id": "15.3",
+                    "section_title": "小结",
+                    "page": 105,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 16,
+            "chapter_title": "创建高级联结",
+            "start_page": 106,
+            "sections": [
+                {
+                    "section_id": "16.1",
+                    "section_title": "使用表别名",
+                    "page": 106,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "16.2",
+                    "section_title": "使用不同类型的联结",
+                    "page": 107,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "16.2.1",
+                            "sub_section_title": "自联结",
+                            "page": 107
+                        },
+                        {
+                            "sub_section_id": "16.2.2",
+                            "sub_section_title": "自然联结",
+                            "page": 109
+                        },
+                        {
+                            "sub_section_id": "16.2.3",
+                            "sub_section_title": "外部联结",
+                            "page": 109
+                        }
+                    ]
+                },
+                {
+                    "section_id": "16.3",
+                    "section_title": "使用带聚集函数的联结",
+                    "page": 111,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "16.4",
+                    "section_title": "使用联结和联结条件",
+                    "page": 112,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "16.5",
+                    "section_title": "小结",
+                    "page": 112,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 17,
+            "chapter_title": "组合查询",
+            "start_page": 113,
+            "sections": [
+                {
+                    "section_id": "17.1",
+                    "section_title": "组合查询",
+                    "page": 113,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "17.2",
+                    "section_title": "创建组合查询",
+                    "page": 113,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "17.2.1",
+                            "sub_section_title": "使用UNION",
+                            "page": 114
+                        },
+                        {
+                            "sub_section_id": "17.2.2",
+                            "sub_section_title": "UNION规则",
+                            "page": 115
+                        },
+                        {
+                            "sub_section_id": "17.2.3",
+                            "sub_section_title": "包含或取消重复的行",
+                            "page": 116
+                        },
+                        {
+                            "sub_section_id": "17.2.4",
+                            "sub_section_title": "对组合查询结果排序",
+                            "page": 117
+                        }
+                    ]
+                },
+                {
+                    "section_id": "17.3",
+                    "section_title": "小结",
+                    "page": 118,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 18,
+            "chapter_title": "全文本搜索",
+            "start_page": 119,
+            "sections": [
+                {
+                    "section_id": "18.1",
+                    "section_title": "理解全文本搜索",
+                    "page": 119,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "18.2",
+                    "section_title": "使用全文本搜索",
+                    "page": 120,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "18.2.1",
+                            "sub_section_title": "启用全文本搜索支持",
+                            "page": 120
+                        },
+                        {
+                            "sub_section_id": "18.2.2",
+                            "sub_section_title": "进行全文本搜索",
+                            "page": 121
+                        },
+                        {
+                            "sub_section_id": "18.2.3",
+                            "sub_section_title": "使用查询扩展",
+                            "page": 124
+                        },
+                        {
+                            "sub_section_id": "18.2.4",
+                            "sub_section_title": "布尔文本搜索",
+                            "page": 126
+                        },
+                        {
+                            "sub_section_id": "18.2.5",
+                            "sub_section_title": "全文本搜索的使用说明",
+                            "page": 129
+                        }
+                    ]
+                },
+                {
+                    "section_id": "18.3",
+                    "section_title": "小结",
+                    "page": 130,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 19,
+            "chapter_title": "插入数据",
+            "start_page": 131,
+            "sections": [
+                {
+                    "section_id": "19.1",
+                    "section_title": "数据插入",
+                    "page": 131,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "19.2",
+                    "section_title": "插入完整的行",
+                    "page": 131,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "19.3",
+                    "section_title": "插入多个行",
+                    "page": 134,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "19.4",
+                    "section_title": "插入检索出的数据",
+                    "page": 136,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "19.5",
+                    "section_title": "小结",
+                    "page": 138,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 20,
+            "chapter_title": "更新和删除数据",
+            "start_page": 139,
+            "sections": [
+                {
+                    "section_id": "20.1",
+                    "section_title": "更新数据",
+                    "page": 139,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "20.2",
+                    "section_title": "删除数据",
+                    "page": 141,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "20.3",
+                    "section_title": "更新和删除的指导原则",
+                    "page": 142,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "20.4",
+                    "section_title": "小结",
+                    "page": 143,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 21,
+            "chapter_title": "创建和操纵表",
+            "start_page": 144,
+            "sections": [
+                {
+                    "section_id": "21.1",
+                    "section_title": "创建表",
+                    "page": 144,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "21.1.1",
+                            "sub_section_title": "表创建基础",
+                            "page": 144
+                        },
+                        {
+                            "sub_section_id": "21.1.2",
+                            "sub_section_title": "使用NULL值",
+                            "page": 146
+                        },
+                        {
+                            "sub_section_id": "21.1.3",
+                            "sub_section_title": "主键再介绍",
+                            "page": 147
+                        },
+                        {
+                            "sub_section_id": "21.1.4",
+                            "sub_section_title": "使用AUTO_INCREMENT",
+                            "page": 148
+                        },
+                        {
+                            "sub_section_id": "21.1.5",
+                            "sub_section_title": "指定默认值",
+                            "page": 149
+                        },
+                        {
+                            "sub_section_id": "21.1.6",
+                            "sub_section_title": "引擎类型",
+                            "page": 150
+                        }
+                    ]
+                },
+                {
+                    "section_id": "21.2",
+                    "section_title": "更新表",
+                    "page": 151,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "21.3",
+                    "section_title": "删除表",
+                    "page": 153,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "21.4",
+                    "section_title": "重命名表",
+                    "page": 153,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "21.5",
+                    "section_title": "小结",
+                    "page": 154,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 22,
+            "chapter_title": "使用视图",
+            "start_page": 155,
+            "sections": [
+                {
+                    "section_id": "22.1",
+                    "section_title": "视图",
+                    "page": 155,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "22.1.1",
+                            "sub_section_title": "为什么使用\n视图",
+                            "page": 156
+                        },
+                        {
+                            "sub_section_id": "22.1.2",
+                            "sub_section_title": "视图的规则和\n限制",
+                            "page": 157
+                        }
+                    ]
+                },
+                {
+                    "section_id": "22.2",
+                    "section_title": "使用视图",
+                    "page": 157,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "22.2.1",
+                            "sub_section_title": "利用视图简化\n复杂的联结",
+                            "page": 157
+                        },
+                        {
+                            "sub_section_id": "22.2.2",
+                            "sub_section_title": "用视图重新格式化\n检索出的数据",
+                            "page": 158
+                        },
+                        {
+                            "sub_section_id": "22.2.3",
+                            "sub_section_title": "用视图过滤不\n想要的数据",
+                            "page": 159
+                        },
+                        {
+                            "sub_section_id": "22.2.4",
+                            "sub_section_title": "使用视图与计算\n字段",
+                            "page": 160
+                        },
+                        {
+                            "sub_section_id": "22.2.5",
+                            "sub_section_title": "更新视图",
+                            "page": 161
+                        }
+                    ]
+                },
+                {
+                    "section_id": "22.3",
+                    "section_title": "小结",
+                    "page": 162,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 23,
+            "chapter_title": "使用存储过程",
+            "start_page": 163,
+            "sections": [
+                {
+                    "section_id": "23.1",
+                    "section_title": "存储过程",
+                    "page": 163,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "23.2",
+                    "section_title": "为什么要使用存储过程",
+                    "page": 164,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "23.3",
+                    "section_title": "使用存储过程",
+                    "page": 165,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "23.3.1",
+                            "sub_section_title": "执行存储过程",
+                            "page": 165
+                        },
+                        {
+                            "sub_section_id": "23.3.2",
+                            "sub_section_title": "创建存储过程",
+                            "page": 165
+                        },
+                        {
+                            "sub_section_id": "23.3.3",
+                            "sub_section_title": "删除存储过程",
+                            "page": 167
+                        },
+                        {
+                            "sub_section_id": "23.3.4",
+                            "sub_section_title": "使用参数",
+                            "page": 167
+                        },
+                        {
+                            "sub_section_id": "23.3.5",
+                            "sub_section_title": "建立智能存储\n过程",
+                            "page": 170
+                        },
+                        {
+                            "sub_section_id": "23.3.6",
+                            "sub_section_title": "检查存储过程",
+                            "page": 173
+                        }
+                    ]
+                },
+                {
+                    "section_id": "23.4",
+                    "section_title": "小结",
+                    "page": 173,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 24,
+            "chapter_title": "使用游标",
+            "start_page": 174,
+            "sections": [
+                {
+                    "section_id": "24.1",
+                    "section_title": "游标",
+                    "page": 174,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "24.2",
+                    "section_title": "使用游标",
+                    "page": 174,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "24.2.1",
+                            "sub_section_title": "创建游标",
+                            "page": 175
+                        },
+                        {
+                            "sub_section_id": "24.2.2",
+                            "sub_section_title": "打开和关闭游标",
+                            "page": 175
+                        },
+                        {
+                            "sub_section_id": "24.2.3",
+                            "sub_section_title": "使用游标数据",
+                            "page": 176
+                        }
+                    ]
+                },
+                {
+                    "section_id": "24.3",
+                    "section_title": "小结",
+                    "page": 180,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 25,
+            "chapter_title": "使用触发器",
+            "start_page": 181,
+            "sections": [
+                {
+                    "section_id": "25.1",
+                    "section_title": "触发器",
+                    "page": 181,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "25.2",
+                    "section_title": "创建触发器",
+                    "page": 182,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "25.3",
+                    "section_title": "删除触发器",
+                    "page": 183,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "25.4",
+                    "section_title": "使用触发器",
+                    "page": 183,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "25.4.1",
+                            "sub_section_title": "INSERT触发器",
+                            "page": 183
+                        },
+                        {
+                            "sub_section_id": "25.4.2",
+                            "sub_section_title": "DELETE触发器",
+                            "page": 184
+                        },
+                        {
+                            "sub_section_id": "25.4.3",
+                            "sub_section_title": "UPDATE触发器",
+                            "page": 185
+                        },
+                        {
+                            "sub_section_id": "25.4.4",
+                            "sub_section_title": "关于触发器的进一步介绍",
+                            "page": 186
+                        }
+                    ]
+                },
+                {
+                    "section_id": "25.5",
+                    "section_title": "小结",
+                    "page": 186,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 26,
+            "chapter_title": "管理事务处理",
+            "start_page": 187,
+            "sections": [
+                {
+                    "section_id": "26.1",
+                    "section_title": "事务处理",
+                    "page": 187,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "26.2",
+                    "section_title": "控制事务处理",
+                    "page": 189,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "26.2.1",
+                            "sub_section_title": "使用ROLLBACK",
+                            "page": 189
+                        },
+                        {
+                            "sub_section_id": "26.2.2",
+                            "sub_section_title": "使用COMMIT",
+                            "page": 190
+                        },
+                        {
+                            "sub_section_id": "26.2.3",
+                            "sub_section_title": "使用保留点",
+                            "page": 191
+                        },
+                        {
+                            "sub_section_id": "26.2.4",
+                            "sub_section_title": "更改默认的提交行为",
+                            "page": 192
+                        }
+                    ]
+                },
+                {
+                    "section_id": "26.3",
+                    "section_title": "小结",
+                    "page": 192,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 27,
+            "chapter_title": "全球化和本地化",
+            "start_page": 193,
+            "sections": [
+                {
+                    "section_id": "27.1",
+                    "section_title": "字符集和校对顺序",
+                    "page": 193,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "27.2",
+                    "section_title": "使用字符集和校对顺序",
+                    "page": 194,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "27.3",
+                    "section_title": "小结",
+                    "page": 196,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 28,
+            "chapter_title": "安全管理",
+            "start_page": 197,
+            "sections": [
+                {
+                    "section_id": "28.1",
+                    "section_title": "访问控制",
+                    "page": 197,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "28.2",
+                    "section_title": "管理用户",
+                    "page": 198,
+                    "sub_sections": [
+                        {
+                            "sub_section_id": "28.2.1",
+                            "sub_section_title": "创建用户账号",
+                            "page": 199
+                        },
+                        {
+                            "sub_section_id": "28.2.2",
+                            "sub_section_title": "删除用户账号",
+                            "page": 200
+                        },
+                        {
+                            "sub_section_id": "28.2.3",
+                            "sub_section_title": "设置访问权限",
+                            "page": 200
+                        },
+                        {
+                            "sub_section_id": "28.2.4",
+                            "sub_section_title": "更改口令",
+                            "page": 203
+                        }
+                    ]
+                },
+                {
+                    "section_id": "28.3",
+                    "section_title": "小结",
+                    "page": 204,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 29,
+            "chapter_title": "数据库维护",
+            "start_page": 205,
+            "sections": [
+                {
+                    "section_id": "29.1",
+                    "section_title": "备份数据",
+                    "page": 205,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "29.2",
+                    "section_title": "进行数据库维护",
+                    "page": 206,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "29.3",
+                    "section_title": "诊断启动问题",
+                    "page": 207,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "29.4",
+                    "section_title": "查看日志文件",
+                    "page": 207,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "29.5",
+                    "section_title": "小结",
+                    "page": 208,
+                    "sub_sections": []
+                }
+            ]
+        },
+        {
+            "chapter_number": 30,
+            "chapter_title": "改善性能",
+            "start_page": 209,
+            "sections": [
+                {
+                    "section_id": "30.1",
+                    "section_title": "改善性能",
+                    "page": 209,
+                    "sub_sections": []
+                },
+                {
+                    "section_id": "30.2",
+                    "section_title": "小结",
+                    "page": 211,
+                    "sub_sections": []
+                }
+            ]
+        }
+    ]
+}

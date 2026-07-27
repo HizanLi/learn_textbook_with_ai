@@ -186,6 +186,19 @@ export async function getProjectProcessingProgress(username, projectName) {
   return data;
 }
 
+export async function getMineruJobs(username) {
+  const params = new URLSearchParams();
+  if (username) {
+    params.set("username", username);
+  }
+  const res = await fetch(`${API_BASE}/api/mineru-jobs?${params}`);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to fetch MinerU jobs");
+  }
+  return data;
+}
+
 export async function triggerProcessingStep(username, projectName, step) {
   const res = await fetch(`${API_BASE}/api/trigger-processing-step`, {
     method: "POST",

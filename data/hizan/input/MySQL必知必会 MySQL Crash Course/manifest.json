@@ -1,0 +1,31 @@
+{
+  "page_count": 252,
+  "pages_per_part": 120,
+  "merged_markdown": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\hybrid_auto\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course.md",
+  "parts": [
+    {
+      "index": 1,
+      "start_page": 1,
+      "end_page": 120,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_001\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course_part_001.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_001",
+      "markdown_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_001\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course_part_001.md"
+    },
+    {
+      "index": 2,
+      "start_page": 121,
+      "end_page": 240,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_002\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course_part_002.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_002",
+      "markdown_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_002\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course_part_002.md"
+    },
+    {
+      "index": 3,
+      "start_page": 241,
+      "end_page": 252,
+      "pdf_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\input\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_003\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course_part_003.pdf",
+      "output_part_dir": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_003",
+      "markdown_path": "C:\\users\\25422\\Documents\\github\\learn_textbook_with_ai\\data\\hizan\\output\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course\\part_003\\MySQL\u5fc5\u77e5\u5fc5\u4f1a MySQL Crash Course_part_003.md"
+    }
+  ]
+}
