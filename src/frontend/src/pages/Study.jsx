@@ -14,7 +14,9 @@ import {
   getProjectProcessingProgress,
   triggerProcessingStep,
   getProjectMarkdown,
+  getProjectToc,
   submitProjectToc,
+  retryProjectToc,
 } from "../services/api";
 
 export default function Study() {
@@ -36,6 +38,10 @@ export default function Study() {
   const [tocInput, setTocInput] = useState("");
   const [step2Error, setStep2Error] = useState("");
   const [submittingToc, setSubmittingToc] = useState(false);
+  const [tocPreview, setTocPreview] = useState(null);
+  const [tocPreviewError, setTocPreviewError] = useState("");
+  const [tocRetryStatus, setTocRetryStatus] = useState("");
+  const [retryingToc, setRetryingToc] = useState(false);
   const loadedProjectRef = useRef(null);
 
   useEffect(() => {
@@ -53,6 +59,10 @@ export default function Study() {
     setMarkdownPreview("");
     setTocInput("");
     setStep2Error("");
+    setTocPreview(null);
+    setTocPreviewError("");
+    setTocRetryStatus("");
+    setRetryingToc(false);
     setSummaryProgress(null);
     setPdfPreferences(null);
     setPdfUrl((prevUrl) => {
@@ -129,6 +139,21 @@ export default function Study() {
           steps = await getProjectProcessingSteps(username, projectNameToSelect);
         } catch (stepsErr) {
           console.error("Failed to get processing steps:", stepsErr);
+        }
+
+        if (steps?.step2?.complete) {
+          try {
+            const tocResult = await getProjectToc(username, projectNameToSelect);
+            if (mounted) {
+              setTocPreview(tocResult?.data || null);
+              setTocPreviewError("");
+            }
+          } catch (tocErr) {
+            if (mounted) {
+              setTocPreview(null);
+              setTocPreviewError(tocErr.message || t("study.loadTocFailed"));
+            }
+          }
         }
 
         const step3Complete = !!steps?.step3?.complete;
@@ -260,19 +285,21 @@ export default function Study() {
                 {["step1", "step2", "step3"].map((stepKey) => {
                   const step = processingSteps[stepKey];
                   const isProcessing = processingStep === stepKey;
+                  const isRetryingTocStep = retryingToc && (stepKey === "step2" || stepKey === "step3");
+                  const displayedComplete = step.complete && !isRetryingTocStep;
                   const step2Disabled = stepKey === "step2" && !processingSteps?.step1?.complete;
                   return (
                     <div key={stepKey} className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
                       <div className="flex items-center gap-3">
-                        {step.complete ? (
+                        {displayedComplete ? (
                           <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-green-600" />
                         ) : (
                           <Circle className="h-5 w-5 flex-shrink-0 text-slate-400" />
                         )}
                         <span className={`text-sm font-medium ${
-                          step.complete ? "text-green-700" : "text-slate-600"
+                          displayedComplete ? "text-green-700" : "text-slate-600"
                         }`}>
-                          {getStepName(stepKey, step)}
+                          {isRetryingTocStep ? t("study.regeneratingToc") : getStepName(stepKey, step)}
                         </span>
                       </div>
                       {!step.complete && (
@@ -401,8 +428,13 @@ export default function Study() {
                         setStep2Error("");
                         try {
                           await submitProjectToc(username, projectName, tocInput.trim());
-                          const steps = await getProjectProcessingSteps(username, projectName);
+                          const [steps, tocResult] = await Promise.all([
+                            getProjectProcessingSteps(username, projectName),
+                            getProjectToc(username, projectName),
+                          ]);
                           setProcessingSteps(steps);
+                          setTocPreview(tocResult?.data || null);
+                          setTocPreviewError("");
                           if (steps?.step2?.complete) {
                             setShowStep2Panel(false);
                           }
@@ -418,6 +450,99 @@ export default function Study() {
                       {submittingToc ? t("study.processing") : t("study.generateToc")}
                     </button>
                   </div>
+                </div>
+              )}
+              {processingSteps?.step2?.complete && (
+                <div className="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50/40 p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold text-slate-900">{t("study.tocReviewTitle")}</h3>
+                      <p className="mt-1 text-xs text-slate-600">{t("study.tocReviewHint")}</p>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={retryingToc || processingStep !== null}
+                      onClick={async () => {
+                        setRetryingToc(true);
+                        setProcessingStep("toc-retry");
+                        setTocPreviewError("");
+                        setTocRetryStatus("");
+                        setTocPreview(null);
+                        setProcessingSteps((prev) => prev ? ({
+                          ...prev,
+                          step2: { ...prev.step2, complete: false },
+                          step3: { ...prev.step3, complete: false },
+                        }) : prev);
+                        try {
+                          const retryResult = await retryProjectToc(username, projectName, tocInput);
+                          console.info("TOC retry completed:", retryResult);
+                          const changedFileCount = (retryResult?.afterFiles || []).filter((afterFile) => {
+                            const beforeFile = (retryResult?.beforeFiles || []).find(
+                              (file) => file.filename === afterFile.filename
+                            );
+                            return beforeFile && (
+                              beforeFile.inode !== afterFile.inode ||
+                              beforeFile.modifiedAt !== afterFile.modifiedAt ||
+                              beforeFile.size !== afterFile.size
+                            );
+                          }).length;
+                          setTocRetryStatus(t("study.retryTocSuccess", {
+                            count: retryResult?.deletedFiles?.length ?? 0,
+                            changed: changedFileCount,
+                            path: retryResult?.outputDir || "",
+                          }));
+                          const [tocResult, steps] = await Promise.all([
+                            getProjectToc(username, projectName),
+                            getProjectProcessingSteps(username, projectName),
+                          ]);
+                          setTocPreview(tocResult?.data || null);
+                          setProcessingSteps(steps);
+                        } catch (err) {
+                          console.error("Failed to regenerate TOC:", err);
+                          setTocPreviewError(err.message || t("study.retryTocFailed"));
+                          try {
+                            const steps = await getProjectProcessingSteps(username, projectName);
+                            setProcessingSteps(steps);
+                          } catch (stepsErr) {
+                            console.error("Failed to refresh processing steps after TOC retry failure:", stepsErr);
+                          }
+                        } finally {
+                          setRetryingToc(false);
+                          setProcessingStep(null);
+                        }
+                      }}
+                      className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    >
+                      {retryingToc ? (
+                        <span className="flex items-center gap-1">
+                          <Loader className="h-3 w-3 animate-spin" />
+                          {t("study.regeneratingToc")}
+                        </span>
+                      ) : (
+                        t("study.retryToc")
+                      )}
+                    </button>
+                  </div>
+
+                  {tocPreviewError ? (
+                    <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                      {tocPreviewError}
+                    </div>
+                  ) : tocRetryStatus ? (
+                    <div className="rounded-md border border-emerald-200 bg-white px-3 py-2 text-xs text-emerald-700">
+                      {tocRetryStatus}
+                    </div>
+                  ) : null}
+
+                  {tocPreview ? (
+                    <pre className="max-h-[28rem] overflow-auto rounded-md border border-emerald-100 bg-white p-4 text-xs leading-5 text-slate-700">
+                      {JSON.stringify(tocPreview, null, 2)}
+                    </pre>
+                  ) : (
+                    <p className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+                      {t("study.tocPreviewEmpty")}
+                    </p>
+                  )}
                 </div>
               )}
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">

@@ -209,6 +209,16 @@ export async function getProjectMarkdown(username, projectName) {
   return data;
 }
 
+export async function getProjectToc(username, projectName) {
+  const url = `${API_BASE}/api/project-toc?username=${encodeURIComponent(username)}&projectName=${encodeURIComponent(projectName)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to fetch project TOC");
+  }
+  return data;
+}
+
 export async function submitProjectToc(username, projectName, tocString) {
   const res = await fetch(`${API_BASE}/api/parse-project-toc`, {
     method: "POST",
@@ -218,6 +228,19 @@ export async function submitProjectToc(username, projectName, tocString) {
   const data = await res.json();
   if (!res.ok) {
     throw new Error(data.error || data.detail || "Failed to parse project TOC");
+  }
+  return data;
+}
+
+export async function retryProjectToc(username, projectName, tocString = "") {
+  const res = await fetch(`${API_BASE}/api/retry-project-toc`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, projectName, tocString }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || data.detail || "Failed to regenerate project TOC");
   }
   return data;
 }

@@ -233,6 +233,109 @@ router.get("/project-pdf", (req, res) => {
   fileStream.pipe(res);
 });
 
+function getProjectTocPath(username, projectName) {
+  return path.join(
+    resolveProjectOutputDir(username, projectName),
+    "textbook_toc.json"
+  );
+}
+
+function getProjectTocSourcePath(username, projectName) {
+  return path.join(
+    resolveProjectOutputDir(username, projectName),
+    "toc_source.txt"
+  );
+}
+
+function getTocGeneratedFilePaths(projectOutputDir) {
+  return [
+    "textbook_toc.json",
+    "textbook_with_content.json",
+    "chunker_step_1.json",
+  ].map((filename) => {
+    const filePath = path.join(projectOutputDir, filename);
+    if (!fs.existsSync(filePath)) {
+      return {
+        filename,
+        path: filePath,
+        exists: false,
+      };
+    }
+
+    const stat = fs.statSync(filePath);
+    return {
+      filename,
+      path: filePath,
+      exists: true,
+      inode: stat.ino,
+      size: stat.size,
+      modifiedAt: stat.mtime.toISOString(),
+      changedAt: stat.ctime.toISOString(),
+    };
+  });
+}
+
+async function parseProjectTocWithCore(username, projectName, tocString) {
+  const safeUsername = String(username).trim();
+  const noExtProjectName = String(projectName).trim().replace(/\.[^/.]+$/, "");
+  const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
+
+  const chunkerResponse = await fetch(`${CORE_API}/api/chunker/process`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: safeUsername,
+      file_name: `${noExtProjectName}.md`,
+      output_filename: "chunker_step_1.json",
+      description: `Chunking markdown for ${noExtProjectName}`,
+    }),
+  });
+  const chunkerResult = await chunkerResponse.json();
+  if (!chunkerResponse.ok) {
+    throw new Error(chunkerResult.detail || chunkerResult.message || "Failed to process chunker step");
+  }
+
+  const tocResponse = await fetch(`${CORE_API}/api/analyze/parse-toc`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: safeUsername,
+      project_name: noExtProjectName,
+      filename: noExtProjectName,
+      toc_string: tocString,
+      save_to_disk: true,
+    }),
+  });
+  const tocResult = await tocResponse.json();
+  if (!tocResponse.ok) {
+    throw new Error(tocResult.detail || tocResult.message || "Failed to parse table of content");
+  }
+
+  return {
+    chunker: chunkerResult.data,
+    toc: tocResult.data,
+  };
+}
+
+router.get("/project-toc", (req, res) => {
+  const { username, projectName } = req.query;
+  if (!username || !projectName) {
+    return res.status(400).json({ error: "username and projectName are required" });
+  }
+
+  const tocPath = getProjectTocPath(String(username).trim(), String(projectName).trim());
+  if (!fs.existsSync(tocPath)) {
+    return res.status(404).json({ error: "textbook_toc.json not found" });
+  }
+
+  try {
+    const toc = JSON.parse(fs.readFileSync(tocPath, "utf-8"));
+    return res.json({ success: true, data: toc });
+  } catch (err) {
+    return res.status(500).json({ error: `Failed to read textbook_toc.json: ${err.message}` });
+  }
+});
+
 router.get("/project-pdf-preferences", (req, res) => {
   const { username, projectId } = req.query;
   if (!username || !projectId) {
@@ -492,59 +595,98 @@ router.post("/parse-project-toc", async (req, res) => {
 
   const safeUsername = String(username).trim();
   const safeProjectName = String(projectName).trim();
-  const noExtProjectName = safeProjectName.replace(/\.[^/.]+$/, "");
-  const CORE_API = process.env.CORE_API || "http://127.0.0.1:8080";
 
   try {
-    // Ensure chunker output for step 2 exists using the expected filename.
-    const chunkerResponse = await fetch(`${CORE_API}/api/chunker/process`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: safeUsername,
-        file_name: `${noExtProjectName}.md`,
-        output_filename: "chunker_step_1.json",
-        description: `Chunking markdown for ${noExtProjectName}`,
-      }),
-    });
-    const chunkerResult = await chunkerResponse.json();
-    if (!chunkerResponse.ok) {
-      throw new Error(chunkerResult.detail || chunkerResult.message || "Failed to process chunker step");
-    }
-
-    // Parse and save TOC via the core API endpoint.
-    const tocResponse = await fetch(`${CORE_API}/api/analyze/parse-toc`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: safeUsername,
-        project_name: noExtProjectName,
-        // Keep filename for compatibility with current core endpoint implementation.
-        filename: noExtProjectName,
-        toc_string: tocString,
-        save_to_disk: true,
-      }),
-    });
-    const tocResult = await tocResponse.json();
-    if (!tocResponse.ok) {
-      const detail = tocResult.detail || tocResult.message || "Failed to parse table of content";
-      if (String(detail).includes("filename")) {
-        throw new Error("Core parse-toc endpoint failed due to filename/project_name mismatch in Python server. Please sync src/core/main.py fields.");
-      }
-      throw new Error(detail);
-    }
+    const data = await parseProjectTocWithCore(safeUsername, safeProjectName, tocString);
+    const sourcePath = getProjectTocSourcePath(safeUsername, safeProjectName);
+    fs.mkdirSync(path.dirname(sourcePath), { recursive: true });
+    fs.writeFileSync(sourcePath, tocString, "utf-8");
 
     return res.json({
       success: true,
       message: "Step 2 completed: chunker and TOC parsing finished",
-      data: {
-        chunker: chunkerResult.data,
-        toc: tocResult.data,
-      },
+      data,
     });
   } catch (err) {
     console.error(`Error parsing TOC for ${safeUsername}/${safeProjectName}: ${err.message}`);
     return res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/retry-project-toc", async (req, res) => {
+  const { username, projectName, tocString } = req.body || {};
+  if (!username || !projectName) {
+    return res.status(400).json({ error: "username and projectName are required" });
+  }
+
+  const safeUsername = String(username).trim();
+  const safeProjectName = String(projectName).trim();
+  const projectOutputDir = resolveProjectOutputDir(safeUsername, safeProjectName);
+  const sourcePath = getProjectTocSourcePath(safeUsername, safeProjectName);
+  const tocPath = getProjectTocPath(safeUsername, safeProjectName);
+
+  if (!fs.existsSync(projectOutputDir)) {
+    return res.status(404).json({
+      error: `Project output folder not found: ${projectOutputDir}`,
+    });
+  }
+
+  const sourceToc = typeof tocString === "string" && tocString.trim()
+    ? tocString.trim()
+    : fs.existsSync(sourcePath)
+      ? fs.readFileSync(sourcePath, "utf-8")
+      : fs.existsSync(tocPath)
+        ? fs.readFileSync(tocPath, "utf-8")
+        : "";
+
+  if (!sourceToc) {
+    return res.status(400).json({
+      error: "No saved TOC source is available. Please submit the textbook TOC again.",
+    });
+  }
+
+  const beforeFiles = getTocGeneratedFilePaths(projectOutputDir);
+  const deletedFiles = [];
+  const missingFiles = [];
+  for (const filename of beforeFiles.map((file) => file.filename)) {
+    const filePath = path.join(projectOutputDir, filename);
+    if (fs.existsSync(filePath)) {
+      fs.rmSync(filePath, { force: true });
+      deletedFiles.push(filePath);
+    } else {
+      missingFiles.push(filePath);
+    }
+  }
+
+  console.log(
+    `Retrying TOC for ${safeUsername}/${safeProjectName}. Deleted ${deletedFiles.length} files from ${projectOutputDir}`
+  );
+
+  try {
+    const data = await parseProjectTocWithCore(safeUsername, safeProjectName, sourceToc);
+    fs.mkdirSync(path.dirname(sourcePath), { recursive: true });
+    fs.writeFileSync(sourcePath, sourceToc, "utf-8");
+
+    return res.json({
+      success: true,
+      message: "TOC files were deleted and regenerated",
+      deletedFiles,
+      missingFiles,
+      beforeFiles,
+      afterFiles: getTocGeneratedFilePaths(projectOutputDir),
+      outputDir: projectOutputDir,
+      data,
+    });
+  } catch (err) {
+    console.error(`Error retrying TOC for ${safeUsername}/${safeProjectName}: ${err.message}`);
+    return res.status(500).json({
+      error: err.message,
+      deletedFiles,
+      missingFiles,
+      beforeFiles,
+      afterFiles: getTocGeneratedFilePaths(projectOutputDir),
+      outputDir: projectOutputDir,
+    });
   }
 });
 
