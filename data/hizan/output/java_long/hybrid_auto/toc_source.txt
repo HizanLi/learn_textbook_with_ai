@@ -1,1917 +1,391 @@
-{
-    "book_title": "",
-    "chapters": [
-        {
-            "chapter_number": 1,
-            "chapter_title": "The Mental Landscape",
-            "start_page": 1,
-            "sections": [
-                {
-                    "section_id": "1.1",
-                    "section_title": "Machine Language",
-                    "page": 1,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "1.2",
-                    "section_title": "Asynchronous Events",
-                    "page": 1,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "1.3",
-                    "section_title": "The Java Virtual Machine",
-                    "page": 1,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "1.4",
-                    "section_title": "Building Blocks of Programs",
-                    "page": 1,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "1.5",
-                    "section_title": "Object-oriented Programming",
-                    "page": 1,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "1.6",
-                    "section_title": "The Modern User Interface",
-                    "page": 1,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "1.7",
-                    "section_title": "The Internet",
-                    "page": 1,
-                    "sub_sections": []
-                }
-            ]
-        },
-        {
-            "chapter_number": 2,
-            "chapter_title": "Names and Things",
-            "start_page": 2,
-            "sections": [
-                {
-                    "section_id": "2.1",
-                    "section_title": "The Basic Java Application",
-                    "page": 2,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "2.2",
-                    "section_title": "Variables and Types",
-                    "page": 2,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "2.2.1",
-                            "sub_section_title": "Variables",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.2.2",
-                            "sub_section_title": "Types and Literals",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.2.3",
-                            "sub_section_title": "Variables in Programs",
-                            "page": 2
-                        }
-                    ]
-                },
-                {
-                    "section_id": "2.3",
-                    "section_title": "Objects and Subroutines",
-                    "page": 2,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "2.3.1",
-                            "sub_section_title": "Built-in Subroutines and Functions",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.3.2",
-                            "sub_section_title": "Operations on Strings",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.3.3",
-                            "sub_section_title": "Introduction to Ensums",
-                            "page": 2
-                        }
-                    ]
-                },
-                {
-                    "section_id": "2.4",
-                    "section_title": "Text Input and Output",
-                    "page": 2,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "2.4.1",
-                            "sub_section_title": "A First Text Input Example",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.4.2",
-                            "sub_section_title": "Text Output",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.4.3",
-                            "sub_section_title": "TextIO Input Functions",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.4.4",
-                            "sub_section_title": "Formatted Output",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.4.5",
-                            "sub_section_title": "Introduction to File I/O",
-                            "page": 2
-                        }
-                    ]
-                },
-                {
-                    "section_id": "2.5",
-                    "section_title": "Details of Expressions",
-                    "page": 2,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "2.5.1",
-                            "sub_section_title": "Arithmetic Operators",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.5.2",
-                            "sub_section_title": "Increment and Decrement",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.5.3",
-                            "sub_section_title": "Relational Operators",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.5.4",
-                            "sub_section_title": "Boolean Operators",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.5.5",
-                            "sub_section_title": "Conditional Operator",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.5.6",
-                            "sub_section_title": "Assignment Operators and Type-Casts",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.5.7",
-                            "sub_section_title": "Type Conversion of Strings",
-                            "page": 2
-                        },
-                        {
-                            "sub_section_id": "2.5.8",
-                            "sub_section_title": "Precedence Rules",
-                            "page": 2
-                        }
-                    ]
-                },
-                {
-                    "section_id": "2.6",
-                    "section_title": "Programming Environments",
-                    "page": 2,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "2.6.1",
-                            "sub_section_title": "Java Development Kit",
-                            "page": 51
-                        },
-                        {
-                            "sub_section_id": "2.6.2",
-                            "sub_section_title": "Command Line Environment",
-                            "page": 52
-                        },
-                        {
-                            "sub_section_id": "2.6.3",
-                            "sub_section_title": "IDEs and Eclipse",
-                            "page": 54
-                        },
-                        {
-                            "sub_section_id": "2.6.4",
-                            "sub_section_title": "The Problem of Packages",
-                            "page": 56
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 3,
-            "chapter_title": "Control",
-            "start_page": 61,
-            "sections": [
-                {
-                    "section_id": "3.1",
-                    "section_title": "Blocks, Loops, and Branches",
-                    "page": 61,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "3.1.1",
-                            "sub_section_title": "Blocks",
-                            "page": 61
-                        },
-                        {
-                            "sub_section_id": "3.1.2",
-                            "sub_section_title": "The Basic While Loop",
-                            "page": 62
-                        },
-                        {
-                            "sub_section_id": "3.1.3",
-                            "sub_section_title": "The Basic If Statement",
-                            "page": 64
-                        }
-                    ]
-                },
-                {
-                    "section_id": "3.2",
-                    "section_title": "Algorithm Development",
-                    "page": 66,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "3.2.1",
-                            "sub_section_title": "Pseudocode and Stepwise Refinement",
-                            "page": 66
-                        },
-                        {
-                            "sub_section_id": "3.2.2",
-                            "sub_section_title": "The $3\\mathrm{N} + 1$ Problem",
-                            "page": 69
-                        },
-                        {
-                            "sub_section_id": "3.2.3",
-                            "sub_section_title": "Coding, Testing, Debugging",
-                            "page": 72
-                        }
-                    ]
-                },
-                {
-                    "section_id": "3.3",
-                    "section_title": "while and do..while",
-                    "page": 73,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "3.3.1",
-                            "sub_section_title": "The while Statement",
-                            "page": 74
-                        },
-                        {
-                            "sub_section_id": "3.3.2",
-                            "sub_section_title": "The do..while Statement",
-                            "page": 76
-                        },
-                        {
-                            "sub_section_id": "3.3.3",
-                            "sub_section_title": "break and continue",
-                            "page": 78
-                        }
-                    ]
-                },
-                {
-                    "section_id": "3.4",
-                    "section_title": "The for Statement",
-                    "page": 79,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "3.4.1",
-                            "sub_section_title": "For Loops",
-                            "page": 80
-                        },
-                        {
-                            "sub_section_id": "3.4.2",
-                            "sub_section_title": "Example: Counting Divisors",
-                            "page": 83
-                        },
-                        {
-                            "sub_section_id": "3.4.3",
-                            "sub_section_title": "Nested for Loops",
-                            "page": 85
-                        },
-                        {
-                            "sub_section_id": "3.4.4",
-                            "sub_section_title": "Enums and for-each Loops",
-                            "page": 87
-                        }
-                    ]
-                },
-                {
-                    "section_id": "3.5",
-                    "section_title": "The if Statement",
-                    "page": 89,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "3.5.1",
-                            "sub_section_title": "The Dangling else Problem",
-                            "page": 89
-                        },
-                        {
-                            "sub_section_id": "3.5.2",
-                            "sub_section_title": "The if...else if Construction",
-                            "page": 89
-                        },
-                        {
-                            "sub_section_id": "3.5.3",
-                            "sub_section_title": "If Statement Examples",
-                            "page": 91
-                        },
-                        {
-                            "sub_section_id": "3.5.4",
-                            "sub_section_title": "The Empty Statement",
-                            "page": 95
-                        }
-                    ]
-                },
-                {
-                    "section_id": "3.6",
-                    "section_title": "The switch Statement",
-                    "page": 96,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "3.6.1",
-                            "sub_section_title": "The Basic switch Statement",
-                            "page": 96
-                        },
-                        {
-                            "sub_section_id": "3.6.2",
-                            "sub_section_title": "Menus and switch Statements",
-                            "page": 97
-                        },
-                        {
-                            "sub_section_id": "3.6.3",
-                            "sub_section_title": "Enums in switch Statements",
-                            "page": 98
-                        },
-                        {
-                            "sub_section_id": "3.6.4",
-                            "sub_section_title": "Definite Assignment",
-                            "page": 99
-                        }
-                    ]
-                },
-                {
-                    "section_id": "3.7",
-                    "section_title": "Exceptions and try..catch",
-                    "page": 100,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "3.7.1",
-                            "sub_section_title": "Exceptions",
-                            "page": 100
-                        },
-                        {
-                            "sub_section_id": "3.7.2",
-                            "sub_section_title": "try..catch",
-                            "page": 101
-                        },
-                        {
-                            "sub_section_id": "3.7.3",
-                            "sub_section_title": "Exceptions in TextIO",
-                            "page": 102
-                        }
-                    ]
-                },
-                {
-                    "section_id": "3.8",
-                    "section_title": "GUI Programming",
-                    "page": 104,
-                    "sub_sections": []
-                }
-            ]
-        },
-        {
-            "chapter_number": 4,
-            "chapter_title": "Subroutines",
-            "start_page": 117,
-            "sections": [
-                {
-                    "section_id": "4.1",
-                    "section_title": "Black Boxes",
-                    "page": 117,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "4.2",
-                    "section_title": "Static Subroutines and Variables",
-                    "page": 119,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "4.2.1",
-                            "sub_section_title": "Subroutine Definitions",
-                            "page": 119
-                        },
-                        {
-                            "sub_section_id": "4.2.2",
-                            "sub_section_title": "Calling Subroutines",
-                            "page": 121
-                        },
-                        {
-                            "sub_section_id": "4.2.3",
-                            "sub_section_title": "Subroutines in Programs",
-                            "page": 122
-                        },
-                        {
-                            "sub_section_id": "4.2.4",
-                            "sub_section_title": "Member Variables",
-                            "page": 124
-                        }
-                    ]
-                },
-                {
-                    "section_id": "4.3",
-                    "section_title": "Parameters",
-                    "page": 127,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "4.3.1",
-                            "sub_section_title": "Using Parameters",
-                            "page": 127
-                        },
-                        {
-                            "sub_section_id": "4.3.2",
-                            "sub_section_title": "Formal and Actual Parameters",
-                            "page": 128
-                        },
-                        {
-                            "sub_section_id": "4.3.3",
-                            "sub_section_title": "Overloading",
-                            "page": 129
-                        },
-                        {
-                            "sub_section_id": "4.3.4",
-                            "sub_section_title": "Subroutine Examples",
-                            "page": 130
-                        },
-                        {
-                            "sub_section_id": "4.3.5",
-                            "sub_section_title": "Throwing Exceptions",
-                            "page": 132
-                        },
-                        {
-                            "sub_section_id": "4.3.6",
-                            "sub_section_title": "Global and Local Variables",
-                            "page": 133
-                        }
-                    ]
-                },
-                {
-                    "section_id": "4.4",
-                    "section_title": "Return Values",
-                    "page": 134,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "4.4.1",
-                            "sub_section_title": "The return statement",
-                            "page": 134
-                        },
-                        {
-                            "sub_section_id": "4.4.2",
-                            "sub_section_title": "Function Examples",
-                            "page": 135
-                        },
-                        {
-                            "sub_section_id": "4.4.3",
-                            "sub_section_title": "3N+1 Revisited",
-                            "page": 138
-                        }
-                    ]
-                },
-                {
-                    "section_id": "4.5",
-                    "section_title": "APIs, Packages, and Javadoc",
-                    "page": 140,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "4.5.1",
-                            "sub_section_title": "Toolboxes",
-                            "page": 140
-                        },
-                        {
-                            "sub_section_id": "4.5.2",
-                            "sub_section_title": "Java's Standard Packages",
-                            "page": 141
-                        },
-                        {
-                            "sub_section_id": "4.5.3",
-                            "sub_section_title": "Using Classes from Packages",
-                            "page": 142
-                        },
-                        {
-                            "sub_section_id": "4.5.4",
-                            "sub_section_title": "Javadoc",
-                            "page": 144
-                        }
-                    ]
-                },
-                {
-                    "section_id": "4.6",
-                    "section_title": "More on Program Design",
-                    "page": 146,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "4.6.1",
-                            "sub_section_title": "Preconditions and Postconditions",
-                            "page": 146
-                        },
-                        {
-                            "sub_section_id": "4.6.2",
-                            "sub_section_title": "A Design Example",
-                            "page": 147
-                        },
-                        {
-                            "sub_section_id": "4.6.3",
-                            "sub_section_title": "The Program",
-                            "page": 151
-                        }
-                    ]
-                },
-                {
-                    "section_id": "4.7",
-                    "section_title": "The Truth About Declarations",
-                    "page": 153,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "4.7.1",
-                            "sub_section_title": "Initialization in Declarations",
-                            "page": 154
-                        },
-                        {
-                            "sub_section_id": "4.7.2",
-                            "sub_section_title": "Named Constants",
-                            "page": 155
-                        },
-                        {
-                            "sub_section_id": "4.7.3",
-                            "sub_section_title": "Naming and Scope Rules",
-                            "page": 158
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 5,
-            "chapter_title": "Objects and Classes",
-            "start_page": 165,
-            "sections": [
-                {
-                    "section_id": "5.1",
-                    "section_title": "Objects and Instance Methods",
-                    "page": 165,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "5.1.1",
-                            "sub_section_title": "Objects, Classes, and Instances",
-                            "page": 166
-                        },
-                        {
-                            "sub_section_id": "5.1.2",
-                            "sub_section_title": "Fundamentals of Objects",
-                            "page": 167
-                        },
-                        {
-                            "sub_section_id": "5.1.3",
-                            "sub_section_title": "Getters and Setters",
-                            "page": 172
-                        }
-                    ]
-                },
-                {
-                    "section_id": "5.2",
-                    "section_title": "Constructors and Object Initialization",
-                    "page": 173,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "5.2.1",
-                            "sub_section_title": "Initializing Instance Variables",
-                            "page": 173
-                        },
-                        {
-                            "sub_section_id": "5.2.2",
-                            "sub_section_title": "Constructors",
-                            "page": 174
-                        },
-                        {
-                            "sub_section_id": "5.2.3",
-                            "sub_section_title": "Garbage Collection",
-                            "page": 179
-                        }
-                    ]
-                },
-                {
-                    "section_id": "5.3",
-                    "section_title": "Programming with Objects",
-                    "page": 179,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "5.3.1",
-                            "sub_section_title": "Some Built-in Classes",
-                            "page": 180
-                        },
-                        {
-                            "sub_section_id": "5.3.2",
-                            "sub_section_title": "Wrapper Classes and Autoboxing",
-                            "page": 181
-                        },
-                        {
-                            "sub_section_id": "5.3.3",
-                            "sub_section_title": "The class \"Object\"",
-                            "page": 182
-                        },
-                        {
-                            "sub_section_id": "5.3.4",
-                            "sub_section_title": "Object-oriented Analysis and Design",
-                            "page": 183
-                        }
-                    ]
-                },
-                {
-                    "section_id": "5.4",
-                    "section_title": "Programming Example: Card, Hand, Deck",
-                    "page": 185,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "5.4.1",
-                            "sub_section_title": "Designing the classes",
-                            "page": 185
-                        },
-                        {
-                            "sub_section_id": "5.4.2",
-                            "sub_section_title": "The Card Class",
-                            "page": 187
-                        },
-                        {
-                            "sub_section_id": "5.4.3",
-                            "sub_section_title": "Example: A Simple Card Game",
-                            "page": 191
-                        }
-                    ]
-                },
-                {
-                    "section_id": "5.5",
-                    "section_title": "Inheritance and Polymorphism",
-                    "page": 194,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "5.5.1",
-                            "sub_section_title": "Extending Existing Classes",
-                            "page": 194
-                        },
-                        {
-                            "sub_section_id": "5.5.2",
-                            "sub_section_title": "Inheritance and Class Hierarchy",
-                            "page": 196
-                        },
-                        {
-                            "sub_section_id": "5.5.3",
-                            "sub_section_title": "Example: Vehicles",
-                            "page": 197
-                        },
-                        {
-                            "sub_section_id": "5.5.4",
-                            "sub_section_title": "Polymorphism",
-                            "page": 200
-                        },
-                        {
-                            "sub_section_id": "5.5.5",
-                            "sub_section_title": "Abstract Classes",
-                            "page": 202
-                        }
-                    ]
-                },
-                {
-                    "section_id": "5.6",
-                    "section_title": "this and super",
-                    "page": 205,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "5.6.1",
-                            "sub_section_title": "The Special Variable this",
-                            "page": 205
-                        },
-                        {
-                            "sub_section_id": "5.6.2",
-                            "sub_section_title": "The Special Variable super",
-                            "page": 206
-                        },
-                        {
-                            "sub_section_id": "5.6.3",
-                            "sub_section_title": "Constructors in Subclasses",
-                            "page": 208
-                        }
-                    ]
-                },
-                {
-                    "section_id": "5.7",
-                    "section_title": "Interfaces, Nested Classes, and Other Details",
-                    "page": 209,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "5.7.1",
-                            "sub_section_title": "Interfaces",
-                            "page": 209
-                        },
-                        {
-                            "sub_section_id": "5.7.2",
-                            "sub_section_title": "Nested Classes",
-                            "page": 211
-                        },
-                        {
-                            "sub_section_id": "5.7.3",
-                            "sub_section_title": "Anonymous Inner Classes",
-                            "page": 214
-                        },
-                        {
-                            "sub_section_id": "5.7.4",
-                            "sub_section_title": "Mixing Static and Non-static",
-                            "page": 214
-                        },
-                        {
-                            "sub_section_id": "5.7.5",
-                            "sub_section_title": "Static Import",
-                            "page": 216
-                        },
-                        {
-                            "sub_section_id": "5.7.6",
-                            "sub_section_title": "Enums as Classes",
-                            "page": 217
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 6,
-            "chapter_title": "Introduction to GUI Programming",
-            "start_page": 225,
-            "sections": [
-                {
-                    "section_id": "6.1",
-                    "section_title": "The Basic GUI Application",
-                    "page": 225,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.1.1",
-                            "sub_section_title": "JFrame and JPanel",
-                            "page": 227
-                        },
-                        {
-                            "sub_section_id": "6.1.2",
-                            "sub_section_title": "Components and Layout",
-                            "page": 229
-                        },
-                        {
-                            "sub_section_id": "6.1.3",
-                            "sub_section_title": "Events and Listeners",
-                            "page": 230
-                        }
-                    ]
-                },
-                {
-                    "section_id": "6.2",
-                    "section_title": "Applets and HTML",
-                    "page": 231,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.2.1",
-                            "sub_section_title": "JApplet",
-                            "page": 231
-                        },
-                        {
-                            "sub_section_id": "6.2.2",
-                            "sub_section_title": "Reusing Your JPanels",
-                            "page": 233
-                        },
-                        {
-                            "sub_section_id": "6.2.3",
-                            "sub_section_title": "Basic HTML",
-                            "page": 235
-                        },
-                        {
-                            "sub_section_id": "6.2.4",
-                            "sub_section_title": "Applets on Web Pages",
-                            "page": 238
-                        }
-                    ]
-                },
-                {
-                    "section_id": "6.3",
-                    "section_title": "Graphics and Painting",
-                    "page": 240,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.3.1",
-                            "sub_section_title": "Coordinates",
-                            "page": 242
-                        },
-                        {
-                            "sub_section_id": "6.3.2",
-                            "sub_section_title": "Colors",
-                            "page": 243
-                        },
-                        {
-                            "sub_section_id": "6.3.3",
-                            "sub_section_title": "Fonts",
-                            "page": 244
-                        },
-                        {
-                            "sub_section_id": "6.3.4",
-                            "sub_section_title": "Shapes",
-                            "page": 245
-                        },
-                        {
-                            "sub_section_id": "6.3.5",
-                            "sub_section_title": "Graphics2D",
-                            "page": 246
-                        },
-                        {
-                            "sub_section_id": "6.3.6",
-                            "sub_section_title": "An Example",
-                            "page": 247
-                        }
-                    ]
-                },
-                {
-                    "section_id": "6.4",
-                    "section_title": "Mouse Events",
-                    "page": 251,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.4.1",
-                            "sub_section_title": "Event Handling",
-                            "page": 252
-                        },
-                        {
-                            "sub_section_id": "6.4.2",
-                            "sub_section_title": "MouseEvent and MouseListener",
-                            "page": 253
-                        },
-                        {
-                            "sub_section_id": "6.4.3",
-                            "sub_section_title": "Mouse Coordinates",
-                            "page": 256
-                        },
-                        {
-                            "sub_section_id": "6.4.4",
-                            "sub_section_title": "MouseMotionListeners and Dragging",
-                            "page": 258
-                        },
-                        {
-                            "sub_section_id": "6.4.5",
-                            "sub_section_title": "Anonymous Event Handlers",
-                            "page": 262
-                        }
-                    ]
-                },
-                {
-                    "section_id": "6.5",
-                    "section_title": "Timer and Keyboard Events",
-                    "page": 264,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.5.1",
-                            "sub_section_title": "Timers and Animation",
-                            "page": 264
-                        },
-                        {
-                            "sub_section_id": "6.5.2",
-                            "sub_section_title": "Keyboard Events",
-                            "page": 266
-                        },
-                        {
-                            "sub_section_id": "6.5.3",
-                            "sub_section_title": "Focus Events",
-                            "page": 269
-                        },
-                        {
-                            "sub_section_id": "6.5.4",
-                            "sub_section_title": "State Machines",
-                            "page": 270
-                        }
-                    ]
-                },
-                {
-                    "section_id": "6.6",
-                    "section_title": "Basic Components",
-                    "page": 273,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.6.1",
-                            "sub_section_title": "JButton",
-                            "page": 275
-                        },
-                        {
-                            "sub_section_id": "6.6.2",
-                            "sub_section_title": "JLabel",
-                            "page": 276
-                        },
-                        {
-                            "sub_section_id": "6.6.3",
-                            "sub_section_title": "JCheckBox",
-                            "page": 277
-                        },
-                        {
-                            "sub_section_id": "6.6.4",
-                            "sub_section_title": "JTextField and JTextArea",
-                            "page": 278
-                        },
-                        {
-                            "sub_section_id": "6.6.5",
-                            "sub_section_title": "JComboBox",
-                            "page": 279
-                        },
-                        {
-                            "sub_section_id": "6.6.6",
-                            "sub_section_title": "JSlider",
-                            "page": 280
-                        }
-                    ]
-                },
-                {
-                    "section_id": "6.7",
-                    "section_title": "Basic Layout",
-                    "page": 282,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.7.1",
-                            "sub_section_title": "Basic Layout Managers",
-                            "page": 283
-                        },
-                        {
-                            "sub_section_id": "6.7.2",
-                            "sub_section_title": "Borders",
-                            "page": 285
-                        },
-                        {
-                            "sub_section_id": "6.7.3",
-                            "sub_section_title": "SliderAndComboBoxDemo",
-                            "page": 287
-                        },
-                        {
-                            "sub_section_id": "6.7.4",
-                            "sub_section_title": "A Simple Calculator",
-                            "page": 289
-                        },
-                        {
-                            "sub_section_id": "6.7.5",
-                            "sub_section_title": "Using a null Layout",
-                            "page": 291
-                        },
-                        {
-                            "sub_section_id": "6.7.6",
-                            "sub_section_title": "A Little Card Game",
-                            "page": 293
-                        }
-                    ]
-                },
-                {
-                    "section_id": "6.8",
-                    "section_title": "Menus and Dialogs",
-                    "page": 296,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "6.8.1",
-                            "sub_section_title": "Menus and Menubars",
-                            "page": 297
-                        },
-                        {
-                            "sub_section_id": "6.8.2",
-                            "sub_section_title": "Dialogs",
-                            "page": 300
-                        },
-                        {
-                            "sub_section_id": "6.8.3",
-                            "sub_section_title": "Fine Points of Frames",
-                            "page": 302
-                        },
-                        {
-                            "sub_section_id": "6.8.4",
-                            "sub_section_title": "Creating Jar Files",
-                            "page": 304
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 7,
-            "chapter_title": "Arrays",
-            "start_page": 313,
-            "sections": [
-                {
-                    "section_id": "7.1",
-                    "section_title": "Creating and Using Arrays",
-                    "page": 313,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "7.1.1",
-                            "sub_section_title": "Arrays",
-                            "page": 314
-                        },
-                        {
-                            "sub_section_id": "7.1.2",
-                            "sub_section_title": "Using Arrays",
-                            "page": 314
-                        },
-                        {
-                            "sub_section_id": "7.1.3",
-                            "sub_section_title": "Array Initialization",
-                            "page": 316
-                        }
-                    ]
-                },
-                {
-                    "section_id": "7.2",
-                    "section_title": "Programming With Arrays",
-                    "page": 318,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "7.2.1",
-                            "sub_section_title": "Arrays and for Loops",
-                            "page": 318
-                        },
-                        {
-                            "sub_section_id": "7.2.2",
-                            "sub_section_title": "Arrays and for-each Loops",
-                            "page": 320
-                        },
-                        {
-                            "sub_section_id": "7.2.3",
-                            "sub_section_title": "Array Types in Subroutines",
-                            "page": 321
-                        },
-                        {
-                            "sub_section_id": "7.2.4",
-                            "sub_section_title": "Random Access",
-                            "page": 322
-                        },
-                        {
-                            "sub_section_id": "7.2.5",
-                            "sub_section_title": "Arrays of Objects",
-                            "page": 324
-                        },
-                        {
-                            "sub_section_id": "7.2.6",
-                            "sub_section_title": "Variable Arity Methods",
-                            "page": 327
-                        }
-                    ]
-                },
-                {
-                    "section_id": "7.3",
-                    "section_title": "Dynamic Arrays and ArrayLists",
-                    "page": 329,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "7.3.1",
-                            "sub_section_title": "Partially Full Arrays",
-                            "page": 329
-                        },
-                        {
-                            "sub_section_id": "7.3.2",
-                            "sub_section_title": "Dynamic Arrays",
-                            "page": 332
-                        },
-                        {
-                            "sub_section_id": "7.3.3",
-                            "sub_section_title": "ArrayLists",
-                            "page": 335
-                        },
-                        {
-                            "sub_section_id": "7.3.4",
-                            "sub_section_title": "Parameterized Types",
-                            "page": 339
-                        },
-                        {
-                            "sub_section_id": "7.3.5",
-                            "sub_section_title": "Vectors",
-                            "page": 342
-                        }
-                    ]
-                },
-                {
-                    "section_id": "7.4",
-                    "section_title": "Searching and Sorting",
-                    "page": 343,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "7.4.1",
-                            "sub_section_title": "Searching",
-                            "page": 343
-                        },
-                        {
-                            "sub_section_id": "7.4.2",
-                            "sub_section_title": "Association Lists",
-                            "page": 345
-                        },
-                        {
-                            "sub_section_id": "7.4.3",
-                            "sub_section_title": "Insertion Sort",
-                            "page": 348
-                        },
-                        {
-                            "sub_section_id": "7.4.4",
-                            "sub_section_title": "Selection Sort",
-                            "page": 349
-                        },
-                        {
-                            "sub_section_id": "7.4.5",
-                            "sub_section_title": "Unsorting",
-                            "page": 351
-                        }
-                    ]
-                },
-                {
-                    "section_id": "7.5",
-                    "section_title": "Multi-dimensional Arrays",
-                    "page": 352,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "7.5.1",
-                            "sub_section_title": "Creating Two-dimensional Arrays",
-                            "page": 352
-                        },
-                        {
-                            "sub_section_id": "7.5.2",
-                            "sub_section_title": "Using Two-dimensional Arrays",
-                            "page": 354
-                        },
-                        {
-                            "sub_section_id": "7.5.3",
-                            "sub_section_title": "Example: Checkers",
-                            "page": 357
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 8,
-            "chapter_title": "Correctness and Robustness",
-            "start_page": 373,
-            "sections": [
-                {
-                    "section_id": "8.1",
-                    "section_title": "Introduction to Correctness and Robustness",
-                    "page": 373,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "8.1.1",
-                            "sub_section_title": "Horror Stories",
-                            "page": 374
-                        },
-                        {
-                            "sub_section_id": "8.1.2",
-                            "sub_section_title": "Java to the Rescue",
-                            "page": 375
-                        },
-                        {
-                            "sub_section_id": "8.1.3",
-                            "sub_section_title": "Problems Remain in Java",
-                            "page": 377
-                        }
-                    ]
-                },
-                {
-                    "section_id": "8.2",
-                    "section_title": "Writing Correct Programs",
-                    "page": 378,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "8.2.1",
-                            "sub_section_title": "Provably Correct Programs",
-                            "page": 378
-                        },
-                        {
-                            "sub_section_id": "8.2.2",
-                            "sub_section_title": "Robust Handling of Input",
-                            "page": 381
-                        }
-                    ]
-                },
-                {
-                    "section_id": "8.3",
-                    "section_title": "Exceptions and try..catch",
-                    "page": 385,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "8.3.1",
-                            "sub_section_title": "Exceptions and Exception Classes",
-                            "page": 386
-                        },
-                        {
-                            "sub_section_id": "8.3.2",
-                            "sub_section_title": "The try Statement",
-                            "page": 388
-                        },
-                        {
-                            "sub_section_id": "8.3.3",
-                            "sub_section_title": "Throwing Exceptions",
-                            "page": 390
-                        },
-                        {
-                            "sub_section_id": "8.3.4",
-                            "sub_section_title": "Mandatory Exception Handling",
-                            "page": 392
-                        },
-                        {
-                            "sub_section_id": "8.3.5",
-                            "sub_section_title": "Programming with Exceptions",
-                            "page": 393
-                        }
-                    ]
-                },
-                {
-                    "section_id": "8.4",
-                    "section_title": "Assertions",
-                    "page": 396,
-                    "sub_sections": []
-                },
-                {
-                    "section_id": "8.5",
-                    "section_title": "Introduction to Threads",
-                    "page": 399,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "8.5.1",
-                            "sub_section_title": "Creating and Running Threads",
-                            "page": 400
-                        },
-                        {
-                            "sub_section_id": "8.5.2",
-                            "sub_section_title": "Operations on Threads",
-                            "page": 404
-                        },
-                        {
-                            "sub_section_id": "8.5.3",
-                            "sub_section_title": "Mutual Exclusion with \"synchronized\"",
-                            "page": 405
-                        },
-                        {
-                            "sub_section_id": "8.5.4",
-                            "sub_section_title": "Wait and Notify",
-                            "page": 408
-                        },
-                        {
-                            "sub_section_id": "8.5.5",
-                            "sub_section_title": "Volatile Variables",
-                            "page": 412
-                        }
-                    ]
-                },
-                {
-                    "section_id": "8.6",
-                    "section_title": "Analysis of Algorithms",
-                    "page": 413,
-                    "sub_sections": []
-                }
-            ]
-        },
-        {
-            "chapter_number": 9,
-            "chapter_title": "Linked Data Structures and Recursion",
-            "start_page": 427,
-            "sections": [
-                {
-                    "section_id": "9.1",
-                    "section_title": "Recursion",
-                    "page": 427,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "9.1.1",
-                            "sub_section_title": "Recursive Binary Search",
-                            "page": 428
-                        },
-                        {
-                            "sub_section_id": "9.1.2",
-                            "sub_section_title": "Towers of Hanoi",
-                            "page": 430
-                        },
-                        {
-                            "sub_section_id": "9.1.3",
-                            "sub_section_title": "A Recursive Sorting Algorithm",
-                            "page": 432
-                        },
-                        {
-                            "sub_section_id": "9.1.4",
-                            "sub_section_title": "Blob Counting",
-                            "page": 435
-                        }
-                    ]
-                },
-                {
-                    "section_id": "9.2",
-                    "section_title": "Linked Data Structures",
-                    "page": 439,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "9.2.1",
-                            "sub_section_title": "Recursive Linking",
-                            "page": 439
-                        },
-                        {
-                            "sub_section_id": "9.2.2",
-                            "sub_section_title": "Linked Lists",
-                            "page": 441
-                        },
-                        {
-                            "sub_section_id": "9.2.3",
-                            "sub_section_title": "Basic Linked List Processing",
-                            "page": 441
-                        },
-                        {
-                            "sub_section_id": "9.2.4",
-                            "sub_section_title": "Inserting into a Linked List",
-                            "page": 445
-                        },
-                        {
-                            "sub_section_id": "9.2.5",
-                            "sub_section_title": "Deleting from a Linked List",
-                            "page": 447
-                        }
-                    ]
-                },
-                {
-                    "section_id": "9.3",
-                    "section_title": "Stacks, Queues, and ADTs",
-                    "page": 448,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "9.3.1",
-                            "sub_section_title": "Stacks",
-                            "page": 449
-                        },
-                        {
-                            "sub_section_id": "9.3.2",
-                            "sub_section_title": "Queues",
-                            "page": 452
-                        },
-                        {
-                            "sub_section_id": "9.3.3",
-                            "sub_section_title": "Postfix Expressions",
-                            "page": 456
-                        }
-                    ]
-                },
-                {
-                    "section_id": "9.4",
-                    "section_title": "Binary Trees",
-                    "page": 459,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "9.4.1",
-                            "sub_section_title": "Tree Traversal",
-                            "page": 460
-                        },
-                        {
-                            "sub_section_id": "9.4.2",
-                            "sub_section_title": "Binary Sort Trees",
-                            "page": 462
-                        },
-                        {
-                            "sub_section_id": "9.4.3",
-                            "sub_section_title": "Expression Trees",
-                            "page": 467
-                        }
-                    ]
-                },
-                {
-                    "section_id": "9.5",
-                    "section_title": "A Simple Recursive Descent Parser",
-                    "page": 470,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "9.5.1",
-                            "sub_section_title": "Backus-Naur Form",
-                            "page": 470
-                        },
-                        {
-                            "sub_section_id": "9.5.2",
-                            "sub_section_title": "Recursive Descent Parsing",
-                            "page": 472
-                        },
-                        {
-                            "sub_section_id": "9.5.3",
-                            "sub_section_title": "Building an Expression Tree",
-                            "page": 476
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 10,
-            "chapter_title": "Generic Programming and Collection Classes",
-            "start_page": 485,
-            "sections": [
-                {
-                    "section_id": "10.1",
-                    "section_title": "Generic Programming",
-                    "page": 485,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "10.1.1",
-                            "sub_section_title": "Generic Programming in Smalltalk",
-                            "page": 486
-                        },
-                        {
-                            "sub_section_id": "10.1.2",
-                            "sub_section_title": "Generic Programming in C++",
-                            "page": 487
-                        },
-                        {
-                            "sub_section_id": "10.1.3",
-                            "sub_section_title": "Generic Programming in Java",
-                            "page": 488
-                        },
-                        {
-                            "sub_section_id": "10.1.4",
-                            "sub_section_title": "The Java Collection Framework",
-                            "page": 489
-                        },
-                        {
-                            "sub_section_id": "10.1.5",
-                            "sub_section_title": "Iterators and for-each Loops",
-                            "page": 491
-                        },
-                        {
-                            "sub_section_id": "10.1.6",
-                            "sub_section_title": "Equality and Comparison",
-                            "page": 492
-                        },
-                        {
-                            "sub_section_id": "10.1.7",
-                            "sub_section_title": "Generics and Wrapper Classes",
-                            "page": 495
-                        }
-                    ]
-                },
-                {
-                    "section_id": "10.2",
-                    "section_title": "Lists and Sets",
-                    "page": 496,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "10.2.1",
-                            "sub_section_title": "ArrayList and LinkedList",
-                            "page": 496
-                        },
-                        {
-                            "sub_section_id": "10.2.2",
-                            "sub_section_title": "Sorting",
-                            "page": 499
-                        },
-                        {
-                            "sub_section_id": "10.2.3",
-                            "sub_section_title": "TreeSet and HashSet",
-                            "page": 500
-                        },
-                        {
-                            "sub_section_id": "10.2.4",
-                            "sub_section_title": "EnumSet",
-                            "page": 503
-                        }
-                    ]
-                },
-                {
-                    "section_id": "10.3",
-                    "section_title": "Maps",
-                    "page": 504,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "10.3.1",
-                            "sub_section_title": "The Map Interface",
-                            "page": 505
-                        },
-                        {
-                            "sub_section_id": "10.3.2",
-                            "sub_section_title": "Views, SubSets, and SubMaps",
-                            "page": 506
-                        },
-                        {
-                            "sub_section_id": "10.3.3",
-                            "sub_section_title": "Hash Tables and Hash Codes",
-                            "page": 509
-                        }
-                    ]
-                },
-                {
-                    "section_id": "10.4",
-                    "section_title": "Programming with the Collection Framework",
-                    "page": 511,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "10.4.1",
-                            "sub_section_title": "Symbol Tables",
-                            "page": 511
-                        },
-                        {
-                            "sub_section_id": "10.4.2",
-                            "sub_section_title": "Sets Inside a Map",
-                            "page": 512
-                        },
-                        {
-                            "sub_section_id": "10.4.3",
-                            "sub_section_title": "Using a Comparator",
-                            "page": 515
-                        },
-                        {
-                            "sub_section_id": "10.4.4",
-                            "sub_section_title": "Word Counting",
-                            "page": 517
-                        }
-                    ]
-                },
-                {
-                    "section_id": "10.5",
-                    "section_title": "Writing Generic Classes and Methods",
-                    "page": 519,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "10.5.1",
-                            "sub_section_title": "Simple Generic Classes",
-                            "page": 520
-                        },
-                        {
-                            "sub_section_id": "10.5.2",
-                            "sub_section_title": "Simple Generic Methods",
-                            "page": 521
-                        },
-                        {
-                            "sub_section_id": "10.5.3",
-                            "sub_section_title": "Type Wildcards",
-                            "page": 523
-                        },
-                        {
-                            "sub_section_id": "10.5.4",
-                            "sub_section_title": "Bounded Types",
-                            "page": 527
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 11,
-            "chapter_title": "Files and Networking",
-            "start_page": 537,
-            "sections": [
-                {
-                    "section_id": "11.1",
-                    "section_title": "Streams, Readers, and Writers",
-                    "page": 537,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "11.1.1",
-                            "sub_section_title": "Character and Byte Streams",
-                            "page": 537
-                        },
-                        {
-                            "sub_section_id": "11.1.2",
-                            "sub_section_title": "PrintWriter",
-                            "page": 539
-                        },
-                        {
-                            "sub_section_id": "11.1.3",
-                            "sub_section_title": "Data Streams",
-                            "page": 540
-                        },
-                        {
-                            "sub_section_id": "11.1.4",
-                            "sub_section_title": "Reading Text",
-                            "page": 541
-                        },
-                        {
-                            "sub_section_id": "11.1.5",
-                            "sub_section_title": "The Scanner Class",
-                            "page": 544
-                        },
-                        {
-                            "sub_section_id": "11.1.6",
-                            "sub_section_title": "Serialized Object I/O",
-                            "page": 545
-                        }
-                    ]
-                },
-                {
-                    "section_id": "11.2",
-                    "section_title": "Files",
-                    "page": 546,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "11.2.1",
-                            "sub_section_title": "Reading and Writing Files",
-                            "page": 546
-                        },
-                        {
-                            "sub_section_id": "11.2.2",
-                            "sub_section_title": "Files and Directories",
-                            "page": 549
-                        },
-                        {
-                            "sub_section_id": "11.2.3",
-                            "sub_section_title": "File Dialog Boxes",
-                            "page": 552
-                        }
-                    ]
-                },
-                {
-                    "section_id": "11.3",
-                    "section_title": "Programming With Files",
-                    "page": 554,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "11.3.1",
-                            "sub_section_title": "Copying a File",
-                            "page": 555
-                        },
-                        {
-                            "sub_section_id": "11.3.2",
-                            "sub_section_title": "Persistent Data",
-                            "page": 557
-                        },
-                        {
-                            "sub_section_id": "11.3.3",
-                            "sub_section_title": "Files in GUI Programs",
-                            "page": 559
-                        },
-                        {
-                            "sub_section_id": "11.3.4",
-                            "sub_section_title": "Storing Objects in Files",
-                            "page": 561
-                        }
-                    ]
-                },
-                {
-                    "section_id": "11.4",
-                    "section_title": "Networking",
-                    "page": 568,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "11.4.1",
-                            "sub_section_title": "URLs and URLConnections",
-                            "page": 569
-                        },
-                        {
-                            "sub_section_id": "11.4.2",
-                            "sub_section_title": "TCP/IP and Client/Server",
-                            "page": 571
-                        },
-                        {
-                            "sub_section_id": "11.4.3",
-                            "sub_section_title": "Sockets",
-                            "page": 572
-                        },
-                        {
-                            "sub_section_id": "11.4.4",
-                            "sub_section_title": "A Trivial Client/Server",
-                            "page": 574
-                        },
-                        {
-                            "sub_section_id": "11.4.5",
-                            "sub_section_title": "A Simple Network Chat",
-                            "page": 578
-                        }
-                    ]
-                },
-                {
-                    "section_id": "11.5",
-                    "section_title": "Network Programming and Threads",
-                    "page": 581,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "11.5.1",
-                            "sub_section_title": "A Threaded GUI Chat Program",
-                            "page": 582
-                        },
-                        {
-                            "sub_section_id": "11.5.2",
-                            "sub_section_title": "A Multithreaded Server",
-                            "page": 585
-                        },
-                        {
-                            "sub_section_id": "11.5.3",
-                            "sub_section_title": "Distributed Computing",
-                            "page": 588
-                        }
-                    ]
-                },
-                {
-                    "section_id": "11.6",
-                    "section_title": "A Brief Introduction to XML",
-                    "page": 596,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "11.6.1",
-                            "sub_section_title": "Basic XML Syntax",
-                            "page": 596
-                        },
-                        {
-                            "sub_section_id": "11.6.2",
-                            "sub_section_title": "XMLEncoder and XMLDecoder",
-                            "page": 598
-                        },
-                        {
-                            "sub_section_id": "11.6.3",
-                            "sub_section_title": "Working With the DOM",
-                            "page": 600
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "chapter_number": 12,
-            "chapter_title": "Advanced GUI Programming",
-            "start_page": 611,
-            "sections": [
-                {
-                    "section_id": "12.1",
-                    "section_title": "Images and Resources",
-                    "page": 611,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "12.1.1",
-                            "sub_section_title": "Images and BufferedImages",
-                            "page": 611
-                        },
-                        {
-                            "sub_section_id": "12.1.2",
-                            "sub_section_title": "Working With Pixels",
-                            "page": 617
-                        },
-                        {
-                            "sub_section_id": "12.1.3",
-                            "sub_section_title": "Resources",
-                            "page": 620
-                        },
-                        {
-                            "sub_section_id": "12.1.4",
-                            "sub_section_title": "Cursors and Icons",
-                            "page": 621
-                        },
-                        {
-                            "sub_section_id": "12.1.5",
-                            "sub_section_title": "Image File I/O",
-                            "page": 622
-                        }
-                    ]
-                },
-                {
-                    "section_id": "12.2",
-                    "section_title": "Fancier Graphics",
-                    "page": 624,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "12.2.1",
-                            "sub_section_title": "Measuring Text",
-                            "page": 625
-                        },
-                        {
-                            "sub_section_id": "12.2.2",
-                            "sub_section_title": "Transparency",
-                            "page": 627
-                        },
-                        {
-                            "sub_section_id": "12.2.3",
-                            "sub_section_title": "Antialiasing",
-                            "page": 629
-                        },
-                        {
-                            "sub_section_id": "12.2.4",
-                            "sub_section_title": "Strokes and Paints",
-                            "page": 630
-                        },
-                        {
-                            "sub_section_id": "12.2.5",
-                            "sub_section_title": "Transforms",
-                            "page": 633
-                        }
-                    ]
-                },
-                {
-                    "section_id": "12.3",
-                    "section_title": "Actions and Buttons",
-                    "page": 636,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "12.3.1",
-                            "sub_section_title": "Action and AbstractAction",
-                            "page": 636
-                        },
-                        {
-                            "sub_section_id": "12.3.2",
-                            "sub_section_title": "Icons on Buttons",
-                            "page": 638
-                        },
-                        {
-                            "sub_section_id": "12.3.3",
-                            "sub_section_title": "Radio Buttons",
-                            "page": 639
-                        },
-                        {
-                            "sub_section_id": "12.3.4",
-                            "sub_section_title": "Toolbars",
-                            "page": 642
-                        },
-                        {
-                            "sub_section_id": "12.3.5",
-                            "sub_section_title": "Keyboard Accelerators",
-                            "page": 643
-                        },
-                        {
-                            "sub_section_id": "12.3.6",
-                            "sub_section_title": "HTML on Buttons",
-                            "page": 645
-                        }
-                    ]
-                },
-                {
-                    "section_id": "12.4",
-                    "section_title": "Complex Components and MVC",
-                    "page": 646,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "12.4.1",
-                            "sub_section_title": "Model-View-Controller",
-                            "page": 646
-                        },
-                        {
-                            "sub_section_id": "12.4.2",
-                            "sub_section_title": "Lists and ListModels",
-                            "page": 647
-                        },
-                        {
-                            "sub_section_id": "12.4.3",
-                            "sub_section_title": "Tables and TableModels",
-                            "page": 650
-                        },
-                        {
-                            "sub_section_id": "12.4.4",
-                            "sub_section_title": "Documents and Editors",
-                            "page": 654
-                        },
-                        {
-                            "sub_section_id": "12.4.5",
-                            "sub_section_title": "Custom Components",
-                            "page": 655
-                        }
-                    ]
-                },
-                {
-                    "section_id": "12.5",
-                    "section_title": "Finishing Touches",
-                    "page": 660,
-                    "sub_sections": [
-                        {
-                            "sub_section_id": "12.5.1",
-                            "sub_section_title": "The Mandelbrot Set",
-                            "page": 660
-                        },
-                        {
-                            "sub_section_id": "12.5.2",
-                            "sub_section_title": "Design of the Program",
-                            "page": 662
-                        },
-                        {
-                            "sub_section_id": "12.5.3",
-                            "sub_section_title": "Internationalization",
-                            "page": 664
-                        },
-                        {
-                            "sub_section_id": "12.5.4",
-                            "sub_section_title": "Events, Events, Events",
-                            "page": 666
-                        },
-                        {
-                            "sub_section_id": "12.5.5",
-                            "sub_section_title": "Custom Dialogs",
-                            "page": 668
-                        },
-                        {
-                            "sub_section_id": "12.5.6",
-                            "sub_section_title": "Preferences",
-                            "page": 669
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-}
+Preface
+xiii
+1 The Mental Landscape
+1
+1.1 Machine Language
+1.2 Asynchronous Events
+1.3 The Java Virtual Machine
+1.4 Building Blocks of Programs
+1.5 Object-oriented Programming
+1.6 The Modern User Interface
+1.7 The Internet
+Quiz on Chapter 1
+2 Names and Things
+2.1 The Basic Java Application
+2.2 Variables and Types
+2.2.1 Variables
+2.2.2 Types and Literals
+2.2.3 Variables in Programs
+2.3 Objects and Subroutines
+2.3.1 Built-in Subroutines and Functions
+2.3.2 Operations on Strings
+2.3.3 Introduction to Ensums
+2.4 Text Input and Output
+2.4.1 A First Text Input Example
+2.4.2 Text Output
+2.4.3 TextIO Input Functions
+2.4.4 Formatted Output
+2.4.5 Introduction to File I/O
+2.5 Details of Expressions
+2.5.1 Arithmetic Operators
+2.5.2 Increment and Decrement
+2.5.3 Relational Operators
+2.5.4 Boolean Operators
+2.5.5 Conditional Operator
+2.5.6 Assignment Operators and Type-Casts
+2.5.7 Type Conversion of Strings
+2.5.8 Precedence Rules
+2.6 Programming Environments
+
+2.6.1 Java Development Kit 51  
+2.6.2 Command Line Environment 52  
+2.6.3 IDEs and Eclipse 54  
+2.6.4 The Problem of Packages 56  
+Exercises for Chapter 2 58  
+Quiz on Chapter 2 60  
+
+Control 61  
+3.1 Blocks, Loops, and Branches 61  
+3.1.1 Blocks 61  
+3.1.2 The Basic While Loop 62  
+3.1.3 The Basic If Statement 64  
+3.2 Algorithm Development 66  
+3.2.1 Pseudocode and Stepwise Refinement 66  
+3.2.2 The $3\mathrm{N} + 1$ Problem 69  
+3.2.3 Coding, Testing, Debugging 72  
+3.3 while and do..while 73  
+3.3.1 The while Statement 74  
+3.3.2 The do..while Statement 76  
+3.3.3 break and continue 78  
+3.4 The for Statement 79  
+3.4.1 For Loops 80  
+3.4.2 Example: Counting Divisors 83  
+3.4.3 Nested for Loops 85  
+3.4.4 Enums and for-each Loops 87  
+3.5 The if Statement 89  
+3.5.1 The Dangling else Problem 89  
+3.5.2 The if...else if Construction 89  
+3.5.3 If Statement Examples 91  
+3.5.4 The Empty Statement 95  
+3.6 The switch Statement 96  
+3.6.1 The Basic switch Statement 96  
+3.6.2 Menus and switch Statements 97  
+3.6.3 Enums in switch Statements 98  
+3.6.4 Definite Assignment 99  
+3.7 Exceptions and try..catch 100  
+3.7.1 Exceptions 100  
+3.7.2 try..catch 101  
+3.7.3 Exceptions in TextIO 102  
+3.8 GUI Programming 104  
+Exercises for Chapter 3 111  
+Quiz on Chapter 3 114  
+
+Subroutines 117  
+4.1 Black Boxes 117  
+4.2 Static Subroutines and Variables 119  
+4.2.1 Subroutine Definitions 119  
+4.2.2 Calling Subroutines 121
+
+4.2.3 Subroutines in Programs . 122
+4.2.4 Member Variables . 124
+4.3 Parameters . 127
+4.3.1 Using Parameters . 127
+4.3.2 Formal and Actual Parameters . 128
+4.3.3 Overloading . 129
+4.3.4 Subroutine Examples . 130
+4.3.5 Throwing Exceptions . 132
+4.3.6 Global and Local Variables . 133
+4.4 Return Values . 134
+4.4.1 The return statement . 134
+4.4.2 Function Examples . 135
+4.4.3 3N+1 Revisited . 138
+4.5 APIs, Packages, and Javadoc . 140
+4.5.1 Toolboxes . 140
+4.5.2 Java's Standard Packages . 141
+4.5.3 Using Classes from Packages . 142
+4.5.4 Javadoc . 144
+4.6 More on Program Design . 146
+4.6.1 Preconditions and Postconditions . 146
+4.6.2 A Design Example . 147
+4.6.3 The Program . 151
+4.7 The Truth About Declarations . 153
+4.7.1 Initialization in Declarations . 154
+4.7.2 Named Constants . 155
+4.7.3 Naming and Scope Rules . 158
+Exercises for Chapter 4 . 161
+Quiz on Chapter 4 . 164
+Objects and Classes . 165
+5.1 Objects and Instance Methods . 165
+5.1.1 Objects, Classes, and Instances . 166
+5.1.2 Fundamentals of Objects . 167
+5.1.3 Getters and Setters . 172
+5.2 Constructors and Object Initialization . 173
+5.2.1 Initializing Instance Variables . 173
+5.2.2 Constructors . 174
+5.2.3 Garbage Collection . 179
+5.3 Programming with Objects . 179
+5.3.1 Some Built-in Classes . 180
+5.3.2 Wrapper Classes and Autoboxing . 181
+5.3.3 The class "Object" . 182
+5.3.4 Object-oriented Analysis and Design . 183
+5.4 Programming Example: Card, Hand, Deck . 185
+5.4.1 Designing the classes . 185
+5.4.2 The Card Class . 187
+5.4.3 Example: A Simple Card Game . 191
+
+5.5 Inheritance and Polymorphism 194  
+5.5.1 Extending Existing Classes 194  
+5.5.2 Inheritance and Class Hierarchy 196  
+5.5.3 Example: Vehicles 197  
+5.5.4 Polymorphism 200  
+5.5.5 Abstract Classes 202  
+5.6 this and super 205  
+5.6.1 The Special Variable this 205  
+5.6.2 The Special Variable super 206  
+5.6.3 Constructors in Subclasses 208  
+5.7 Interfaces, Nested Classes, and Other Details 209  
+5.7.1 Interfaces 209  
+5.7.2 Nested Classes 211  
+5.7.3 Anonymous Inner Classes 214  
+5.7.4 Mixing Static and Non-static 214  
+5.7.5 Static Import 216  
+5.7.6 Enums as Classes 217  
+Exercises for Chapter 5 220  
+Quiz on Chapter 5 223  
+Introduction to GUI Programming 225  
+6.1 The Basic GUI Application 225  
+6.1.1 JFrame and JPanel 227  
+6.1.2 Components and Layout 229  
+6.1.3 Events and Listeners 230  
+6.2 Applets and HTML 231  
+6.2.1 JApplet 231  
+6.2.2 Reusing Your JPanels 233  
+6.2.3 Basic HTML 235  
+6.2.4 Applets on Web Pages 238  
+6.3 Graphics and Painting 240  
+6.3.1 Coordinates 242  
+6.3.2 Colors 243  
+6.3.3 Fonts 244  
+6.3.4 Shapes 245  
+6.3.5 Graphics2D 246  
+6.3.6 An Example 247  
+6.4 Mouse Events 251  
+6.4.1 Event Handling 252  
+6.4.2 MouseEvent and MouseListener 253  
+6.4.3 Mouse Coordinates 256  
+6.4.4 MouseMotionListeners and Dragging 258  
+6.4.5 Anonymous Event Handlers 262  
+6.5 Timer and Keyboard Events 264  
+6.5.1 Timers and Animation 264  
+6.5.2 Keyboard Events 266  
+6.5.3 Focus Events 269
+
+6.5.4 State Machines 270  
+6.6 Basic Components 273  
+6.6.1 JButton 275  
+6.6.2 JLabel 276  
+6.6.3 JCheckBox 277  
+6.6.4 JTextField and JTextArea 278  
+6.6.5 JComboBox 279  
+6.6.6 JSlider 280  
+6.7 Basic Layout 282  
+6.7.1 Basic Layout Managers 283  
+6.7.2 Borders 285  
+6.7.3 SliderAndComboBoxDemo 287  
+6.7.4 A Simple Calculator 289  
+6.7.5 Using a null Layout 291  
+6.7.6 A Little Card Game 293  
+6.8 Menus and Dialogs 296  
+6.8.1 Menus and Menubars 297  
+6.8.2 Dialogs 300  
+6.8.3 Fine Points of Frames 302  
+6.8.4 Creating Jar Files 304  
+Exercises for Chapter 6 306  
+Quiz on Chapter 6 311  
+Arrays 313  
+7.1 Creating and Using Arrays 313  
+7.1.1 Arrays 314  
+7.1.2 Using Arrays 314  
+7.1.3 Array Initialization 316  
+7.2 Programming With Arrays 318  
+7.2.1 Arrays and for Loops 318  
+7.2.2 Arrays and for-each Loops 320  
+7.2.3 Array Types in Subroutines 321  
+7.2.4 Random Access 322  
+7.2.5 Arrays of Objects 324  
+7.2.6 Variable Arity Methods 327  
+7.3 Dynamic Arrays and ArrayLists 329  
+7.3.1 Partially Full Arrays 329  
+7.3.2 Dynamic Arrays 332  
+7.3.3 ArrayLists 335  
+7.3.4 Parameterized Types 339  
+7.3.5 Vectors 342  
+7.4 Searching and Sorting 343  
+7.4.1 Searching 343  
+7.4.2 Association Lists 345  
+7.4.3 Insertion Sort 348  
+7.4.4 Selection Sort 349  
+7.4.5 Unsorting 351
+
+7.5 Multi-dimensional Arrays 352  
+7.5.1 Creating Two-dimensional Arrays 352  
+7.5.2 Using Two-dimensional Arrays 354  
+7.5.3 Example: Checkers 357  
+Exercises for Chapter 7 364  
+Quiz on Chapter 7 370  
+
+8 Correctness and Robustness 373  
+8.1 Introduction to Correctness and Robustness 373  
+8.1.1 Horror Stories 374  
+8.1.2 Java to the Rescue 375  
+8.1.3 Problems Remain in Java 377  
+8.2 Writing Correct Programs 378  
+8.2.1 Provably Correct Programs 378  
+8.2.2 Robust Handling of Input 381  
+8.3 Exceptions and try..catch 385  
+8.3.1 Exceptions and Exception Classes 386  
+8.3.2 The try Statement 388  
+8.3.3 Throwing Exceptions 390  
+8.3.4 Mandatory Exception Handling 392  
+8.3.5 Programming with Exceptions 393  
+8.4 Assertions 396  
+8.5 Introduction to Threads 399  
+8.5.1 Creating and Running Threads 400  
+8.5.2 Operations on Threads 404  
+8.5.3 Mutual Exclusion with "synchronized" 405  
+8.5.4 Wait and Notify 408  
+8.5.5 Volatile Variables 412  
+8.6 Analysis of Algorithms 413  
+Exercises for Chapter 8 419  
+Quiz on Chapter 8 424  
+
+9 Linked Data Structures and Recursion 427  
+9.1 Recursion 427  
+9.1.1 Recursive Binary Search 428  
+9.1.2 Towers of Hanoi 430  
+9.1.3 A Recursive Sorting Algorithm 432  
+9.1.4 Blob Counting 435  
+9.2 Linked Data Structures 439  
+9.2.1 Recursive Linking 439  
+9.2.2 Linked Lists 441  
+9.2.3 Basic Linked List Processing 441  
+9.2.4 Inserting into a Linked List 445  
+9.2.5 Deleting from a Linked List 447  
+9.3 Stacks, Queues, and ADTs 448  
+9.3.1 Stacks 449  
+9.3.2 Queues 452  
+9.3.3 Postfix Expressions 456
+
+9.4 Binary Trees 459
+9.4.1 Tree Traversal 460
+9.4.2 Binary Sort Trees 462
+9.4.3 Expression Trees 467
+9.5 A Simple Recursive Descent Parser 470
+9.5.1 Backus-Naur Form 470
+9.5.2 Recursive Descent Parsing 472
+9.5.3 Building an Expression Tree 476
+Exercises for Chapter 9 479
+Quiz on Chapter 9 482
+
+10 Generic Programming and Collection Classes 485
+10.1 Generic Programming 485
+10.1.1 Generic Programming in Smalltalk 486
+10.1.2 Generic Programming in C++ 487
+10.1.3 Generic Programming in Java 488
+10.1.4 The Java Collection Framework 489
+10.1.5 Iterators and for-each Loops 491
+10.1.6 Equality and Comparison 492
+10.1.7 Generics and Wrapper Classes 495
+10.2 Lists and Sets 496
+10.2.1 ArrayList and LinkedList 496
+10.2.2 Sorting 499
+10.2.3 TreeSet and HashSet 500
+10.2.4 EnumSet 503
+10.3 Maps 504
+10.3.1 The Map Interface 505
+10.3.2 Views, SubSets, and SubMaps 506
+10.3.3 Hash Tables and Hash Codes 509
+10.4 Programming with the Collection Framework 511
+10.4.1 Symbol Tables 511
+10.4.2 Sets Inside a Map 512
+10.4.3 Using a Comparator 515
+10.4.4 Word Counting 517
+10.5 Writing Generic Classes and Methods 519
+10.5.1 Simple Generic Classes 520
+10.5.2 Simple Generic Methods 521
+10.5.3 Type Wildcards 523
+10.5.4 Bounded Types 527
+Exercises for Chapter 10 531
+Quiz on Chapter 10 535
+
+11 Files and Networking 537
+11.1 Streams, Readers, and Writers 537
+11.1.1 Character and Byte Streams 537
+11.1.2 PrintWriter 539
+11.1.3 Data Streams 540
+11.1.4 Reading Text 541
+
+11.1.5 The Scanner Class . 544
+11.1.6 Serialized Object I/O . 545
+11.2 Files . 546
+11.2.1 Reading and Writing Files . 546
+11.2.2 Files and Directories . 549
+11.2.3 File Dialog Boxes . 552
+11.3 Programming With Files . 554
+11.3.1 Copying a File . 555
+11.3.2 Persistent Data . 557
+11.3.3 Files in GUI Programs . 559
+11.3.4 Storing Objects in Files . 561
+11.4 Networking . 568
+11.4.1 URLs and URLConnections . 569
+11.4.2 TCP/IP and Client/Server . 571
+11.4.3 Sockets . 572
+11.4.4 A Trivial Client/Server . 574
+11.4.5 A Simple Network Chat . 578
+11.5 Network Programming and Threads . 581
+11.5.1 A Threaded GUI Chat Program . 582
+11.5.2 A Multithreaded Server . 585
+11.5.3 Distributed Computing . 588
+11.6 A Brief Introduction to XML . 596
+11.6.1 Basic XML Syntax . 596
+11.6.2 XMLEncoder and XMLDecoder . 598
+11.6.3 Working With the DOM . 600
+Exercises for Chapter 11 . 606
+Quiz on Chapter 11 . 609
+
+Advanced GUI Programming 611
+12.1 Images and Resources . 611
+12.1.1 Images and BufferedImages . 611
+12.1.2 Working With Pixels . 617
+12.1.3 Resources . 620
+12.1.4 Cursors and Icons . 621
+12.1.5 Image File I/O . 622
+12.2 Fancier Graphics . 624
+12.2.1 Measuring Text . 625
+12.2.2 Transparency . 627
+12.2.3 Antialiasing . 629
+12.2.4 Strokes and Paints . 630
+12.2.5 Transforms . 633
+12.3 Actions and Buttons . 636
+12.3.1 Action and AbstractAction . 636
+12.3.2 Icons on Buttons . 638
+12.3.3 Radio Buttons . 639
+12.3.4 Toolbars . 642
+12.3.5 Keyboard Accelerators . 643
+
+12.3.6 HTML on Buttons . 645  
+12.4 Complex Components and MVC . 646  
+12.4.1 Model-View-Controller . 646  
+12.4.2 Lists and ListModels . 647  
+12.4.3 Tables and TableModels . 650  
+12.4.4 Documents and Editors . 654  
+12.4.5 Custom Components . 655  
+12.5 Finishing Touches . 660  
+12.5.1 The Mandelbrot Set . 660  
+12.5.2 Design of the Program . 662  
+12.5.3 Internationalization . 664  
+12.5.4 Events, Events, Events . 666  
+12.5.5 Custom Dialogs . 668  
+12.5.6 Preferences . 669  
+Exercises for Chapter 12 . 671  
+Quiz on Chapter 12 . 673

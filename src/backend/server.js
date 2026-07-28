@@ -36,7 +36,7 @@ app.get("/health", async (req, res) => {
     const response = await fetch(`${CORE_API}/health`, { signal: AbortSignal.timeout(5000) });
     if (response.ok) {
       const data = await response.json();
-      coreStatus = data.status || "healthy";
+      coreStatus = data.services?.core?.status || data.status || "healthy";
       // MinerU status comes from the core service's health check
       if (data.services && data.services.mineru) {
         // Normalizing: MinerU returns "ready", "unavailable", or "error"

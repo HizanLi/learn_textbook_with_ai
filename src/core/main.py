@@ -852,14 +852,18 @@ async def parse_table_of_content(request: ParseTocRequest):
 @app.get("/health")
 async def health_check():
     """
-    健康检查端点：主要检查 MinerU Docker 容器状态
+    健康检查端点：FastAPI 能响应即代表 Python core 可用。
+    MinerU/Docker 是独立依赖，状态放在 services.mineru 中。
     """
     mineru_health = mineru_client.check_health()
-    
+
     return {
-        "status": "healthy" if mineru_health["status"] == "ready" else "unhealthy",
+        "status": "healthy",
         "timestamp": os.getenv("CURRENT_DATE", "2026-03-22"),
         "services": {
+            "core": {
+                "status": "healthy"
+            },
             "mineru": mineru_health
         }
     }
