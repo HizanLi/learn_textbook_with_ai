@@ -15,36 +15,47 @@
                     "key_topics_analysis": {
                         "core_concepts": [
                             "ActionListener class",
+                            "action listeners",
                             "actionPerformed() method",
                             "addActionListener() method",
                             "addMouseListener() method",
                             "AlertDialog class",
+                            "alert dialog pop-up",
                             "Android emulator",
-                            "APK (Android package files)",
+                            "Android package files (APK)",
+                            "Android Studio",
+                            "animation",
+                            "anonymous inner classes",
                             "application program interface (API) levels",
                             "ArrayList data structure",
-                            "anonymous inner classes"
+                            "attributes",
+                            "frame rate",
+                            "threading",
+                            "widgets"
                         ],
                         "fundamental_rules": [
-                            "action listeners are used to handle events",
-                            "arithmetic operators include +, -, *, /",
-                            "assignment operator is =",
-                            "importing classes automatically in Android Studio",
-                            "SDK or API levels determine compatibility",
-                            "threading is used for managing animations"
+                            "Addition operator: +",
+                            "Arithmetic operators: +, -, *, /",
+                            "Assignment operator: =",
+                            "AbsoluteLayout value: 240",
+                            "SDK or API levels determine Android compatibility",
+                            "Code completion and automatic import of classes in Android Studio",
+                            "Timer setup for animation: adding, setting, and starting timer"
                         ],
                         "common_pitfalls": [
-                            "Correcting spelling errors in code",
-                            "Ensuring proper SDK or API levels",
-                            "Handling frame rate in animations"
+                            "Incorrect grouping of symbols in Android Studio",
+                            "Spelling errors in code",
+                            "Misuse of assignment operator (=) vs. equality operator",
+                            "Illegal operations with arithmetic operators"
                         ],
                         "examples": [
-                            "BubbleDraw app on Android emulator",
-                            "Hi-Lo guessing game on Android emulator",
-                            "Secret Messages app on Android emulator",
-                            "Using ArrayList for data management"
+                            "BubbleDraw app (Android mobile version) and (GUI version) for animation",
+                            "Hi-Lo guessing game (Android mobile version) using Android emulator",
+                            "Secret Messages app (Android mobile version) using Android emulator",
+                            "AlertDialog class usage for pop-up dialogs (About screen, 113-114)",
+                            "ActionListener implementation with actionPerformed() method"
                         ],
-                        "one_sentence_summary": "The content covers key Java concepts and practices for developing applications on Android, including handling events, managing animations, and using Android Studio effectively."
+                        "one_sentence_summary": "This section covers Java development across Windows, macOS, and Linux, focusing on Android Studio setup, key classes like ActionListener and AlertDialog, animation techniques, and common coding pitfalls."
                     }
                 },
                 {
@@ -55,23 +66,25 @@
                     "content": "# Installing Java 8 and 9 for Developers\n\nThe Java Development Kit (JDK) is the version of Java for developers or programmers—like you! The JDK gives you the power to write and compile your own Java apps that you can share with your friends, deploy in a business, or run anywhere on almost any device.\n\nWe’re going to install both versions 8 and 9 of the JDK. That way, we can gain the benefits of version 8’s widespread use while also accessing version 9’s newest features.\n\nTo install JDK 8:\n\n1. Go to http://jdk.java.net/8/.   \n2. Click the Accept License Agreement radio button.   \n3. Find the link for your operating system in the list of downloads under JDK, and click it. If your operating system is Windows or Linux, choose the 64-bit version.   \n4. Open the JDK file from your computer’s Downloads directory and install the JDK.\n\nTo install JDK 9, go to http://jdk.java.net/9/ and then repeat steps 2–4 from your JDK 8 installation.",
                     "key_topics_analysis": {
                         "core_concepts": [
-                            "Java Development Kit (JDK)",
-                            "Version 8 and 9 of JDK"
+                            "Java Development Kit (JDK) is the version of Java for developers, enabling writing and compiling Java applications.",
+                            "JDK 8 is widely used; JDK 9 offers newest features.",
+                            "Installation requires downloading from official Oracle websites for JDK 8 and JDK 9."
                         ],
                         "fundamental_rules": [
-                            "JDK allows writing and compiling Java applications",
-                            "JDK 8 is widely used",
-                            "JDK 9 offers new features"
+                            "For Windows or Linux, choose the 64-bit version of the JDK.",
+                            "Accept the License Agreement before downloading.",
+                            "Install JDK 8 first, then repeat steps for JDK 9."
                         ],
                         "common_pitfalls": [
-                            "Not accepting the License Agreement",
-                            "Choosing the incorrect version for the operating system"
+                            "Selecting the wrong architecture (e.g., 32-bit instead of 64-bit) for Windows or Linux.",
+                            "Failing to accept the License Agreement before downloading.",
+                            "Not opening the downloaded file from the Downloads directory to install."
                         ],
                         "examples": [
-                            "Installing JDK 8 from http://jdk.java.net/8/",
-                            "Installing JDK 9 from http://jdk.java.net/9/"
+                            "Install JDK 8 by visiting http://jdk.java.net/8/, accepting license, selecting OS-specific 64-bit link, and installing from Downloads.",
+                            "Install JDK 9 by visiting http://jdk.java.net/9/ and repeating the same steps as JDK 8."
                         ],
-                        "one_sentence_summary": "The guide explains how to install Java Development Kit versions 8 and 9, highlighting their uses and installation steps."
+                        "one_sentence_summary": "Install both JDK 8 and JDK 9 by downloading from official sites, accepting the license, selecting the 64-bit version for Windows/Linux, and running the installer."
                     }
                 },
                 {
